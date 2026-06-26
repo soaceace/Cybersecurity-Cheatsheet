@@ -1,404 +1,845 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Network Defense — Define It Yourself</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1e1e2e">
+<title>Network Defense Cheatsheet</title>
 <style>
-  :root{
-    --bg:#0f1419; --panel:#171e26; --panel2:#1d2630; --line:#2a3642;
-    --text:#e6edf3; --muted:#8b98a5; --accent:#4cc38a; --accent2:#2f81f7;
-    --warn:#d29922; --input:#0c1116; --done:#1a2b22;
-  }
-  [data-theme="light"]{
-    --bg:#f6f8fa; --panel:#ffffff; --panel2:#f0f3f6; --line:#d0d7de;
-    --text:#1f2328; --muted:#636c76; --accent:#1a7f4b; --accent2:#0969da;
-    --warn:#9a6700; --input:#ffffff; --done:#e8f5ee;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:Calibri,-apple-system,Segoe UI,Roboto,sans-serif;
-    background:var(--bg);color:var(--text);line-height:1.45}
-  header{position:sticky;top:0;z-index:10;background:var(--panel);
-    border-bottom:1px solid var(--line);padding:14px 18px}
-  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  h1{font-size:18px;margin:0;font-weight:700}
-  .sub{color:var(--muted);font-size:13px;margin-top:2px}
-  .grow{flex:1}
-  input,select,button{font-family:inherit;font-size:14px}
-  #search{flex:1;min-width:180px;padding:9px 12px;background:var(--input);
-    color:var(--text);border:1px solid var(--line);border-radius:8px}
-  select{padding:9px 10px;background:var(--input);color:var(--text);
-    border:1px solid var(--line);border-radius:8px}
-  .btn{padding:8px 12px;background:var(--panel2);color:var(--text);
-    border:1px solid var(--line);border-radius:8px;cursor:pointer;white-space:nowrap}
-  .btn:hover{border-color:var(--accent)}
-  .btn.accent{background:var(--accent);color:#04130c;border-color:var(--accent);font-weight:600}
-  .bar{height:8px;background:var(--panel2);border-radius:6px;overflow:hidden;margin-top:10px}
-  .bar > div{height:100%;background:var(--accent);width:0;transition:width .3s}
-  .stats{font-size:13px;color:var(--muted);margin-top:6px}
-  main{max-width:900px;margin:0 auto;padding:18px}
-  .sec{margin:22px 0 8px;font-size:13px;letter-spacing:.5px;text-transform:uppercase;
-    color:var(--accent);font-weight:700;border-bottom:1px solid var(--line);padding-bottom:6px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;
-    padding:14px 16px;margin:10px 0}
-  .card.done{background:var(--done);border-color:var(--accent)}
-  .term{font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .tag{font-size:11px;color:var(--muted);border:1px solid var(--line);
-    border-radius:20px;padding:1px 8px;font-weight:400}
-  textarea{width:100%;margin-top:10px;min-height:64px;resize:vertical;
-    background:var(--input);color:var(--text);border:1px solid var(--line);
-    border-radius:8px;padding:10px;font-size:14px;font-family:inherit}
-  textarea:focus{outline:none;border-color:var(--accent2)}
-  .tools{display:flex;gap:8px;margin-top:8px;align-items:center;flex-wrap:wrap}
-  .reveal{font-size:13px;color:var(--accent2);cursor:pointer;user-select:none;
-    background:none;border:none;padding:4px 0;font-family:inherit}
-  .src{margin-top:8px;padding:10px 12px;background:var(--panel2);
-    border-left:3px solid var(--accent2);border-radius:6px;font-size:14px;
-    color:var(--text);display:none}
-  .src.show{display:block}
-  .src .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.5px;
-    color:var(--muted);display:block;margin-bottom:4px}
-  .saveddot{font-size:12px;color:var(--accent);opacity:0;transition:opacity .2s}
-  .saveddot.show{opacity:1}
-  .hidden{display:none !important}
-  footer{max-width:900px;margin:10px auto 40px;padding:0 18px;color:var(--muted);font-size:12px}
-  @media(max-width:600px){main{padding:12px}h1{font-size:16px}}
+:root{
+  --base:#1e1e2e;--mantle:#181825;--crust:#11111b;
+  --s0:#313244;--s1:#45475a;--s2:#585b70;
+  --text:#cdd6f4;--sub:#a6adc8;--ov:#7f849c;--faint:#6c7086;
+  --blue:#89b4fa;--lav:#b4befe;--teal:#94e2d5;--green:#a6e3a1;
+  --peach:#fab387;--red:#f38ba8;--mauve:#cba6f7;--yellow:#f9e2af;
+  --m1:#94e2d5;--m2:#cba6f7;--m3:#fab387;--m4:#f38ba8;--m5:#a6e3a1;
+  --m6:#89dceb;--m7:#f5c2e7;--m8:#89b4fa;
+  --accent:#89b4fa;--gold:#f9e2af;--ok:#a6e3a1;--bad:#f38ba8;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --shadow:0 12px 40px rgba(0,0,0,.4);--radius:14px;
+}
+[data-theme="light"]{
+  --base:#eff1f5;--mantle:#e6e9ef;--crust:#dce0e8;
+  --s0:#ccd0da;--s1:#bcc0cc;--s2:#acb0be;
+  --text:#4c4f69;--sub:#5c5f77;--ov:#7c7f93;--faint:#8c8fa1;
+  --blue:#1e66f5;--lav:#7287fd;--teal:#179299;--green:#40a02b;
+  --peach:#fe640b;--red:#d20f39;--mauve:#8839ef;--yellow:#df8e1d;
+  --m1:#179299;--m2:#8839ef;--m3:#fe640b;--m4:#d20f39;--m5:#40a02b;
+  --m6:#04a5e5;--m7:#ea76cb;--m8:#1e66f5;
+  --accent:#1e66f5;--gold:#df8e1d;--ok:#40a02b;--bad:#d20f39;
+  --shadow:0 12px 36px rgba(80,90,120,.18);
+}
+*{box-sizing:border-box}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}html{scroll-behavior:auto}}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--base);color:var(--text);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+::selection{background:color-mix(in srgb,var(--accent) 35%,transparent)}
+
+/* header */
+header{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--base) 86%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--s0)}
+.tb{max-width:1280px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:16px}
+.logo{display:flex;align-items:center;gap:11px;flex-shrink:0}
+.logo .glyph{width:30px;height:30px;flex-shrink:0}
+.logo .name{display:flex;flex-direction:column;line-height:1.15}
+.logo .name b{font-size:15px;letter-spacing:-.2px}
+.logo .name b .ver{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:700;margin-left:2px}
+.logo .name small{font-size:11px;color:var(--faint)}
+.search-wrap{flex:1;max-width:520px;margin:0 auto;display:flex;align-items:center;gap:9px;background:var(--mantle);border:1px solid var(--s0);border-radius:11px;padding:9px 13px;color:var(--ov)}
+.search-wrap:focus-within{border-color:var(--accent)}
+.search-wrap input{flex:1;background:none;border:none;color:var(--text);font-size:14.5px;outline:none}
+.search-wrap input::placeholder{color:var(--faint)}
+.kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--s1);border-radius:5px;padding:1px 6px;color:var(--faint)}
+.search-clear{display:none;background:none;border:none;font-size:18px;color:var(--faint)}
+.tb-actions{display:flex;gap:8px;flex-shrink:0}
+.icon-btn{background:var(--mantle);border:1px solid var(--s0);border-radius:10px;height:40px;padding:0 13px;display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;color:var(--text)}
+.icon-btn:hover{border-color:var(--s1)}
+.icon-btn.primary{background:var(--accent);color:var(--crust);border-color:transparent}
+.icon-btn.primary:hover{filter:brightness(1.05)}
+.icon-btn.sq{width:40px;padding:0;justify-content:center}
+
+/* shell */
+.shell{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:230px 1fr;gap:26px;padding:0 22px}
+.sidebar{position:sticky;top:74px;align-self:start;height:calc(100vh - 90px);overflow-y:auto;padding:22px 0}
+.sidebar h4{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--faint);margin:0 0 10px}
+.toc{display:flex;flex-direction:column;gap:2px}
+.toc a{display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:9px;text-decoration:none;color:var(--sub);font-size:13.5px;font-weight:600;border-left:2px solid transparent}
+.toc a:hover{background:var(--mantle)}
+.toc a.active{background:var(--mantle);color:var(--text);border-left-color:var(--mc)}
+.toc a .dot{width:9px;height:9px;border-radius:50%;background:var(--mc);flex-shrink:0}
+.toc a .ct{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--faint)}
+.toc-prog{margin-top:20px;padding:0 11px}
+.toc-prog .bar{height:7px;background:var(--s0);border-radius:4px;overflow:hidden}
+.toc-prog .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--green))}
+.toc-prog .txt{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:6px}
+
+main{padding:24px 0 60px;min-width:0}
+.hero{margin-bottom:26px}
+.hero h1{font-size:30px;letter-spacing:-.7px;margin:0 0 10px;line-height:1.1}
+.hero p{color:var(--sub);font-size:15px;max-width:660px;margin:0}
+.hero .stats{display:flex;gap:22px;margin-top:18px;flex-wrap:wrap}
+.hero .stat b{font-family:var(--mono);font-size:21px;color:var(--accent)}
+.hero .stat span{display:block;font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.7px;margin-top:2px}
+
+/* filter chips */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.chip{background:var(--mantle);border:1px solid var(--s0);border-radius:999px;padding:6px 13px;font-size:13px;font-weight:600;color:var(--sub);display:inline-flex;align-items:center;gap:7px}
+.chip:hover{border-color:var(--s1)}
+.chip .dot{width:9px;height:9px;border-radius:50%}
+.chip[aria-pressed="true"]{color:var(--text);border-color:var(--cc,var(--accent));background:color-mix(in srgb,var(--cc,var(--accent)) 15%,var(--mantle))}
+.chip.star[aria-pressed="true"]{--cc:var(--gold)}
+.barwrap{display:flex;align-items:center;gap:12px;margin:14px 0 22px;flex-wrap:wrap}
+.btn-sm{background:var(--mantle);border:1px solid var(--s0);border-radius:8px;padding:6px 11px;font-size:12.5px;font-weight:600;color:var(--sub)}
+.btn-sm:hover{border-color:var(--s1);color:var(--text)}
+
+/* reference */
+.refgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:26px}
+.refcard{background:var(--mantle);border:1px solid var(--s0);border-radius:var(--radius);padding:15px 16px}
+.refcard h3{margin:0 0 11px;font-size:13px;display:flex;align-items:center;gap:8px}
+.refcard h3 .ic{color:var(--accent)}
+table.ref{width:100%;border-collapse:collapse;font-size:12.5px}
+table.ref td{padding:5px 4px;border-bottom:1px solid var(--s0);vertical-align:top}
+table.ref tr:last-child td{border-bottom:none}
+table.ref td:first-child{font-family:var(--mono);color:var(--text);white-space:nowrap;padding-right:12px}
+table.ref td:last-child{color:var(--sub)}
+
+/* domain sections */
+.domain{margin-bottom:14px;scroll-margin-top:80px}
+.dhead{width:100%;display:flex;align-items:center;gap:13px;padding:14px 4px;background:none;border:none;border-bottom:1px solid var(--s0);text-align:left}
+.dcode{font-family:var(--mono);font-weight:700;font-size:12px;color:var(--crust);background:var(--mc);border-radius:6px;padding:3px 8px;flex-shrink:0}
+.dname{font-weight:700;font-size:18px;flex:1}
+.dmeta{font-family:var(--mono);font-size:11px;color:var(--faint)}
+.dprog{width:50px;height:5px;background:var(--s0);border-radius:3px;overflow:hidden}
+.dprog i{display:block;height:100%;width:0;background:var(--mc)}
+.chev{color:var(--faint);font-size:12px;transition:transform .2s}
+details[open] .chev{transform:rotate(90deg)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:11px;padding:14px 0 4px}
+
+/* term card */
+.tcard{background:var(--mantle);border:1px solid var(--s0);border-radius:12px;padding:13px 14px;cursor:pointer;transition:border-color .15s,transform .1s}
+.tcard:hover{border-color:var(--mc);transform:translateY(-1px)}
+.tcard.done{border-color:color-mix(in srgb,var(--ok) 45%,var(--s0))}
+.tc-top{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.tc-tag{font-family:var(--mono);font-size:9.5px;font-weight:700;color:var(--mc);border:1px solid color-mix(in srgb,var(--mc) 45%,transparent);border-radius:5px;padding:2px 5px;flex-shrink:0}
+.tc-term{font-weight:700;font-size:14.5px;flex:1;line-height:1.3}
+.tc-cmd{color:var(--accent);font-family:var(--mono);font-size:11px}
+.tc-def{color:var(--sub);font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tc-actions{display:flex;gap:5px;margin-top:9px}
+.mini{background:none;border:1px solid var(--s0);border-radius:7px;height:28px;padding:0 9px;font-size:11px;font-weight:600;color:var(--faint);display:inline-flex;align-items:center;gap:5px}
+.mini:hover{border-color:var(--s1);color:var(--sub)}
+.mini.on-star{color:var(--gold);border-color:color-mix(in srgb,var(--gold) 50%,transparent)}
+.mini.on-done{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 50%,transparent)}
+.mini.exp{margin-left:auto}
+.empty{text-align:center;padding:70px 20px;color:var(--faint)}
+.empty b{display:block;color:var(--sub);font-size:17px;margin-bottom:6px}
+
+/* modal */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:.2s;z-index:50}
+.scrim.show{opacity:1;pointer-events:auto}
+.modal{position:fixed;z-index:60;top:50%;left:50%;transform:translate(-50%,-48%) scale(.98);width:min(660px,94vw);max-height:88vh;overflow-y:auto;background:var(--base);border:1px solid var(--s1);border-radius:18px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.2s}
+.modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.mhead{position:sticky;top:0;background:color-mix(in srgb,var(--base) 92%,transparent);backdrop-filter:blur(8px);padding:18px 20px 12px;border-bottom:1px solid var(--s0);display:flex;align-items:flex-start;gap:11px}
+.mback{background:none;border:1px solid var(--s0);border-radius:8px;height:30px;padding:0 9px;font-size:12px;font-weight:600;color:var(--sub);display:none;align-items:center;gap:5px}
+.mback.show{display:inline-flex}
+.m-tag{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--mc);border:1px solid color-mix(in srgb,var(--mc) 50%,transparent);border-radius:5px;padding:3px 7px;margin-top:4px}
+.m-term{font-size:21px;font-weight:700;flex:1;line-height:1.25}
+.mclose{background:none;border:none;font-size:24px;color:var(--faint);line-height:1}
+.mbody{padding:18px 20px 22px}
+.m-sec{margin-bottom:18px}
+.m-sec h5{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--faint);margin:0 0 7px;display:flex;align-items:center;gap:7px}
+.m-def{font-size:15.5px;color:var(--text);line-height:1.55;margin:0}
+.m-deep{font-size:14px;color:var(--sub);line-height:1.6;margin:0}
+.m-tip{background:color-mix(in srgb,var(--gold) 13%,var(--mantle));border:1px solid color-mix(in srgb,var(--gold) 32%,transparent);border-radius:11px;padding:12px 14px;font-size:13.5px;color:var(--text);line-height:1.55}
+.m-tip b{color:var(--gold)}
+.m-cmd{position:relative;background:var(--crust);border:1px solid var(--s0);border-radius:10px;padding:13px 14px;font-family:var(--mono);font-size:12.5px;color:var(--text);white-space:pre;overflow-x:auto}
+.m-cmd .copy{position:absolute;top:8px;right:8px;background:var(--s0);border:none;border-radius:6px;font-size:10px;padding:4px 8px;color:var(--sub);font-family:var(--sans);font-weight:600}
+.rel{display:flex;flex-wrap:wrap;gap:7px}
+.rel button{background:var(--mantle);border:1px solid var(--s0);border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600;color:var(--sub)}
+.rel button:hover{border-color:var(--accent);color:var(--text)}
+.m-actions{display:flex;gap:9px;padding-top:6px;border-top:1px solid var(--s0);margin-top:4px}
+.m-actions button{flex:1;background:var(--mantle);border:1px solid var(--s0);border-radius:10px;padding:11px;font-size:13.5px;font-weight:600;color:var(--sub);display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.m-actions button.on-star{color:var(--gold);border-color:color-mix(in srgb,var(--gold) 50%,transparent);background:color-mix(in srgb,var(--gold) 12%,var(--mantle))}
+.m-actions button.on-done{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 50%,transparent);background:color-mix(in srgb,var(--ok) 12%,var(--mantle))}
+
+/* study modal */
+.study .mbody{padding-top:8px}
+.tabs{display:flex;gap:4px;background:var(--mantle);border:1px solid var(--s0);border-radius:11px;padding:4px;margin-bottom:18px}
+.tabs button{flex:1;background:none;border:none;padding:9px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--sub)}
+.tabs button[aria-selected="true"]{background:var(--base);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.setrow{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.setrow .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--faint);width:100%;margin-bottom:-2px}
+.pill{background:var(--mantle);border:1px solid var(--s0);border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:600;color:var(--sub)}
+.pill[aria-pressed="true"]{color:var(--text);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--mantle))}
+.go{width:100%;margin-top:8px;background:var(--accent);color:var(--crust);border:none;border-radius:11px;padding:13px;font-weight:700;font-size:15px}
+.go:hover{filter:brightness(1.05)}
+
+.flash{perspective:1600px;height:280px;margin:6px 0 14px}
+.flash .inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;cursor:pointer}
+.flash.flip .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--s0);border-radius:16px;background:var(--mantle);padding:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.face .ft{position:absolute;top:13px;left:15px;font-family:var(--mono);font-size:10px;color:var(--faint)}
+.face .fg{position:absolute;top:11px;right:13px;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--mc);border:1px solid color-mix(in srgb,var(--mc) 45%,transparent);border-radius:5px;padding:2px 6px}
+.front .q{font-size:20px;font-weight:700}
+.back{transform:rotateY(180deg);background:var(--base)}
+.back .a{font-size:14.5px;color:var(--text);line-height:1.55}
+.fcnav{display:flex;align-items:center;justify-content:center;gap:9px}
+.fcnav button{background:var(--mantle);border:1px solid var(--s0);border-radius:9px;padding:9px 15px;font-weight:600}
+.fcnav .ct{font-family:var(--mono);font-size:12.5px;color:var(--sub);min-width:64px;text-align:center}
+.hint{text-align:center;font-size:11.5px;color:var(--faint);font-family:var(--mono);margin:0 0 12px}
+
+/* quiz */
+.qhead{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12.5px;color:var(--sub);margin-bottom:13px}
+.qdef{font-size:16.5px;font-weight:600;line-height:1.45;margin:0 0 16px}
+.opt{display:flex;gap:10px;width:100%;text-align:left;background:var(--mantle);border:1px solid var(--s0);border-radius:11px;padding:12px 14px;margin-bottom:9px;font-size:14.5px;font-weight:600;color:var(--text)}
+.opt .n{font-family:var(--mono);font-size:11px;color:var(--faint);border:1px solid var(--s1);border-radius:5px;padding:1px 6px;flex-shrink:0}
+.opt:hover:not(:disabled){border-color:var(--s1)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--mantle))}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 15%,var(--mantle))}
+.qfb{font-size:13px;color:var(--sub);background:var(--mantle);border:1px solid var(--s0);border-radius:10px;padding:11px 13px;margin:4px 0 12px;line-height:1.5}
+.qfb b{color:var(--gold)}
+.qnext{width:100%;background:var(--accent);color:var(--crust);border:none;border-radius:10px;padding:12px;font-weight:700;font-size:14.5px}
+.qnext:disabled{opacity:.35;cursor:default}
+.result{text-align:center;padding:18px 6px}
+.result .big{font-family:var(--mono);font-size:44px;font-weight:700;margin:6px 0}
+.review{text-align:left;margin-top:18px}
+.review h5{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--faint);margin:0 0 8px}
+.rv{border:1px solid var(--s0);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:13px}
+.rv .rt{font-weight:700;margin-bottom:2px}
+.rv .ra{color:var(--bad)}.rv .rc{color:var(--ok)}
+.rv .open{background:none;border:none;color:var(--accent);font-size:12px;font-weight:600;padding:4px 0 0;text-decoration:underline}
+.res-actions{display:flex;gap:9px;margin-top:16px}
+.res-actions button{flex:1;border-radius:10px;padding:11px;font-weight:600;font-size:13.5px;border:1px solid var(--s0);background:var(--mantle);color:var(--text)}
+.res-actions button.prime{background:var(--accent);color:var(--crust);border-color:transparent}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--mantle);border:1px solid var(--s1);border-radius:10px;padding:10px 16px;font-size:13px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.22s;z-index:70}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.totop{position:fixed;bottom:22px;right:22px;width:44px;height:44px;border-radius:50%;background:var(--mantle);border:1px solid var(--s1);color:var(--text);font-size:18px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.2s;z-index:35}
+.totop.show{opacity:1;pointer-events:auto}
+footer{max-width:1280px;margin:0 auto;padding:24px 22px 50px;color:var(--faint);font-size:11.5px;font-family:var(--mono);line-height:1.7}
+
+@media (max-width:880px){.shell{grid-template-columns:1fr}.sidebar{display:none}}
+@media (max-width:620px){
+  .tb{flex-wrap:wrap;padding:11px 14px}.search-wrap{order:3;flex-basis:100%;max-width:none}
+  .logo .name small{display:none}.shell{padding:0 14px}.hero h1{font-size:24px}
+  .icon-btn .lbl{display:none}.icon-btn{padding:0 11px}
+}
+@media print{
+  header,.sidebar,.chips,.barwrap,.tc-actions,.totop,.icon-btn{display:none!important}
+  .shell{grid-template-columns:1fr}details{open:true}.tcard{break-inside:avoid;cursor:default}
+  body{background:#fff;color:#000}
+}
 </style>
 </head>
 <body>
 <header>
-  <div class="row">
-    <div>
-      <h1>Network Defense — Define It Yourself</h1>
-      <div class="sub">Write each definition from memory, then reveal the reference to check yourself</div>
+  <div class="tb">
+    <div class="logo">
+      <svg class="glyph" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M16 2.5 27 7v8.5c0 7-4.7 11.8-11 14.2C9.7 27.3 5 22.5 5 15.5V7z" fill="var(--accent)" opacity=".18"/>
+        <path d="M16 2.5 27 7v8.5c0 7-4.7 11.8-11 14.2C9.7 27.3 5 22.5 5 15.5V7z" stroke="var(--accent)" stroke-width="1.8"/>
+        <path d="m11 16 3.4 3.4L21 12.5" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="name"><b>Network Defense <span class="ver">NetDef</span></b><small>Cisco NetAcad · modules 1&ndash;5</small></div>
     </div>
-    <div class="grow"></div>
-    <a class="btn" href="index.html">← Security+ Cheatsheet</a>
-    <button class="btn" id="theme">◐ Theme</button>
-  </div>
-  <div class="row" style="margin-top:12px">
-    <input id="search" placeholder="Search terms…">
-    <select id="filterMod">
-      <option value="">All modules</option>
-    </select>
-    <select id="filterState">
-      <option value="">All terms</option>
-      <option value="done">Defined only</option>
-      <option value="todo">Not yet defined</option>
-    </select>
-  </div>
-  <div class="bar"><div id="barFill"></div></div>
-  <div class="stats" id="stats"></div>
-  <div class="row" style="margin-top:10px">
-    <button class="btn accent" id="expAnki">Export for Anki (.txt)</button>
-    <button class="btn" id="expJson">Backup (.json)</button>
-    <button class="btn" id="impJson">Restore backup</button>
-    <input type="file" id="fileIn" accept=".json" class="hidden">
+    <label class="search-wrap" aria-label="Search">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="search" type="search" placeholder="Search terms, commands, definitions..." autocomplete="off">
+      <span class="kbd">/</span>
+      <button class="search-clear" id="searchClear" aria-label="Clear">&times;</button>
+    </label>
+    <div class="tb-actions">
+      <a class="icon-btn" href="index.html" title="Open the Security+ SY0-701 cheatsheet"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg><span class="lbl">Security+</span></a>
+      <button class="icon-btn primary" id="studyBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 7l10-4 10 4-10 4z"/><path d="M6 10v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/></svg><span class="lbl">Study</span></button>
+      <button class="icon-btn sq" id="themeBtn" aria-label="Toggle theme">◐</button>
+    </div>
   </div>
 </header>
-<main id="list"></main>
-<footer>
-  Your definitions save automatically in this browser. Use <b>Backup</b> to keep a copy, and
-  <b>Export for Anki</b> when you want to drill them with spaced repetition. The reveal text is a
-  short reference pulled from your slides, condensed for self-checking.
-</footer>
+
+<div class="shell">
+  <nav class="sidebar" aria-label="Module navigation">
+    <h4>Modules</h4>
+    <div class="toc" id="toc"></div>
+    <div class="toc-prog"><div class="bar"><i id="gBar"></i></div><div class="txt" id="gTxt">0% learned</div></div>
+  </nav>
+
+  <main id="main">
+    <section class="hero">
+      <h1>Network Defense study desk</h1>
+      <p>Every concept from the Cisco NetAcad Network Defense modules in one offline page: precise definitions, deep-dive detail on each term, exam tips, copy-ready Cisco IOS commands, and a scored quiz.</p>
+      <div class="stats">
+        <div class="stat"><b id="stTerms">0</b><span>terms</span></div>
+        <div class="stat"><b>5</b><span>modules</span></div>
+        <div class="stat"><b id="stCmd">0</b><span>commands</span></div>
+      </div>
+    </section>
+
+    <div class="chips" id="chips"></div>
+    <div class="barwrap">
+      <button class="btn-sm" id="expandAll">Expand all</button>
+      <button class="btn-sm" id="collapseAll">Collapse all</button>
+    </div>
+
+    <section class="refgrid" id="refgrid"></section>
+    <div id="list"></div>
+  </main>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTerm"></div>
+<div class="modal study" id="studyModal" role="dialog" aria-modal="true"></div>
+<button class="totop" id="totop" aria-label="Back to top">↑</button>
+<div class="toast" id="toast"></div>
+<footer>Built from Cisco NetAcad Network Defense modules 1&ndash;5 · fully offline · progress, favorites &amp; theme persist in this browser via localStorage · not affiliated with Cisco · study use only</footer>
 
 <script>
+"use strict";
 // ============================================================
-//  HOW TO ADD A NEW MODULE (do this when class unlocks one)
-//  1) Add the module's number + name to the MODULES map below.
-//  2) Append term objects to the TERMS array, copying this shape:
-//        {m:"3", s:"3.1 Access Controls", t:"Term name", d:"Reference definition."},
-//     - m = module number (as text)   - s = section heading
-//     - t = the term                  - d = the reference definition
-//  3) Save and re-upload netdef.html to GitHub. That's it.
-//  Terms group under their section automatically, and the module
-//  filter dropdown rebuilds itself from whatever modules exist.
+//  HOW TO ADD A NEW MODULE (when class unlocks one)
+//  1) Add a line to MODS below: pick the next number, a short
+//     code, a name, and the next spare color var (--m6, --m7, --m8
+//     are already defined and ready to use). Example:
+//        {n:6,code:"M6",name:"Cryptography",v:"--m6"},
+//  2) Append terms to the T array, copying this shape (only t, m,
+//     and d are required; x/tip/c/rel are optional extras):
+//        {t:"Term name", m:6, d:"Short definition.",
+//         x:"Optional deeper explanation.", tip:"Optional exam tip.",
+//         c:"optional command", rel:["Related term","Another term"]},
+//  3) Save and re-upload netdef.html to GitHub.
+//  The sidebar, filter chips, flashcards, and quiz all rebuild from
+//  MODS and T automatically. Your progress/favorites are stored in
+//  the browser, so re-uploading never erases them.
 // ============================================================
-const MODULES = {
-  "1":"Understanding Defense",
-  "2":"System & Network Defense",
-  // "3":"Access Control",
-  // "4":"Access Control Lists",
-  // "5":"Firewall Technologies",
-};
-
-// ---- DATA: every term from both decks, with a concise reference definition ----
-const TERMS = [
-// ===== MODULE 1 =====
-{m:"1",s:"1.1 Defense-in-Depth",t:"Asset",d:"Anything of value to an organization that must be protected — servers, infrastructure devices, end devices, and the greatest asset, data."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Vulnerability",d:"A weakness in a system or its design that could be exploited by a threat actor."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Threat",d:"Any potential danger to an asset."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Attack surface",d:"The total collection of an organization's assets that threat actors could target."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Asset management",d:"Inventorying all assets, then developing and implementing policies and procedures to protect them."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Asset classification",d:"Assigning resources into groups based on common characteristics so the most critical info gets the highest protection."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Asset standardization",d:"Identifying specific hardware/software products an org uses, so replacements are fast and maintenance costs stay low."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Asset lifecycle",d:"The stages an asset moves through: Procurement, Deployment, Utilization, Maintenance, Disposal."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Defense-in-depth",d:"Using multiple layers of security at the network edge, within the network, and on endpoints so one failure doesn't break everything."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Edge router (R1)",d:"First line of defense; has rules specifying which traffic to allow or deny, passing internal-bound traffic to the firewall."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Firewall",d:"Second line of defense; a checkpoint device that performs additional filtering and tracks the state of connections."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Internal router (R2)",d:"A further line of defense that applies final filtering rules on traffic before forwarding it to its destination."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"IPS (Intrusion Prevention System)",d:"A security device used in defense-in-depth alongside routers and firewalls to detect and block intrusions."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"AMP (Advanced Malware Protection)",d:"A defense-in-depth security technology focused on detecting and stopping malware."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Security Onion",d:"Analogy where an attacker must peel away defenses layer by layer to reach the target. (Not the Security Onion tool suite.)"},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Security Artichoke",d:"Borderless-network analogy that benefits the attacker — they only remove certain 'leaves' to reach sensitive data."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Layering",d:"Setting up multiple defenses that work together, so a barrier of defenses must all be defeated to attack successfully."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Limiting",d:"Restricting access so each user only has the level of access required to do their job, reducing the threat surface."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Diversity",d:"Making layers different so that defeating one layer doesn't let the same technique defeat all the others."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Obscurity",d:"Not revealing information (like OS, equipment make/model) that attackers could use to plan an attack."},
-{m:"1",s:"1.1 Defense-in-Depth",t:"Simplicity",d:"Keeping security understandable; overly complex setups people can't configure properly are as easy to compromise."},
-{m:"1",s:"1.2 Cybersecurity Ops Management",t:"Configuration management",d:"Identifying, controlling, and auditing the implementation and any changes made to a system's established baseline."},
-{m:"1",s:"1.2 Cybersecurity Ops Management",t:"Baseline configuration",d:"All the settings configured for a system that form the foundation/template for all similar systems."},
-{m:"1",s:"1.2 Cybersecurity Ops Management",t:"OS hardening",d:"Securing an OS via log/audit config, changing default account names and passwords, account policies, and file-level access control."},
-{m:"1",s:"1.2 Cybersecurity Ops Management",t:"Log file",d:"A record of all events as they occur; made up of log entries, each containing the info for a specific event."},
-{m:"1",s:"1.2 Cybersecurity Ops Management",t:"Log management",d:"Procedures for generating, transmitting, storing, analyzing, and disposing of computer security log data."},
-{m:"1",s:"1.2 Cybersecurity Ops Management",t:"Operating system logs",d:"Logs of events tied to OS actions — e.g., client requests, server responses, successful authentications, usage info."},
-{m:"1",s:"1.2 Cybersecurity Ops Management",t:"Application security logs",d:"Logs generated by network/system security software to detect malicious activity, aid auditing, and prove compliance."},
-{m:"1",s:"1.2 Cybersecurity Ops Management",t:"Protocol analyzer (packet sniffer)",d:"Intercepts and logs network traffic, capturing each packet and analyzing field values on wired or wireless networks."},
-{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Business policies",d:"Guidelines an org develops to govern its actions and define correct behavior; a baseline whose violation may signal a breach."},
-{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Company policies",d:"Rules of conduct and responsibilities for employees and employers; protect worker rights and business interests."},
-{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Employee policies",d:"HR-maintained policies covering salary, pay schedule, benefits, work schedule, and vacations."},
-{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Security policies",d:"A set of security objectives, rules of behavior for users/admins, and system requirements that secure the org's networks and systems."},
-{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Identification and authentication policy",d:"Specifies who can access network resources and the identity verification procedures used."},
-{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Password policies",d:"Ensure passwords meet minimum requirements and are changed regularly."},
-{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Acceptable Use Policy (AUP)",d:"Identifies the network applications and uses that are acceptable to the organization."},
-{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Remote access policy",d:"Identifies how remote users can access the network and what is reachable via remote connectivity."},
-{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Network maintenance policy",d:"Specifies network device OS and end-user application update procedures."},
-{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Incident handling procedures",d:"Describe how security incidents are handled."},
-{m:"1",s:"1.3 Policies, Regulations, Standards",t:"BYOD (Bring Your Own Device)",d:"Letting employees use personal devices to access company systems; needs a policy covering access, devices, and safeguards."},
-{m:"1",s:"1.3 Policies, Regulations, Standards",t:"MDM (Mobile Device Management)",d:"Software letting IT enforce security settings and software configs on all devices that connect to company networks."},
-{m:"1",s:"1.3 Policies, Regulations, Standards",t:"INFOSEC",d:"Information Systems Security — the professionals bound by the laws and codes of ethics governing network security."},
-{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Compliance regulations",d:"External rules defining what orgs must provide and their liability for failing to comply; depend on org type and data handled."},
-// ===== MODULE 2 =====
-{m:"2",s:"2.1 Physical Security",t:"Physical barriers / fencing",d:"Often the outermost, most visible layer of defense; includes perimeter fences, gates, bollards, vehicle barriers, guard shelters."},
-{m:"2",s:"2.1 Physical Security",t:"Bollards",d:"Short posts used to stop vehicle intrusions."},
-{m:"2",s:"2.1 Physical Security",t:"Biometrics",d:"Physiological or behavioral characteristics (face, fingerprint, iris, retina, voice, etc.) used to identify and grant access."},
-{m:"2",s:"2.1 Physical Security",t:"Type I error (false rejection)",d:"A biometric system rejects an authorized user; costly in retail/banking due to lost transactions."},
-{m:"2",s:"2.1 Physical Security",t:"Type II error (false acceptance)",d:"A biometric system accepts an imposter; the most important error for access control since it lets attackers in."},
-{m:"2",s:"2.1 Physical Security",t:"Crossover Error Rate (CER)",d:"The most common single metric for overall biometric accuracy (where false-accept and false-reject rates are equal)."},
-{m:"2",s:"2.1 Physical Security",t:"Acceptance rate",d:"The percentage rate at which a system accepts unenrolled individuals or imposters as authentic (rate of Type II errors)."},
-{m:"2",s:"2.1 Physical Security",t:"Surveillance (video/electronic)",d:"Monitoring that supplements or replaces guards; can record for long periods and link to motion detection and alerts."},
-{m:"2",s:"2.1 Physical Security",t:"Guards and escorts",d:"Provide instantaneous, adaptable response and on-the-spot decisions; downsides are cost and human error."},
-{m:"2",s:"2.1 Physical Security",t:"RFID",d:"Radio Frequency Identification asset tags that track assets leaving a secure area; no line-of-sight needed, can read many at once."},
-{m:"2",s:"2.2 Application Security",t:"Development environment",d:"A less-restrictive, lower-security space where software is built, tested, and debugged before deployment."},
-{m:"2",s:"2.2 Application Security",t:"Version control software",d:"Tracks and manages changes to software code."},
-{m:"2",s:"2.2 Application Security",t:"Sandbox environment",d:"An isolated space where developers work so code isn't overwritten as they develop it."},
-{m:"2",s:"2.2 Application Security",t:"Quality assurance (QA)",d:"Testing process used to find defects in the software."},
-{m:"2",s:"2.2 Application Security",t:"Staging environment",d:"An environment closely matching production, used to verify software runs under required security settings before release."},
-{m:"2",s:"2.2 Application Security",t:"Provisioning / deprovisioning",d:"Provisioning is creating or updating software; deprovisioning is removing it (often via a self-service portal)."},
-{m:"2",s:"2.2 Application Security",t:"Normalization",d:"Organizing data in a database and converting input to its simplest form so strings have unique binary representations and malicious input is caught."},
-{m:"2",s:"2.2 Application Security",t:"Stored procedure",d:"A group of precompiled SQL statements stored in a database that run a task, reducing network traffic and speeding results."},
-{m:"2",s:"2.2 Application Security",t:"Obfuscation",d:"Hides original data with random characters or data to help prevent software from being reverse engineered."},
-{m:"2",s:"2.2 Application Security",t:"Camouflage",d:"Replaces sensitive data with realistic fictional data to help prevent reverse engineering."},
-{m:"2",s:"2.2 Application Security",t:"Code reuse",d:"Using existing software to build new software to save time and cost — but it can introduce vulnerabilities."},
-{m:"2",s:"2.2 Application Security",t:"SDKs / third-party libraries",d:"Repositories of useful code that speed development; their vulnerabilities can affect many applications at once."},
-{m:"2",s:"2.2 Application Security",t:"Input validation",d:"Controlling the data input process to maintain database integrity and block malformed/malicious data."},
-{m:"2",s:"2.2 Application Security",t:"Validation rule",d:"Checks data against defined parameters using criteria: Size, Format, Consistency, Range, and Check digit."},
-{m:"2",s:"2.2 Application Security",t:"Integrity check",d:"Measures consistency of data in a file/record to ensure it hasn't been corrupted, using a hash function snapshot."},
-{m:"2",s:"2.2 Application Security",t:"Hash function",d:"An algorithm that takes a snapshot of data to verify it stays unchanged; common ones are MD5, SHA-1, SHA-256, SHA-512."},
-{m:"2",s:"2.2 Application Security",t:"Checksum",d:"An example of a hash function; converts info to a value and sums it, then compares before/after transfer to verify integrity."},
-{m:"2",s:"2.2 Application Security",t:"Authorization",d:"Determines who can access resources on a need-to-know basis (e.g., file permissions, read-only access)."},
-{m:"2",s:"2.2 Application Security",t:"Code signing",d:"Digitally signing executables to validate the author's identity and prove the code hasn't changed since signing."},
-{m:"2",s:"2.2 Application Security",t:"Secure cookies",d:"Cookies used with HTTPS so stored data isn't transmitted over unencrypted HTTP or exposed to hackers."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"Port scanner",d:"Sends a message to each port and waits for a response to reveal how the port is used and whether it's open (used by defenders and attackers)."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"DHCP",d:"Dynamic Host Configuration Protocol; a server that assigns IP addresses and config info to network devices."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"DHCP snooping",d:"Security measure that prevents rogue DHCP servers from issuing IPs by validating messages from untrusted sources."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"DNS",d:"Domain Name System; translates a URL/website address into a numerical IP address."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"DNSSEC",d:"DNS Security Extensions; uses digital signatures to strengthen authentication and protect against DNS threats."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"ICMP",d:"Internet Control Message Protocol; sends error messages (e.g., service unavailable). Can be abused for recon, DoS, covert channels."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"ping",d:"A network utility that uses ICMP to test the reachability of a host by sending messages and waiting for a reply."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"RIP",d:"Routing Information Protocol; exchanges routing info and picks routes by hop count (max 15 hops)."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"NTP",d:"Network Time Protocol; synchronizes system clocks, which matters for log/event correlation and digital certificates."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"SSH",d:"Secure Shell; provides an encrypted remote connection to a device. Uses TCP port 22."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"Telnet",d:"Older remote-access protocol using unsecure plaintext for auth and data. Uses TCP port 23; use SSH instead."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"SCP",d:"Secure Copy; securely transfers files between remote systems, using SSH for transfer and authentication."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"SNMP / SNMPv3",d:"Simple Network Management Protocol collects stats from TCP/IP devices; SNMPv3 adds cryptography against eavesdropping/tampering."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"HTTP",d:"Hypertext Transfer Protocol; basic web connectivity on port 80 with limited security, open to traffic monitoring."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"SSL",d:"Secure Sockets Layer; uses a handshake at session start to provide confidentiality and prevent eavesdropping/tampering."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"TLS",d:"Transport Layer Security; an updated, more secure replacement for SSL. SSL/TLS use shows as HTTPS in the URL."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"FTP / FTPS",d:"FTP transfers files using a plaintext username/password; FTPS adds TLS/SSL to prevent eavesdropping, tampering, and forgery."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"POP / IMAP / MIME",d:"Email protocols; POP (port 110) and IMAP (port 143) retrieve mail, MIME attaches non-text data. Secure with SSL/TLS."},
-{m:"2",s:"2.3 Hardening: Services & Protocols",t:"S/MIME",d:"Secure/MIME; sends digitally signed and encrypted email providing authentication, integrity, and nonrepudiation."},
-{m:"2",s:"2.4 Hardening: Segmentation",t:"VLAN",d:"Virtual LAN; groups devices logically to segment a network and create secure areas, even across switches."},
-{m:"2",s:"2.4 Hardening: Segmentation",t:"Trunk",d:"A switch port/link that interconnects switches and carries traffic for multiple VLANs between them."},
-{m:"2",s:"2.4 Hardening: Segmentation",t:"DMZ",d:"Demilitarized Zone; a small network between a trusted private network and the Internet, hosting web/mail servers."},
-{m:"2",s:"2.4 Hardening: Segmentation",t:"Zones of risk",d:"Most networks have 2–4: LAN (low risk/high trust), extranet (medium), DMZ (medium-high risk), Internet (high risk/low trust)."},
-{m:"2",s:"2.4 Hardening: Segmentation",t:"Zero Trust model",d:"Constantly monitors all users regardless of status or role instead of automatically trusting internal users/endpoints."},
-{m:"2",s:"2.4 Hardening: Segmentation",t:"East-west / north-south traffic",d:"East-west moves between servers inside the data center; north-south moves into and out of the organization's network."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"WEP",d:"Wired Equivalent Privacy; the first (weak) wireless security protocol, later replaced by WPA."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"WPA",d:"Wi-Fi Protected Access; response to WEP weaknesses, using 256-bit keys. WPA-PSK (pre-shared key) is the most common config."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"MIC (message integrity check)",d:"WPA feature that detects if an attacker captured and altered data between the access point and a wireless client."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"TKIP",d:"Temporal Key Integrity Protocol; helped handle, protect, and change encryption keys in WPA. Later superseded by AES."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"AES",d:"Advanced Encryption Standard; superseded TKIP for better key management and encryption; mandatory in WPA2."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"WPA2",d:"2006 standard mandating AES and replacing TKIP with CCMP."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"CCMP",d:"Counter Cipher Mode with Block Chaining Message Authentication Code Protocol; replaced TKIP in WPA2."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"WPA3",d:"Adds features to WPA2 such as stronger cryptographic algorithms and improved key exchange."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"WPS",d:"Wi-Fi Protected Setup; uses a PIN to connect devices but is vulnerable to brute force — should be disabled."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"Open system authentication",d:"Any wireless device can connect; used only where security is of no concern."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"Shared key authentication",d:"Provides mechanisms to authenticate and encrypt data between a wireless client and the AP/router."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"EAP",d:"Extensible Authentication Protocol; an authentication framework for wireless networks using an authentication server."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"EAP types (TLS/PEAP/TTLS/FAST)",d:"EAP-TLS (high security, needs client+server certs); PEAP & EAP-TTLS (server cert only); EAP-FAST (no certs, easiest)."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"Rogue access point",d:"An unauthorized AP that imitates a legitimate one to let users connect while stealing data or doing other harm."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"Mutual authentication",d:"Two-way authentication where both entities verify each other before connecting; helps prevent rogue access points."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"NFC",d:"Near-Field Communication; contactless communication between devices, e.g., tap-to-pay at a terminal."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"Infrared (IR)",d:"Short-range communication using an IR receiver, e.g., controlling a TV from a phone."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"USB communication",d:"The only wired method on the list; enables storage, modem/fax use, or connecting to forensic acquisition devices."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"COPE",d:"Corporate-Owned, Personally Enabled; an org-issued device holding both personal and organizational data."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"Storage segmentation / containerization",d:"Separates personal and work content via an authenticated, encrypted area; allows app isolation and remote wipe."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"Whitelisting (application management)",d:"Digitally signing apps to authorize which ones users may install, ensuring they come from a trusted source."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"Jailbreaking",d:"Removing the restriction that only Apple-authorized apps may run on an iOS device."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"Rooting",d:"Bypassing Android's security architecture to gain complete administrative access to the device."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"Sideloading",d:"Going around approved app settings to install unapproved apps; less invasive than jailbreaking/rooting but still a risk."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"Context-aware authentication",d:"Uses machine learning to determine access based on a user's normal behavior."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"Remote wiping",d:"Deletes a device's data if it is lost or stolen."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"Full device encryption",d:"Encrypts all data on a mobile device."},
-{m:"2",s:"2.5 Wireless & Mobile",t:"GPS / geofencing",d:"GPS locates a device via satellites (~5m); geolocation/geofencing can push location-based messages — and be abused to capture data."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"High availability",d:"Systems designed to avoid downtime by eliminating single points of failure, reliable crossover, and detecting failures."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"Five nines",d:"99.999% availability — less than ~5.26 minutes of downtime per year."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"Single point of failure",d:"Any hardware, process, data, or utility whose failure causes complete failure of the entire system."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"N+1 redundancy",d:"Components (N) each have at least one backup (+1) on standby; redundant but not fully redundant (like a spare tire)."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"RAID",d:"Spreads data across several drives; except RAID 0, data can be recovered if one disk is lost, and can speed recovery."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"Mirroring",d:"RAID method that stores data, then duplicates it on a second drive."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"Striping",d:"RAID method that writes data across multiple drives so consecutive segments sit on different drives."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"Parity",d:"Striping with parity; checksums generated after striping are stored on a separate drive to detect errors."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"STP (Spanning Tree Protocol)",d:"Keeps redundant physical links loop-free with one logical path; recalculates and unblocks ports if a link/switch fails."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"Default gateway",d:"The router providing devices access to the rest of the network/internet; a single one is a single point of failure."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"First-hop redundancy",d:"A network's ability to dynamically recover from failure of a device acting as the default gateway, using a standby router."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"Location redundancy",d:"Synchronous (real-time, high bandwidth, close), asynchronous (near real-time, less bandwidth), or point-in-time replication."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"Resiliency",d:"The methods and configurations used to make a system or network tolerant of failure."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"Application resilience",d:"An app's ability to react to component problems while still functioning (via fault-tolerant hardware, clustering, backup/restore)."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"Fault tolerance",d:"Lets a system keep operating if one or more components fail; data mirroring is one example."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"System resiliency",d:"Maintaining availability of data and operations despite attacks or disruptions, usually via redundant power and processing."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"IOS resilience / primary bootset",d:"Cisco feature keeping a secure, unremovable copy of the IOS image and running config for faster recovery."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"Data backup",d:"A copy of information stored to backup media (often off-site) so data can be restored after loss or hardware failure."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"UPS",d:"Uninterruptible Power Supply; provides power to gracefully shut down systems during a power event."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"Power events",d:"Spike (momentary high V), Surge (prolonged high V), Fault (momentary loss), Blackout (full loss), Sag/dip (momentary low V), Brownout (prolonged low V), Inrush (initial surge)."},
-{m:"2",s:"2.6 Cybersecurity Resilience",t:"HVAC",d:"Heating, Ventilation, Air Conditioning; controls temperature, humidity, airflow — critical to system stability and security."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Stuxnet",d:"A worm that targeted SCADA systems, proving malware could destroy or interrupt critical infrastructure."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"SCADA",d:"Supervisory Control And Data Acquisition; systems controlling/monitoring industrial processes — segregate from the LAN to protect."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"ICS (Industrial Control Systems)",d:"Systems used in manufacturing, production, energy, and communications; SCADA is one type."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"IoT",d:"Internet of Things; technologies connecting billions of devices to the Internet, greatly expanding the attack surface."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Embedded systems",d:"Systems that capture, store, and access data (smart TVs, medical devices, cars); pose unique security challenges."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Side-channel / timing attack",d:"Attack based on implementation info (timing, power, EM leaks, sound) rather than software weaknesses; timing attacks are one type."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"SoC (System on Chip)",d:"Small Form Factor module (e.g., Raspberry Pi, Arduino) integrating microcontroller, processor, and peripherals; often hard to patch."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"FPGA",d:"Field-Programmable Gate Array; an integrated circuit that can be programmed or modified in the field after deployment."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"RTOS",d:"Real-Time Operating System; small OS for rapid task switching focused on timing; vulnerable to code injection, DoS, priority inversion."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Shodan",d:"An IoT scanner used to tell whether a home-automation/IoT device is vulnerable to attack."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Zigbee",d:"A wireless set of protocols for Wireless Personal Area Networks (WPANs)."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"VoIP",d:"Uses the internet to make/receive phone calls; only as secure as the underlying network — targeted for eavesdropping and fraud."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"VoIP attacks",d:"Registration spoofing (rerouting incoming calls), proxy impersonating (rogue proxy), and call hijacking (rerouting calls)."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"UAV (drone) threats",d:"Drones are susceptible to hijacking, Wi-Fi attacks, GPS spoofing, jamming, and deauthentication attacks."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Deception technologies",d:"Fake infrastructure layer used to distract attackers, learn their methods, and warn of potential attacks."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Honeypot",d:"A decoy system mimicking a real server, left exposed to lure attackers whose activity is then logged and monitored."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Honeynet",d:"A collection of honeypots that mimics a network to distract attackers."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Honeyfiles",d:"Dummy files that attract an attacker but contain no real information."},
-{m:"2",s:"2.7 Embedded & Specialized Systems",t:"DNS sinkhole",d:"Prevents resolution of hostnames for specified URLs, pushing users away from malicious resources."},
+const MODS=[
+ {n:1,code:"M1",name:"Understanding Defense",v:"--m1"},
+ {n:2,code:"M2",name:"System & Network Defense",v:"--m2"},
+ {n:3,code:"M3",name:"Access Control",v:"--m3"},
+ {n:4,code:"M4",name:"Access Control Lists",v:"--m4"},
+ {n:5,code:"M5",name:"Firewall Technologies",v:"--m5"},
+];
+/* d=short def, x=deep dive, tip=exam tip, c=command, rel=related term names */
+const T=[
+/* ===== M1 ===== */
+{t:"Asset",m:1,d:"Anything of value to an organization that must be protected: servers, infrastructure devices, end devices, and the greatest asset, data.",x:"Cybersecurity analysts secure assets first by identifying them. The full set of an organization's devices and information makes up its attack surface, so as the organization grows, so does what must be defended.",rel:["Attack surface","Asset classification","Vulnerability"]},
+{t:"Vulnerability",m:1,d:"A weakness in a system or its design that could be exploited by a threat actor.",x:"Identifying vulnerabilities means understanding the important applications and hardware in use and their specific weaknesses, then asking who would exploit them and what the consequences would be if assets were lost.",rel:["Threat","Asset","Attack surface"]},
+{t:"Threat",m:1,d:"Any potential danger to an asset.",x:"Threat identification produces a list of likely threats for a given environment, for example internal compromise, stolen customer data, phony transactions, or destruction of a data center.",rel:["Vulnerability","Defense-in-depth"]},
+{t:"Attack surface",m:1,d:"The collection of all devices and information owned or managed by an organization that threat actors could target.",x:"Every asset added expands the attack surface. BYOD and IoT dramatically enlarge it, which is why inventory and asset management are foundational to defense.",rel:["Asset","BYOD","IoT"]},
+{t:"Asset management",m:1,d:"Inventorying all assets, then developing and implementing policies and procedures to protect them.",x:"It includes finding where critical information is stored and how access to it is gained, so protection and monitoring can be applied where the value is highest.",rel:["Asset classification","Asset standardization"]},
+{t:"Asset classification",m:1,d:"Assigning resources into groups by common characteristics so the most critical and sensitive information receives the highest level of protection.",x:"A labeling system marks how valuable, sensitive, and critical information is. The four steps are: identify the category, establish accountability, set classification criteria, and implement a schema.",tip:"Know the four-step order: category, accountability (owner), criteria, then schema.",rel:["Asset classification steps","Asset management"]},
+{t:"Asset classification steps",m:1,d:"1) Determine identification category (information, software, physical, services); 2) Establish accountability (owner of each asset and software); 3) Determine criteria (confidentiality, value, time, access rights, destruction); 4) Implement a classification schema.",rel:["Asset classification"]},
+{t:"Asset standardization",m:1,d:"Identifying the specific hardware and software products an organization uses so failures are handled quickly; non-standard environments cost more to maintain.",x:"Standard hardware lets staff swap a known replacement when something fails. Non-standard environments need more expertise and raise maintenance and inventory costs.",rel:["Asset management"]},
+{t:"Asset lifecycle",m:1,d:"The five stages of managing an asset: Procurement, Deployment, Utilization, Maintenance, and Disposal.",x:"Utilization is the longest stage (patching, audits, upgrades). At disposal, all data must be wiped and hazardous parts disposed of per local guidelines.",tip:"At disposal the key control is data sanitization (wiping) before the device leaves.",rel:["Asset management"]},
+{t:"Defense-in-depth",m:1,d:"Using multiple layers of security at the network edge, within the network, and on endpoints so the failure of one safeguard does not affect the others.",x:"Layers include the edge router, firewall, internal router, plus IPS, AMP, content security, and NAC. The point is that no single failure collapses the whole defense.",tip:"Defense-in-depth = redundant, diverse layers. One control failing should not expose the asset.",rel:["Edge router (first line)","Security Onion","Layering"]},
+{t:"Edge router (first line)",m:1,d:"First line of defense; rules specify which traffic is allowed or denied, passing internal-bound connections to the firewall.",rel:["Firewall (defense layer)","Internal router","Defense-in-depth"]},
+{t:"Firewall (defense layer)",m:1,d:"Second line of defense; a checkpoint device that performs additional filtering and tracks the state of connections.",rel:["Edge router (first line)","Internal router","Stateful firewall"]},
+{t:"Internal router",m:1,d:"A line of defense that applies final filtering rules to traffic before it is forwarded to its destination.",rel:["Edge router (first line)","Firewall (defense layer)"]},
+{t:"Security Onion",m:1,d:"Analogy for defense-in-depth: an attacker must peel away defenses layer by layer to reach the target.",x:"The onion visualizes layered defense. Note: this is the analogy, not to be confused with the Security Onion suite of network security tools.",tip:"On the exam, the Security Onion here is a concept, not the tool. The artichoke is the borderless-network update.",rel:["Security Artichoke","Defense-in-depth"]},
+{t:"Security Artichoke",m:1,d:"Updated analogy for borderless networks; the attacker only needs to remove certain leaves, each potentially exposing poorly secured data, to reach the heart.",x:"Because perimeters dissolved, attackers no longer peel every layer; they chip away at leaves, any of which may reveal sensitive data.",rel:["Security Onion","Zero Trust model"]},
+{t:"Layering",m:1,d:"Setting up multiple defenses that work together so a barrier remains even if one layer is penetrated.",rel:["Limiting","Diversity","Obscurity","Simplicity"]},
+{t:"Limiting",m:1,d:"Restricting access so each user has only the level of access required to do their job.",rel:["Least privilege","Layering"]},
+{t:"Diversity",m:1,d:"Making defense layers different so the same technique cannot penetrate all of them.",rel:["Layering","Obscurity"]},
+{t:"Obscurity",m:1,d:"Not revealing information attackers could use to identify the OS, equipment make, or software in use.",rel:["Simplicity","Diversity"]},
+{t:"Simplicity",m:1,d:"Keeping solutions simple enough that staff configure them correctly; complexity does not guarantee security.",rel:["Layering","Obscurity"]},
+{t:"Configuration management",m:1,d:"Identifying, controlling, and auditing the implementation and any changes made to a system's established baseline.",x:"Documented resources include network maps, wiring diagrams, naming conventions, and an IP schema. It underpins OS hardening and secure, repeatable builds.",rel:["Baseline configuration","OS hardening"]},
+{t:"Baseline configuration",m:1,d:"All the settings configured for a system that provide the foundation for similar systems, like a template.",rel:["Configuration management","OS hardening"]},
+{t:"OS hardening",m:1,d:"Configuring logs and auditing, changing default account names and passwords, and implementing account policies and file-level access control to create a secure OS.",tip:"Changing default accounts/passwords is a classic hardening step attackers rely on you forgetting.",rel:["Configuration management","Account types"]},
+{t:"Log file",m:1,d:"A record of events as they occur; each log entry contains all information related to a specific event.",rel:["Log management","Operating system logs","Application security logs"]},
+{t:"Log management",m:1,d:"Procedures for generating, transmitting, storing, analyzing, and disposing of security log data.",rel:["Log file","Application security logs"]},
+{t:"Operating system logs",m:1,d:"Logs recording events linked to OS actions, such as successful authentications and usage information.",rel:["Application security logs","Log file"]},
+{t:"Application security logs",m:1,d:"Logs from network- or system-based security software used for auditing, identifying trends, and showing regulatory compliance.",rel:["Log management","Regulatory compliance"]},
+{t:"Protocol analyzer (packet sniffer)",m:1,d:"Intercepts and logs network traffic, capturing each packet and analyzing field values for traffic logging, problem analysis, and intrusion detection.",x:"Tools like Wireshark capture on wired or wireless networks. Defensively used for analysis; offensively used to read plaintext such as Telnet credentials.",rel:["Telnet","SSH"]},
+{t:"Business policy",m:1,d:"Guidelines that govern an organization's actions and define standards of correct behavior; a baseline whose violation may indicate a breach.",x:"Most organizations keep company policies, employee policies, and security policies. Behavior that violates the baseline can be a sign of compromise.",rel:["Security policy","Acceptable Use Policy (AUP)"]},
+{t:"Security policy",m:1,d:"Sets security objectives, defines rules of behavior for users and admins, and specifies system requirements, providing a baseline for audit and compliance.",x:"It includes identification/authentication, password, acceptable use, remote access, network maintenance, and incident handling policies, and gives security staff management backing.",rel:["Acceptable Use Policy (AUP)","Business policy"]},
+{t:"Acceptable Use Policy (AUP)",m:1,d:"Identifies the network applications and uses that are acceptable to the organization.",rel:["Security policy","Business policy"]},
+{t:"BYOD",m:1,d:"Bring Your Own Device; letting employees use personal devices to access company systems. Boosts productivity but requires a dedicated security policy.",x:"A BYOD policy defines who can enroll, which devices and access levels are allowed, and safeguards if a device is compromised. It enlarges the attack surface.",rel:["BYOD best practices","MDM","Attack surface"]},
+{t:"BYOD best practices",m:1,d:"Password-protected access, manual wireless control, keeping the OS and software updated, data backup, Find My Device, antivirus, and MDM software.",rel:["BYOD","MDM"]},
+{t:"MDM",m:1,d:"Mobile Device Management; software letting IT enforce security settings and configurations on all devices that connect to company networks.",rel:["BYOD","Containerization","COPE"]},
+{t:"Regulatory compliance",m:1,d:"External laws and regulations defining what organizations must provide and their liability for failing to comply; depends on org type and data handled.",rel:["INFOSEC","Security policy"]},
+{t:"INFOSEC",m:1,d:"Information Systems Security; the field whose professionals must be familiar with binding laws and codes of ethics.",rel:["Regulatory compliance"]},
+/* ===== M2 ===== */
+{t:"Physical barriers",m:2,d:"Fencing and barricades, often the outermost and most visible defense layer: perimeter fence, security gate, bollards, vehicle barriers, and guard shelters.",rel:["Bollards","Fence height guidelines"]},
+{t:"Bollards",m:2,d:"Short posts used to stop vehicle intrusions.",rel:["Physical barriers"]},
+{t:"Fence height guidelines",m:2,d:"1 m deters casual trespassers; 2 m is too high to climb casually; 2.5 m offers limited delay to a determined intruder; high-security areas add a top guard.",tip:"Even 2.5 m only delays a determined intruder; fencing deters and slows, it does not stop.",rel:["Physical barriers"]},
+{t:"Biometrics",m:2,d:"Physiological or behavioral characteristics used to identify and grant access: face, fingerprint, hand geometry, iris, retina, signature, and voice.",x:"When selecting a system, accuracy is the most important factor, expressed in error types and rates. Convenient on phones, but storage and counterfeiting resistance matter.",rel:["Type I error (false rejection)","Type II error (false acceptance)","Crossover Error Rate (CER)"]},
+{t:"Type I error (false rejection)",m:2,d:"Rejecting a legitimate user; harmful in retail or banking because a transaction or sale is lost.",tip:"Type I = False Reject = legit user denied. Annoying, but not a security breach.",rel:["Type II error (false acceptance)","Crossover Error Rate (CER)"]},
+{t:"Type II error (false acceptance)",m:2,d:"Accepting an imposter; normally the most important error for an access control system because it lets attackers in.",tip:"Type II = False Accept = imposter let in. This is the dangerous one for security.",rel:["Type I error (false rejection)","Crossover Error Rate (CER)"]},
+{t:"Crossover Error Rate (CER)",m:2,d:"The most common metric describing the overall accuracy of a biometric system, where the false-accept and false-reject rates are equal.",tip:"Lower CER = more accurate system. CER is where FAR and FRR cross.",rel:["Type I error (false rejection)","Type II error (false acceptance)"]},
+{t:"RFID asset tags",m:2,d:"Track assets leaving a secure area; readers can hide in door frames, read multiple tags at once, and need no line of sight.",x:"Unlike barcodes, RFID needs no line of sight and tags need not be visible, which is why readers can be concealed in door frames to flag assets being removed.",rel:["Physical barriers"]},
+{t:"Development environment",m:2,d:"A less restrictive, lower-security environment where software is developed, tested, and debugged before deployment.",rel:["Sandbox environment","Staging environment"]},
+{t:"Sandbox environment",m:2,d:"An isolated space where code is not overwritten as developers work on it.",rel:["Development environment"]},
+{t:"Staging environment",m:2,d:"An environment that closely matches production, used to verify that software runs under the required security settings before deployment.",rel:["Development environment","Provisioning / deprovisioning"]},
+{t:"Provisioning / deprovisioning",m:2,d:"Creating or updating software (provisioning) and removing it (deprovisioning); can be automated via a self-service portal.",rel:["Staging environment"]},
+{t:"Normalization",m:2,d:"Organizing database data and converting input strings to their simplest form so all strings have unique binary representations and malicious input is identified.",rel:["Stored procedure","Input validation"]},
+{t:"Stored procedure",m:2,d:"A group of precompiled SQL statements stored in a database that reduces network traffic and returns faster results.",rel:["Input validation","Normalization"]},
+{t:"Obfuscation",m:2,d:"Hiding original data with random characters or data; used with camouflage to prevent software reverse engineering.",rel:["Camouflage"]},
+{t:"Camouflage",m:2,d:"Replacing sensitive data with realistic fictional data.",rel:["Obfuscation"]},
+{t:"Input validation",m:2,d:"Controlling the data input process to maintain database integrity and block malformed data inserted by attacks.",x:"Without it, attackers submit malformed data that can crash an app or make it divulge information; a modified confirmation URL can flood a database with fake records.",tip:"Input validation is the primary defense against injection-style attacks.",rel:["Validation rule","Normalization"]},
+{t:"Validation rule",m:2,d:"Checks that data falls within defined parameters using criteria: size, format, consistency, range, and check digit.",rel:["Input validation","Normalization"]},
+{t:"Integrity check",m:2,d:"Measures the consistency of data using a hash function snapshot to ensure it has not been corrupted; a checksum is an example.",rel:["Checksum","Code signing"]},
+{t:"Checksum",m:2,d:"Converts each piece of information to a value and sums it; the receiver repeats the process and compares the totals to verify integrity.",x:"Common hash functions behind integrity checks include MD5, SHA-1, SHA-256, and SHA-512. Equal sums mean unchanged data; a mismatch means corruption or tampering.",rel:["Integrity check","Hash algorithm guidance"]},
+{t:"Code signing",m:2,d:"Digitally signing executables to validate the author's identity and prove the code has not changed since it was signed.",rel:["Integrity check"]},
+{t:"Secure cookies",m:2,d:"Cookies used with HTTPS to protect stored data and prevent transmission over unencrypted HTTP.",rel:["SSL / TLS"]},
+{t:"Port scanner",m:2,d:"Sends a message to each port and waits for a response to learn how the port is used and whether it is open; used by admins and attackers alike.",tip:"A port scanner (e.g., Nmap) finds open ports; harden by closing unused ports and services.",rel:["DHCP snooping","DNSSEC"]},
+{t:"DHCP snooping",m:2,d:"Prevents rogue DHCP servers from handing out IP addresses by validating messages from untrusted sources.",rel:["DNSSEC","NTP"]},
+{t:"DNSSEC",m:2,d:"DNS Security Extensions; uses digital signatures to strengthen authentication and protect against threats to DNS.",rel:["DHCP snooping","ICMP"]},
+{t:"ICMP",m:2,d:"Internet Control Message Protocol; sends error messages such as service unavailable or host unreachable. Ping uses ICMP and it can be abused for recon, DoS, and covert channels.",tip:"Many networks filter ICMP to limit reconnaissance and DoS abuse.",rel:["RIP","Mitigate ICMP with ACLs"]},
+{t:"RIP",m:2,d:"Routing Information Protocol; limits hops (max 15) and chooses the best route by hop count. Protect it with authentication and patching.",rel:["NTP","ICMP"]},
+{t:"NTP",m:2,d:"Network Time Protocol; synchronizes system clocks. Correct time is critical for log interpretation and digital certificates; use NTP authentication.",tip:"Accurate time matters for log correlation and certificate validity, so timeservers are attack targets.",rel:["DNSSEC","Log management"]},
+{t:"SSH",m:2,d:"Secure Shell; provides a secure, encrypted remote connection to a device. Uses TCP port 22 and should replace Telnet.",x:"SSH encrypts the session so credentials are not visible in a capture; Telnet sends them in plaintext. SCP rides on SSH for secure file transfer.",tip:"SSH = TCP 22 (encrypted). Telnet = TCP 23 (plaintext). Prefer SSH.",c:"! SSH  -> TCP 22 (encrypted)\n! Telnet -> TCP 23 (plaintext)",rel:["Telnet","SCP"]},
+{t:"Telnet",m:2,d:"An older remote-access protocol that uses unsecure plaintext for authentication and data transmission; credentials are visible in a packet capture.",rel:["SSH","Protocol analyzer (packet sniffer)"]},
+{t:"SCP",m:2,d:"Secure Copy; securely transfers files between remote systems using SSH for data transfer and authentication.",rel:["SSH"]},
+{t:"SNMPv3",m:2,d:"Simple Network Management Protocol v3; collects statistics from TCP/IP devices and uses cryptography to prevent eavesdropping and tampering.",tip:"SNMPv3 is the secure version; older v1/v2 send community strings in cleartext.",rel:["Mitigate SNMP with ACLs"]},
+{t:"SSL / TLS",m:2,d:"SSL manages encryption via a handshake at session start; TLS is its updated, more secure replacement. Both encrypt client-server traffic, shown as HTTPS.",tip:"TLS replaces SSL. If you see SSL on the exam, TLS is the modern, preferred answer.",rel:["FTPS","Secure cookies","S/MIME"]},
+{t:"FTPS",m:2,d:"File Transfer Protocol Secure; adds TLS and SSL to FTP to prevent eavesdropping, tampering, and forgery (plain FTP uses plaintext credentials).",rel:["SSL / TLS"]},
+{t:"S/MIME",m:2,d:"Secure/Multipurpose Internet Mail Extensions; sends digitally signed and encrypted messages providing authentication, integrity, and nonrepudiation.",rel:["SSL / TLS"]},
+{t:"VLAN",m:2,d:"Virtual LAN; segments a network using logical rather than physical connections. Switch ports are assigned to a VLAN; trunks carry multiple VLANs between switches.",x:"VLANs separate sensitive groups (e.g., HR) onto their own logical network, limit broadcast traffic, and reduce the chance of confidential data exposure.",tip:"VLAN = logical segmentation; LAN = physical. Trunk ports carry multiple VLANs.",rel:["Trunk","DMZ","Zones of risk"]},
+{t:"Trunk",m:2,d:"A switch port that physically interconnects switches and carries multiple VLAN traffic between them.",rel:["VLAN"]},
+{t:"DMZ",m:2,d:"Demilitarized Zone; a small network between a trusted private network and the internet, hosting web and mail servers for untrusted access without exposing the internal LAN.",tip:"Public-facing servers go in the DMZ; the internal LAN stays blocked from the public network.",rel:["Zones of risk","DMZ design","VLAN"]},
+{t:"Zones of risk",m:2,d:"LAN (low risk, high trust), extranet (medium-low, medium-high), DMZ (medium-high, medium-low), and Internet (high risk, low trust).",rel:["DMZ","Zero Trust model"]},
+{t:"Zero Trust model",m:2,d:"Constantly monitors all users regardless of status or role, instead of automatically trusting internal users. Firewalls manage east-west and north-south traffic.",tip:"Zero Trust = never trust, always verify. Internal location no longer implies trust.",rel:["Zero Trust","East-west vs north-south traffic","Zones of risk"]},
+{t:"East-west vs north-south traffic",m:2,d:"East-west is traffic between servers inside the data center; north-south is data moving into and out of the organization's network.",rel:["Zero Trust model"]},
+{t:"WEP",m:2,d:"Wired Equivalent Privacy; the first, now weak wireless security protocol, replaced by WPA.",tip:"WEP is broken; never the right answer for securing Wi-Fi. WPA2/WPA3 are.",rel:["WPA / WPA2 / WPA3","WPS"]},
+{t:"WPA / WPA2 / WPA3",m:2,d:"WPA used 256-bit keys, MIC, and TKIP. WPA2 (2006) made AES mandatory and replaced TKIP with CCMP. WPA3 added stronger crypto and improved key exchange.",tip:"WPA2 = AES + CCMP. WPA3 is newest and strongest. TKIP is legacy.",rel:["WEP","TKIP","WPS"]},
+{t:"TKIP",m:2,d:"Temporal Key Integrity Protocol; improved key handling in WPA, later superseded by AES.",rel:["WPA / WPA2 / WPA3"]},
+{t:"WPS",m:2,d:"Wi-Fi Protected Setup; PIN-based setup that is vulnerable to brute force and should be disabled.",tip:"WPS PIN is brute-forceable; the correct guidance is to disable WPS.",rel:["WPA / WPA2 / WPA3"]},
+{t:"Open vs shared key authentication",m:2,d:"Open system lets any wireless device connect (no security); shared key provides mechanisms to authenticate and encrypt data between client and AP.",rel:["EAP","Mutual authentication"]},
+{t:"EAP",m:2,d:"Extensible Authentication Protocol; an authentication framework for wireless networks using an access point and authentication server.",x:"The client requests access, the AP relays credentials to an authentication server, and on success the user joins the network. Several variants trade security for ease of deployment.",rel:["EAP methods compared","802.1X","RADIUS"]},
+{t:"EAP methods compared",m:2,d:"EAP-TLS: client + server certs, high security, hard to deploy. PEAP and EAP-TTLS: server cert only, medium security. EAP-FAST: no certs, easy, medium security.",tip:"EAP-TLS is the most secure because it requires certificates on BOTH client and server.",rel:["EAP","802.1X"]},
+{t:"Mutual authentication",m:2,d:"Two-way authentication where both entities authenticate each other before connecting; prevents rogue access points.",tip:"Mutual auth defeats rogue APs because the client verifies the AP, not just the reverse.",rel:["Rogue access point","Open vs shared key authentication"]},
+{t:"Rogue access point",m:2,d:"An unauthorized AP that imitates a legitimate one so users connect, allowing the attacker to steal data or conduct other activity.",rel:["Mutual authentication"]},
+{t:"NFC",m:2,d:"Near-Field Communication; contactless communication between devices, used for tap-to-pay at a terminal.",rel:["Containerization"]},
+{t:"COPE",m:2,d:"Corporate-Owned, Personally Enabled; a company-issued device that also holds personal data.",rel:["BYOD","Containerization"]},
+{t:"Containerization",m:2,d:"Storage segmentation that separates personal and work content in an authenticated, encrypted area; can isolate apps, control functions, and remote wipe.",rel:["MDM","COPE","Mobile safeguards"]},
+{t:"Jailbreaking / rooting / sideloading",m:2,d:"Jailbreaking removes Apple's app restriction; rooting bypasses Android's security for admin access; sideloading installs unapproved apps. All are risks.",tip:"Jailbreak = iOS, root = Android. Sideloading is less invasive but still bypasses app vetting.",rel:["Mobile safeguards"]},
+{t:"Mobile safeguards",m:2,d:"Screen locks, biometric authentication, context-aware authentication, remote wiping, and full device encryption.",rel:["Context-aware authentication","Containerization","Jailbreaking / rooting / sideloading"]},
+{t:"Context-aware authentication",m:2,d:"Uses machine learning to determine access based on a user's normal behavior.",rel:["Mobile safeguards"]},
+{t:"High availability",m:2,d:"Systems designed to avoid downtime using three principles: eliminate single points of failure, provide reliable crossover, and detect failures as they occur.",tip:"Memorize the three HA principles: no single point of failure, reliable crossover, failure detection.",rel:["Five nines","Single point of failure","Fault tolerance"]},
+{t:"Five nines",m:2,d:"A high-availability goal of 99.999% uptime, meaning less than 5.26 minutes of downtime per year.",tip:"Five nines = 99.999% = ~5.26 minutes downtime/year.",rel:["High availability"]},
+{t:"Single point of failure",m:2,d:"Any part whose failure causes complete failure of the entire system; solved by removing single-element reliance or adding redundant components.",rel:["N+1 redundancy","First-hop redundancy","High availability"]},
+{t:"N+1 redundancy",m:2,d:"Each component (N) has at least one backup (+1), like a car with a spare tire. Redundant, but not a fully redundant system.",tip:"N+1 is NOT full redundancy; it tolerates the loss of one of each component.",rel:["Single point of failure","Fault tolerance"]},
+{t:"RAID",m:2,d:"Spreads data across several drives. Except RAID 0, data survives the loss of a single disk; it can also speed up data recovery.",x:"RAID can be hardware (dedicated controller) or software (OS utility). Storage methods are mirroring, striping, and striping with parity.",tip:"RAID 0 = striping, no redundancy. A single disk loss in RAID 0 loses data.",rel:["RAID storage methods"]},
+{t:"RAID storage methods",m:2,d:"Mirroring duplicates data on a second drive; striping writes data across drives in segments; parity stores checksums to detect errors in striped data.",rel:["RAID"]},
+{t:"Spanning Tree Protocol (STP)",m:2,d:"Ensures redundant physical links are loop-free with one logical path, recalculating paths and unblocking ports if a link or switch fails.",tip:"STP prevents switching loops while keeping redundant links available as backups.",rel:["First-hop redundancy","Single point of failure"]},
+{t:"First-hop redundancy",m:2,d:"A standby router takes over the default-gateway role if the forwarding router fails; end devices use a virtual router IP as their gateway.",rel:["Single point of failure","Spanning Tree Protocol (STP)"]},
+{t:"Location redundancy",m:2,d:"Synchronous (real-time, high bandwidth, close sites), asynchronous (near real-time, less bandwidth, farther sites), or point-in-time (periodic, bandwidth-conservative).",rel:["Fault tolerance","System resiliency"]},
+{t:"Fault tolerance",m:2,d:"The ability of a system to keep operating if one or more components fail; data mirroring is an example.",rel:["System resiliency","N+1 redundancy"]},
+{t:"System resiliency",m:2,d:"Maintaining availability of data and processing despite attacks or disruptions, generally requiring redundant power and processing.",rel:["Fault tolerance","UPS"]},
+{t:"UPS",m:2,d:"Uninterruptible Power Supply; provides power to gracefully shut systems down during a power event.",rel:["Power events","System resiliency"]},
+{t:"Power events",m:2,d:"Spike (momentary high voltage), surge (prolonged high), fault (momentary loss), blackout (complete loss), sag/dip (momentary low), brownout (prolonged low).",tip:"Momentary vs prolonged is the key: spike/fault/sag are momentary; surge/blackout/brownout are prolonged.",rel:["UPS"]},
+{t:"SCADA / ICS",m:2,d:"Supervisory Control and Data Acquisition and Industrial Control Systems run manufacturing, energy, and communications. Segregate them from the corporate LAN.",x:"Early SCADA was never designed for internet exposure, so cybersecurity was an afterthought. The mitigation is network segregation between the ICS network and the corporate LAN.",rel:["Stuxnet","Embedded systems"]},
+{t:"Stuxnet",m:2,d:"A worm that targeted SCADA systems, proving malware attacks could destroy or interrupt critical infrastructure.",rel:["SCADA / ICS"]},
+{t:"IoT",m:2,d:"Internet of Things; billions of connected devices that greatly expand the attack surface and have been infected to launch some of the largest DDoS attacks.",rel:["Embedded systems","Shodan","Attack surface"]},
+{t:"Embedded systems",m:2,d:"Systems that capture, store, and access data inside smart TVs, HVAC controls, medical devices, and automobiles; susceptible to timing and side-channel attacks.",rel:["Side-channel attack","System on Chip (SoC)","RTOS"]},
+{t:"Side-channel attack",m:2,d:"An attack based on information gained from a system's implementation (timing, power consumption, electromagnetic leaks, or sound) rather than software weaknesses.",tip:"Side-channel exploits the implementation (timing/power/EM), not a code bug.",rel:["Embedded systems"]},
+{t:"System on Chip (SoC)",m:2,d:"A small form-factor module integrating a microcontroller, processor, and peripherals (e.g., Raspberry Pi, Arduino); often has poor authentication or patching.",rel:["Embedded systems","RTOS"]},
+{t:"RTOS",m:2,d:"Real-Time Operating System; switches tasks rapidly with a focus on timing. Vulnerable to code injection, DoS, and priority inversion.",rel:["Embedded systems","System on Chip (SoC)"]},
+{t:"Shodan",m:2,d:"An IoT scanner used to check whether a home-automation or internet-connected device is vulnerable to attack.",rel:["IoT"]},
+{t:"Honeypot",m:2,d:"A decoy system that mimics a real server and is purposely left exposed to lure attackers, whose activity is then logged and monitored.",tip:"Honeypot = decoy to study/distract attackers. Honeynet = many honeypots; honeyfiles = decoy files.",rel:["Honeynet / honeyfiles","DNS sinkhole"]},
+{t:"Honeynet / honeyfiles",m:2,d:"A honeynet is a collection of honeypots mimicking a network; honeyfiles are dummy files that attract attackers but hold no real information.",rel:["Honeypot","DNS sinkhole"]},
+{t:"DNS sinkhole",m:2,d:"Prevents resolution of specified URLs to push users away from malicious resources.",rel:["Honeypot"]},
+/* ===== M3 ===== */
+{t:"Physical access controls",m:3,d:"Barriers preventing direct physical contact with systems: guards, fences, motion detectors, locks, swipe cards, cameras, mantraps, and alarms.",rel:["Mantrap","Logical access controls","Administrative access controls"]},
+{t:"Mantrap",m:3,d:"An entry system that staggers the flow of people into a secured area and traps unwanted visitors.",rel:["Physical access controls"]},
+{t:"Logical access controls",m:3,d:"Hardware and software solutions managing access: encryption, smart cards, passwords, biometrics, ACLs, protocols, firewalls, routers, IDS, and clipping levels.",rel:["Physical access controls","Administrative access controls","Clipping level"]},
+{t:"Clipping level",m:3,d:"An allowed threshold for errors before triggering a red flag.",rel:["Logical access controls","Account lockout policy"]},
+{t:"Administrative access controls",m:3,d:"Policies and procedures focused on personnel and business practices: hiring practices, background checks, data classification, security training, and reviews.",rel:["Physical access controls","Logical access controls","AAA"]},
+{t:"AAA",m:3,d:"Authentication, Authorization, and Accounting; the framework to control access. Like a credit card: who can use it, how much they can spend, and a record of purchases.",tip:"AAA order: Authentication (who), Authorization (what), Accounting (record).",rel:["Authentication","Authorization","Accounting"]},
+{t:"Authentication",m:3,d:"Verifying the identity of each user; users prove identity with something they know, something they have, or something they are.",rel:["Authentication factors","Authorization","Multi-factor authentication (MFA)"]},
+{t:"Authorization",m:3,d:"Determining which resources a user can access and which operations they can perform after authentication, often enforced with an ACL.",rel:["Authentication","Accounting","Authorization policy"]},
+{t:"Accounting",m:3,d:"Tracking what users do, including what they access, how long, and any changes made, to provide auditing results.",rel:["Accountability","AAA accounting types"]},
+{t:"Identification",m:3,d:"A unique identifier (username, PIN, smart card, or biometric) that ensures the proper association between allowed activities and a subject.",rel:["Authentication","Federated identity management"]},
+{t:"Federated identity management",m:3,d:"Multiple enterprises letting users use the same credentials across all members, enabling single sign-on to the web but broadening the attack scope.",tip:"Federation enables SSO across organizations; the trade-off is a wider blast radius if compromised.",rel:["SSO","Identification"]},
+{t:"Authentication factors",m:3,d:"Something you know (password, PIN), something you have (smart card, key fob), and something you are (biometric).",tip:"MFA must combine DIFFERENT factor types. Two passwords is still single-factor.",rel:["Multi-factor authentication (MFA)","Authentication"]},
+{t:"Multi-factor authentication (MFA)",m:3,d:"Using at least two verification methods; a stolen password alone will not grant access. 2FA is MFA with exactly two factors.",rel:["Authentication factors","SSO"]},
+{t:"Authorization policy",m:3,d:"Rules controlling access; a group membership policy grants access by group, and an authority-level policy grants it by position in the organization.",rel:["Authorization","RBAC (role-based)"]},
+{t:"Accountability",m:3,d:"Tracing an action back to a person or process, then collecting and reporting usage data for auditing or billing via log files, policies, and education.",rel:["Accounting","Audit policy"]},
+{t:"Zero Trust",m:3,d:"A comprehensive approach securing all access across networks, apps, and environments. Any point requiring an access decision is a perimeter; nothing is trusted by default.",x:"Passing access control once does not grant trust elsewhere; each new resource re-authenticates. NAC is a key enforcement component.",tip:"In Zero Trust, the perimeter is everywhere an access decision happens, not just the network edge.",rel:["Zero Trust pillars","NAC","Zero Trust model"]},
+{t:"Zero Trust pillars",m:3,d:"Workforce (people and their devices), Workloads (apps, APIs, microservices, containers), and Workplace (all connecting devices, including IoT).",rel:["Zero Trust"]},
+{t:"Least privilege",m:3,d:"Granting users, systems, and processes only the limited, as-needed access rights required to perform their function.",tip:"Least privilege + need-to-know limit the damage from a compromised account.",rel:["Privilege escalation","Limiting","Privileged accounts"]},
+{t:"Privilege escalation",m:3,d:"A common exploit where vulnerabilities in servers or access-control systems grant a user or process higher privilege than they should have.",rel:["Least privilege","Privileged accounts"]},
+{t:"DAC",m:3,d:"Discretionary Access Control; the least restrictive model, where data owners control access to their data, often using ACLs.",tip:"DAC = owner decides. Least restrictive of the access-control models.",rel:["MAC","RBAC (role-based)","ABAC"]},
+{t:"MAC",m:3,d:"Mandatory Access Control; the strictest model, assigning security labels to data and clearance levels to users. Used in military and mission-critical systems.",tip:"MAC = labels + clearances, enforced by the system, not the owner. Strictest model.",rel:["DAC","RBAC (role-based)"]},
+{t:"RBAC (role-based)",m:3,d:"Role-Based Access Control; access decisions are based on a user's role and responsibilities. A type of non-discretionary access control.",tip:"RBAC = access by job role. Note Cisco labels both role-based and rule-based as RBAC; read the description.",rel:["Rule-based access control","DAC","MAC"]},
+{t:"ABAC",m:3,d:"Attribute-Based Access Control; grants access based on attributes of the object, the subject, and the environment (such as time of day).",rel:["DAC","Rule-based access control"]},
+{t:"Rule-based access control",m:3,d:"Access is granted by sets of rules or conditions (such as permitted IP addresses or protocols); users cannot change the rules.",rel:["RBAC (role-based)","ABAC","ACL"]},
+{t:"NAC",m:3,d:"Network Access Control; enforces policy on who and what can access the network by profiling devices, checking compliance, and isolating non-compliant ones. Key to zero trust.",rel:["Zero Trust","Account types"]},
+{t:"Account types",m:3,d:"Administrator, user, service, and guest accounts. Never share privileged accounts, and replace risky default accounts.",rel:["Privileged accounts","OS hardening"]},
+{t:"Privileged accounts",m:3,d:"The most powerful accounts with elevated, unrestricted access; targeted by attackers. Secure with least privilege, MFA, password rotation, and session recording.",tip:"Best practices: rotate privileged passwords (30/60 days), record sessions, MFA on all admin access.",rel:["Least privilege","Privilege escalation","Account types"]},
+{t:"Permission levels",m:3,d:"Full Control, Modify, Read and Execute, Write, and Read; rules limiting folder and file access under least privilege and need-to-know.",rel:["Permission inheritance","Deny permission"]},
+{t:"Permission inheritance",m:3,d:"Files inherit parent-folder permissions. Data moved within a volume keeps permissions; data copied, or moved across volumes, inherits new ones.",tip:"Move within same volume = keep perms. Copy, or cross-volume move = inherit new perms.",rel:["Permission levels","Deny permission"]},
+{t:"Deny permission",m:3,d:"Denying an individual or group access to a share overrides any other permission setting, even for an administrator.",tip:"Explicit Deny wins over any Allow, even for admins.",rel:["Permission levels"]},
+{t:"Local Security Policy",m:3,d:"Configured with secpol.msc when a computer is not part of an Active Directory domain; sets password, lockout, and audit policies.",c:"secpol.msc   ! run from the Run box",rel:["Account lockout policy","Audit policy","Privileged accounts"]},
+{t:"Account lockout policy",m:3,d:"Locks an account for a set duration after too many incorrect login attempts (for example, 5 attempts, then a 30-minute lockout).",tip:"Lockout policy mitigates brute-force and password-guessing attacks.",rel:["Local Security Policy","Clipping level"]},
+{t:"Audit policy",m:3,d:"Creates a security log file to track events such as account logon, account management, object access, policy changes, and privilege use.",rel:["Accountability","Local Security Policy"]},
+{t:"SSO",m:3,d:"Single Sign-On; lets a user authenticate across multiple applications with one set of login credentials, so they remember one strong password.",tip:"SSO improves usability but a compromised SSO credential opens every linked app.",rel:["OAuth","Federated identity management","Password vault"]},
+{t:"OAuth",m:3,d:"A standard that enables a user's account information to be used by third-party services such as Facebook or Google.",rel:["SSO"]},
+{t:"Password vault",m:3,d:"Protects and stores a user's credentials behind a single strong password.",rel:["SSO","KBA"]},
+{t:"KBA",m:3,d:"Knowledge-Based Authentication; provides a password reset based on personal information or a series of questions known by the user.",rel:["Password vault"]},
+{t:"HMAC",m:3,d:"Hash-Based Message Authentication Code; combines an encryption key with a hash function to authenticate. IPsec VPNs use it to authenticate packet origin and check integrity.",tip:"HMAC provides integrity AND authenticity because it mixes a secret key into the hash.",rel:["Hash algorithm guidance","Checksum"]},
+{t:"PAP",m:3,d:"Password Authentication Protocol; sends a username and password to a remote access server in plaintext.",tip:"PAP = plaintext, insecure. CHAP uses a hashed challenge and is preferred.",rel:["CHAP","802.1X"]},
+{t:"CHAP",m:3,d:"Challenge Handshake Authentication Protocol; validates a remote client using a one-way hash, comparing the client's value to the expected hash.",rel:["PAP","Kerberos"]},
+{t:"802.1X",m:3,d:"Authenticates identity and authorizes network access based on credentials or a certificate, confirmed by a RADIUS server.",rel:["RADIUS","EAP","NAC"]},
+{t:"RADIUS",m:3,d:"An open standard that combines authentication and authorization but separates accounting; encrypts only the password. Uses UDP 1812/1813 (or 1645/1646).",tip:"RADIUS: UDP, open standard, encrypts password only, combines authN+authZ. Contrast with TACACS+.",c:"RADIUS -> UDP 1812/1813 (or 1645/1646)\n       -> encrypts password only",rel:["TACACS+","802.1X"]},
+{t:"TACACS+",m:3,d:"A mostly-Cisco protocol that separates authentication, authorization, and accounting and encrypts the entire packet body. Uses TCP port 49.",tip:"TACACS+: TCP 49, Cisco, encrypts the WHOLE packet, separates all three A's, per-command authZ.",c:"TACACS+ -> TCP 49\n        -> encrypts entire packet body",rel:["RADIUS","Local vs server-based AAA"]},
+{t:"Kerberos",m:3,d:"Uses strong encryption; the client proves its identity to the server, and the server in turn authenticates itself to the client.",rel:["CHAP","Authentication"]},
+{t:"Hash algorithm guidance",m:3,d:"Use SHA-256 or higher, currently the most secure. Avoid SHA-1 and MD5 due to discovered security flaws.",tip:"Prefer SHA-256+. MD5 and SHA-1 are deprecated for security use.",rel:["HMAC","Checksum"]},
+{t:"Local vs server-based AAA",m:3,d:"Local AAA authenticates against locally stored credentials (small networks); server-based authenticates against a central AAA server and is more scalable (medium-large).",rel:["RADIUS","TACACS+","AAA accounting types"]},
+{t:"AAA accounting types",m:3,d:"Network, connection, EXEC, system, command, and resource accounting, each capturing different usage data sent to a central repository.",rel:["Accounting","Local vs server-based AAA"]},
+/* ===== M4 ===== */
+{t:"ACL",m:4,d:"Access Control List; a sequential list of permit or deny statements (ACEs) that filters packets based on information in the packet header, applied to an interface.",x:"When traffic hits an interface with an ACL, the router compares it to each ACE top-down and acts on the first match. By default a router has no ACLs configured.",tip:"ACLs are processed top-down, first-match wins, and end in an implicit deny.",c:"ip access-group ACL-NAME in",rel:["ACE","Standard ACL","Extended ACL","Implicit deny"]},
+{t:"ACE",m:4,d:"Access Control Entry; a single permit or deny statement within an ACL. Also called an ACL statement.",rel:["ACL","Implicit deny"]},
+{t:"Packet filtering",m:4,d:"Controlling access by analyzing incoming or outgoing packets and forwarding or discarding them based on criteria, at Layer 3 or Layer 4.",rel:["Standard ACL","Extended ACL","Packet filtering (stateless) firewall"]},
+{t:"Standard ACL",m:4,d:"Filters at Layer 3 using the source IPv4 address only. Numbered 1 to 99 or 1300 to 1999.",tip:"Standard = source IP only. Place it CLOSE TO THE DESTINATION.",c:"access-list 10 permit 192.168.1.0 0.0.0.255",rel:["Extended ACL","ACL placement","Named ACL"]},
+{t:"Extended ACL",m:4,d:"Filters at Layer 3 (source and destination IP) and Layer 4 (TCP/UDP ports and protocol type) for finer control. Numbered 100 to 199 or 2000 to 2699.",tip:"Extended = source+dest+port+protocol. Place it CLOSE TO THE SOURCE.",c:"access-list 100 permit tcp 192.168.1.0 0.0.0.255 any eq 80",rel:["Standard ACL","ACL placement","established keyword"]},
+{t:"Named ACL",m:4,d:"The preferred method; an ACL named to describe its purpose. Names are alphanumeric, case-sensitive, and unique.",c:"ip access-list standard NO-ACCESS\nip access-list extended NO-FTP-ACCESS",rel:["Standard ACL","Extended ACL"]},
+{t:"Inbound vs outbound ACL",m:4,d:"An inbound ACL filters packets before routing (efficient, since discarded packets skip routing lookups); an outbound ACL filters after routing, regardless of inbound interface.",rel:["ACL","ACL placement"]},
+{t:"Implicit deny",m:4,d:"A hidden deny-all ACE automatically applied at the end of every ACL. An ACL must contain at least one permit statement or all traffic is denied.",tip:"Every ACL ends with an invisible deny ip any any. Forgetting a permit blocks everything.",c:"! hidden at the end of every ACL:\n! deny ip any any",rel:["ACL","ACE"]},
+{t:"Wildcard mask",m:4,d:"A 32-bit mask that determines which address bits to examine. Bit 0 means match the bit; bit 1 means ignore it, the reverse of a subnet mask.",tip:"Wildcard is the INVERSE of a subnet mask: 0 = must match, 1 = ignore.",rel:["Wildcard mask calculation","host and any keywords"]},
+{t:"Wildcard mask calculation",m:4,d:"Subtract the subnet mask from 255.255.255.255 to get the wildcard mask.",c:"  255.255.255.255\n- 255.255.255.240\n= 0.0.0.15",rel:["Wildcard mask"]},
+{t:"host and any keywords",m:4,d:"host substitutes the 0.0.0.0 mask to match one specific address; any substitutes the 255.255.255.255 mask to match all addresses.",tip:"host = 0.0.0.0 (one address). any = 255.255.255.255 (all addresses).",c:"access-list 10 permit host 192.168.10.10\naccess-list 11 permit any",rel:["Wildcard mask"]},
+{t:"Text editor method",m:4,d:"Edit an ACL by copying it into a text editor, fixing it, removing the old ACL on the router, then pasting the corrected version (pasting alone only appends).",rel:["Sequence number method","ACL"]},
+{t:"Sequence number method",m:4,d:"Edit an ACL using auto-assigned sequence numbers; delete a statement, then re-add it at the same number. Shown by show access-lists.",c:"ip access-list standard 1\n no 10\n 10 deny host 192.168.10.10",rel:["Text editor method","show access-lists"]},
+{t:"established keyword",m:4,d:"A TCP-only basic stateful firewall feature that permits return traffic for sessions originating inside, matching segments with the ACK or RST flag set.",tip:"established = poor-man's stateful firewall; only allows replies (ACK/RST set) to inside-initiated sessions.",c:"access-list 120 permit tcp any 192.168.10.0 0.0.0.255 established",rel:["Extended ACL","Stateful firewall"]},
+{t:"ACL placement",m:4,d:"Place standard ACLs as close to the destination as possible; place extended ACLs as close to the source as possible to drop unwanted traffic early.",tip:"Mnemonic: Standard->Destination, Extended->source (Extended filters earlier to save bandwidth).",rel:["Standard ACL","Extended ACL","ACL guidelines"]},
+{t:"ACL guidelines",m:4,d:"One ACL per interface, per protocol, per direction. Processed top-down, exiting on the first match. Filter most specific to most generic; new statements append to the bottom.",tip:"Remember: 1 ACL per interface/protocol/direction; order matters; specific before generic.",rel:["ACL placement","Implicit deny"]},
+{t:"IP address spoofing",m:4,d:"Overriding packet creation by inserting a custom IP header with a different source address to hide the attacker's identity; used in most DoS attacks.",rel:["Mitigate spoofing with ACLs"]},
+{t:"Mitigate spoofing with ACLs",m:4,d:"Block source addresses that should never arrive inbound from the internet: all-zeros, broadcast, 127.0.0.0/8, 169.254.0.0/16, RFC 1918 private ranges, and 224.0.0.0/4.",tip:"Inbound from the internet should never source from private (RFC 1918), loopback, or APIPA ranges.",rel:["IP address spoofing","Mitigate ICMP with ACLs","Mitigate SNMP with ACLs"]},
+{t:"Mitigate ICMP with ACLs",m:4,d:"Block inbound echo and redirect. Allow inbound echo reply, source quench, and unreachable; allow outbound echo, parameter problem, packet too big, and source quench.",rel:["ICMP","Mitigate spoofing with ACLs"]},
+{t:"Mitigate SNMP with ACLs",m:4,d:"Filter SNMP packets from non-authorized systems, or where SNMP is not needed disable it entirely.",c:"no snmp-server",rel:["SNMPv3","Mitigate spoofing with ACLs"]},
+{t:"Apply an ACL",m:4,d:"Apply an ACL to an interface with ip access-group, or to vty lines with ip access-class, specifying direction in or out.",c:"ip access-group ACL-NAME in\nip access-class VTY-ACL in",rel:["ACL","show access-lists"]},
+{t:"show access-lists",m:4,d:"Displays configured ACLs, their ACEs, sequence numbers, and match statistics (counters). The running-config does not show sequence numbers.",c:"show access-lists",rel:["Sequence number method","ACL"]},
+{t:"IPv6 ACL",m:4,d:"Must be named and filters on source and destination plus upper-layer protocol info like an extended IPv4 ACL. There is no IPv6 equivalent of a standard ACL.",tip:"IPv6 ACLs are always named; there is no standard/extended split as in IPv4.",c:"ipv6 access-list NAME\nipv6 traffic-filter NAME in",rel:["IPv6 implicit rules","Extended ACL"]},
+{t:"IPv6 implicit rules",m:4,d:"Every IPv6 ACL has an implicit deny ipv6 any any plus implicit permits for Neighbor Discovery (NA/NS). Explicitly denying all without permitting NDP disables it.",tip:"In IPv6, a blanket deny can break Neighbor Discovery unless NA/NS are explicitly permitted.",rel:["IPv6 ACL","Implicit deny"]},
+{t:"Dual stack",m:4,d:"Devices running both IPv4 and IPv6 stacks; attackers can leverage IPv4 to exploit IPv6, for example via rogue RAs and tunneling.",rel:["Teredo tunneling","IPv6 ACL"]},
+{t:"Teredo tunneling",m:4,d:"An IPv6 transition technology that embeds IPv6 packets inside IPv4 UDP packets; can be abused to gain a foothold and pivot inside a network.",rel:["Dual stack","IPv6 ACL"]},
+/* ===== M5 ===== */
+{t:"Firewall",m:5,d:"A system, or group of systems, that enforces an access control policy between networks and serves as the only transit point between internal and external networks.",x:"Firewalls resist attack, are the single transit point, and enforce policy. They reduce management complexity by concentrating access control in a few devices.",rel:["Firewall benefits","Firewall limitations","Stateful firewall"]},
+{t:"Firewall benefits",m:5,d:"Prevent exposure of sensitive hosts and apps, sanitize protocol flow to block protocol-flaw exploits, block malicious data, and reduce security management complexity.",rel:["Firewall","Firewall limitations"]},
+{t:"Firewall limitations",m:5,d:"Misconfiguration is serious, some application data cannot pass securely, users may try to bypass it, performance can slow, and traffic can be tunneled as legitimate.",rel:["Firewall","Layered defense"]},
+{t:"Packet filtering (stateless) firewall",m:5,d:"Permits or denies traffic based on Layer 3 and 4 information using a simple policy-table lookup; usually part of a router firewall.",tip:"Stateless = no state table; vulnerable to spoofing and weak with fragments. Fast and cheap.",rel:["Stateful firewall","Packet filter pros and cons"]},
+{t:"Stateful firewall",m:5,d:"The most common and versatile type; filters using connection information kept in a state table at Layers 3, 4, and 5, defending against spoofing and DoS.",tip:"Stateful tracks connections (state table) so return traffic for established sessions is allowed; cannot stop app-layer attacks.",rel:["Packet filtering (stateless) firewall","Stateful pros and cons","established keyword"]},
+{t:"Application gateway firewall (proxy)",m:5,d:"Filters at Layers 3, 4, 5, and 7; the client connects to a proxy server, which connects to the remote server on its behalf so the server only sees the proxy.",tip:"Proxy/application gateway is the one that inspects Layer 7 (application content).",rel:["Next-generation firewall (NGFW)","Stateful firewall"]},
+{t:"Next-generation firewall (NGFW)",m:5,d:"Goes beyond stateful by adding integrated intrusion prevention, application awareness and control to block risky apps, future feed upgrades, and evolving-threat techniques.",tip:"NGFW = stateful + IPS + application awareness/control.",rel:["Stateful firewall","Application gateway firewall (proxy)"]},
+{t:"Host-based firewall",m:5,d:"Firewall software running on a PC or server.",rel:["Transparent firewall","Hybrid firewall"]},
+{t:"Transparent firewall",m:5,d:"Filters IP traffic between a pair of bridged interfaces.",rel:["Host-based firewall","Hybrid firewall"]},
+{t:"Hybrid firewall",m:5,d:"A combination of firewall types, such as an application-inspection firewall that combines a stateful firewall with an application gateway.",rel:["Host-based firewall","Transparent firewall"]},
+{t:"Packet filter pros and cons",m:5,d:"Pros: simple rules, low performance impact, easy, widely supported, low cost. Cons: susceptible to IP spoofing, unreliable with fragments, complex ACLs, no dynamic filtering.",rel:["Packet filtering (stateless) firewall"]},
+{t:"Stateful pros and cons",m:5,d:"Pros: strong primary defense, better performance, defends spoofing/DoS, more logging. Cons: cannot stop application-layer attacks, UDP/ICMP are stateless, no user authentication.",rel:["Stateful firewall"]},
+{t:"Private and public design",m:5,d:"A two-interface firewall: inside is trusted, outside is untrusted. Inside-originated traffic is inspected outbound; public-to-private traffic is generally blocked.",rel:["DMZ design","Zone-Based Policy Firewall (ZPF)"]},
+{t:"DMZ design",m:5,d:"A three-interface firewall (inside, outside, DMZ). Public-to-DMZ traffic is selectively permitted and inspected, while public-to-private traffic is blocked.",tip:"DMZ design = 3 interfaces. Public reaches the DMZ, never the inside network directly.",rel:["DMZ","Private and public design","Zone-Based Policy Firewall (ZPF)"]},
+{t:"Zone-Based Policy Firewall (ZPF)",m:5,d:"Uses zones (groups of interfaces with similar functions). Same-zone traffic passes freely; all zone-to-zone traffic is blocked unless a policy permits it, except the self-zone.",tip:"In a ZPF, inter-zone traffic is denied by default; you must write a policy to permit it.",rel:["DMZ design","Layered defense"]},
+{t:"Layered defense",m:5,d:"Combining firewall types in layers (network core, perimeter, communications, endpoint). Deny by default, permit only needed services, control physical access, and monitor logs.",tip:"Best practice: deny all by default, permit only required services, and monitor firewall logs.",rel:["Bastion host","Defense-in-depth","Firewall limitations"]},
+{t:"Bastion host",m:5,d:"A screened firewall or host that applies additional rules to traffic and discards suspect packets.",rel:["Layered defense"]},
 ];
 
-// ---- slug for stable storage keys ----
-function slug(t){return t.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
-TERMS.forEach(o=>o.id=slug(o.t));
+const MV={};MODS.forEach(m=>MV[m.n]=m.v);
+T.forEach((x,i)=>{x.id="t"+i;});
+const byTerm={};T.forEach(x=>byTerm[x.t]=x);
 
-// ---- build the module filter from whatever modules exist in TERMS ----
-(function buildModuleFilter(){
-  const sel=document.getElementById("filterMod");
-  [...new Set(TERMS.map(o=>o.m))].sort((a,b)=>(+a)-(+b)).forEach(m=>{
-    const opt=document.createElement("option");
-    opt.value=m;
-    opt.textContent="Module "+m+(MODULES[m]?": "+MODULES[m]:"");
-    sel.appendChild(opt);
+/* quick-reference tables */
+const REFS=[
+ {title:"ACL number ranges",rows:[["Standard","1–99, 1300–1999"],["Extended","100–199, 2000–2699"],["IPv6","named only"]]},
+ {title:"Security-relevant ports",rows:[["SSH","TCP 22"],["Telnet","TCP 23"],["DNS","53"],["DHCP","UDP 67/68"],["HTTP / HTTPS","80 / 443"],["POP / IMAP","110 / 143"],["NTP","123"],["SNMP","161/162"],["TACACS+","TCP 49"],["RADIUS","UDP 1812/1813"]]},
+ {title:"AAA: TACACS+ vs RADIUS",rows:[["Transport","TCP 49 / UDP 1812-3"],["Encrypts","whole packet / password only"],["AAA","separates all / combines authN+Z"],["Standard","Cisco / open (RFC)"]]},
+ {title:"Firewall types by OSI layer",rows:[["Packet filter","L3–L4 (stateless)"],["Stateful","L3–L5 (state table)"],["Application gateway","L3,4,5,7 (proxy)"],["NGFW","stateful + IPS + app control"]]},
+];
+
+/* ---- storage ---- */
+const store={get(k,f){try{const v=localStorage.getItem(k);return v==null?f:JSON.parse(v);}catch(e){return f;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+let done=new Set(store.get("ndk_done",[]));
+let favs=new Set(store.get("ndk_favs",[]));
+const saveDone=()=>store.set("ndk_done",[...done]);
+const saveFavs=()=>store.set("ndk_favs",[...favs]);
+
+const $=id=>document.getElementById(id);
+const esc=s=>(s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const root=document.documentElement;
+root.setAttribute("data-theme",store.get("ndk_theme","dark"));
+$("themeBtn").onclick=()=>{const t=root.getAttribute("data-theme")==="dark"?"light":"dark";root.setAttribute("data-theme",t);store.set("ndk_theme",t);};
+
+let toT;const toastEl=$("toast");
+const toast=m=>{toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(toT);toT=setTimeout(()=>toastEl.classList.remove("show"),1400);};
+
+/* ---- state ---- */
+let activeMods=new Set(),favOnly=false,query="";
+const openMods=new Set(store.get("ndk_open",[1,2,3,4,5]));
+
+/* sidebar + chips + refs */
+function buildShell(){
+  const toc=$("toc");
+  MODS.forEach(m=>{
+    const all=T.filter(x=>x.m===m.n).length;
+    const a=document.createElement("a");a.href="#mod"+m.n;a.style.setProperty("--mc",`var(${m.v})`);a.dataset.mod=m.n;
+    a.innerHTML=`<span class="dot"></span>${m.code} ${m.name}<span class="ct" id="tc${m.n}"></span>`;
+    toc.appendChild(a);
   });
-})();
+  const chips=$("chips");
+  MODS.forEach(m=>{
+    const b=document.createElement("button");b.className="chip";b.style.setProperty("--cc",`var(${m.v})`);b.setAttribute("aria-pressed","false");
+    b.innerHTML=`<span class="dot" style="background:var(${m.v})"></span>${m.code}`;
+    b.title=m.name;
+    b.onclick=()=>{activeMods.has(m.n)?activeMods.delete(m.n):activeMods.add(m.n);b.setAttribute("aria-pressed",activeMods.has(m.n));render();};
+    chips.appendChild(b);
+  });
+  const fb=document.createElement("button");fb.className="chip star";fb.setAttribute("aria-pressed","false");fb.innerHTML="★ Favorites";
+  fb.onclick=()=>{favOnly=!favOnly;fb.setAttribute("aria-pressed",favOnly);render();};
+  chips.appendChild(fb);
 
-const KEY="netdef_defs_v1", THEMEKEY="netdef_theme";
-let defs={};
-try{defs=JSON.parse(localStorage.getItem(KEY)||"{}");}catch(e){defs={};}
+  const rg=$("refgrid");
+  REFS.forEach(r=>{
+    const c=document.createElement("div");c.className="refcard";
+    c.innerHTML=`<h3><span class="ic">▦</span>${r.title}</h3><table class="ref"><tbody>${r.rows.map(row=>`<tr><td>${esc(row[0])}</td><td>${esc(row[1])}</td></tr>`).join("")}</tbody></table>`;
+    rg.appendChild(c);
+  });
+  $("stTerms").textContent=T.length;
+  $("stCmd").textContent=T.filter(x=>x.c).length;
+}
 
-function save(){try{localStorage.setItem(KEY,JSON.stringify(defs));}catch(e){}}
+function matches(x){
+  if(activeMods.size&&!activeMods.has(x.m))return false;
+  if(favOnly&&!favs.has(x.id))return false;
+  if(query){const q=query.toLowerCase();if(!((x.t+" "+x.d+" "+(x.x||"")+" "+(x.c||"")).toLowerCase().includes(q)))return false;}
+  return true;
+}
 
-// ---- theme ----
-function applyTheme(t){document.documentElement.setAttribute("data-theme",t);}
-let theme=localStorage.getItem(THEMEKEY)|| (matchMedia&&matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");
-applyTheme(theme);
-document.getElementById("theme").onclick=()=>{theme=theme==="dark"?"light":"dark";applyTheme(theme);localStorage.setItem(THEMEKEY,theme);};
+function termCard(x){
+  const m=MODS[x.m-1],isFav=favs.has(x.id),isDone=done.has(x.id);
+  const el=document.createElement("div");el.className="tcard"+(isDone?" done":"");el.style.setProperty("--mc",`var(${m.v})`);
+  el.innerHTML=`
+    <div class="tc-top"><span class="tc-tag">${m.code}</span><span class="tc-term">${esc(x.t)}</span>${x.c?'<span class="tc-cmd">&gt;_</span>':""}</div>
+    <div class="tc-def">${esc(x.d)}</div>
+    <div class="tc-actions">
+      <button class="mini star ${isFav?"on-star":""}" aria-label="Favorite">${isFav?"★":"☆"}</button>
+      <button class="mini done ${isDone?"on-done":""}" aria-label="Mark learned">✓ ${isDone?"Learned":"Learn"}</button>
+      <button class="mini exp" aria-label="Open details">Details →</button>
+    </div>`;
+  el.onclick=e=>{if(e.target.closest(".mini.star")||e.target.closest(".mini.done"))return;openTerm(x.id,true);};
+  el.querySelector(".mini.star").onclick=e=>{e.stopPropagation();toggleFav(x.id);render();};
+  el.querySelector(".mini.done").onclick=e=>{e.stopPropagation();toggleDone(x.id);render();};
+  return el;
+}
 
-const list=document.getElementById("list");
-const search=document.getElementById("search");
-const fMod=document.getElementById("filterMod");
-const fState=document.getElementById("filterState");
+function toggleFav(id){favs.has(id)?favs.delete(id):favs.add(id);saveFavs();}
+function toggleDone(id){done.has(id)?done.delete(id):done.add(id);saveDone();}
 
 function render(){
-  const q=search.value.trim().toLowerCase();
-  const mod=fMod.value, st=fState.value;
-  list.innerHTML="";
-  let curSec=null, shown=0;
-  TERMS.forEach(o=>{
-    const has=!!(defs[o.id]&&defs[o.id].trim());
-    if(mod&&o.m!==mod)return;
-    if(st==="done"&&!has)return;
-    if(st==="todo"&&has)return;
-    if(q && !(o.t.toLowerCase().includes(q)||o.d.toLowerCase().includes(q)||o.s.toLowerCase().includes(q)))return;
-    if(o.s!==curSec){curSec=o.s;const h=document.createElement("div");h.className="sec";h.textContent="Module "+o.m+" · "+o.s;list.appendChild(h);}
-    shown++;
-    const card=document.createElement("div");
-    card.className="card"+(has?" done":"");
-    card.innerHTML=
-      '<div class="term">'+esc(o.t)+' <span class="tag">'+esc(o.s)+'</span></div>'+
-      '<textarea placeholder="Write the definition in your own words…">'+esc(defs[o.id]||"")+'</textarea>'+
-      '<div class="tools">'+
-        '<button class="reveal">▸ Reveal source definition</button>'+
-        '<span class="saveddot">saved ✓</span>'+
-      '</div>'+
-      '<div class="src"><span class="lbl">Reference</span>'+esc(o.d)+'</div>';
-    const ta=card.querySelector("textarea");
-    const dot=card.querySelector(".saveddot");
-    let tmr;
-    ta.addEventListener("input",()=>{
-      defs[o.id]=ta.value;save();
-      card.classList.toggle("done",!!ta.value.trim());
-      dot.classList.add("show");clearTimeout(tmr);tmr=setTimeout(()=>dot.classList.remove("show"),900);
-      updateStats();
-    });
-    const rev=card.querySelector(".reveal");
-    const src=card.querySelector(".src");
-    rev.onclick=()=>{const on=src.classList.toggle("show");rev.textContent=(on?"▾ Hide":"▸ Reveal")+" source definition";};
-    list.appendChild(card);
+  const list=$("list");list.innerHTML="";
+  const shown=T.filter(matches);
+  // progress
+  MODS.forEach(m=>{const all=T.filter(x=>x.m===m.n);const l=all.filter(x=>done.has(x.id)).length;const tc=$("tc"+m.n);if(tc)tc.textContent=l+"/"+all.length;});
+  const g=done.size/T.length;$("gBar").style.width=(g*100)+"%";$("gTxt").textContent=Math.round(g*100)+"% learned ("+done.size+"/"+T.length+")";
+
+  if(!shown.length){list.innerHTML=`<div class="empty"><b>No matches</b>Clear the search or filters to see terms.</div>`;return;}
+  MODS.forEach(m=>{
+    const items=shown.filter(x=>x.m===m.n);if(!items.length)return;
+    const all=T.filter(x=>x.m===m.n),learned=all.filter(x=>done.has(x.id)).length;
+    const det=document.createElement("details");det.className="domain";det.id="mod"+m.n;det.style.setProperty("--mc",`var(${m.v})`);
+    det.open=!!(query||activeMods.size||favOnly||openMods.has(m.n));
+    det.innerHTML=`
+      <summary class="dhead">
+        <span class="dcode">${m.code}</span><span class="dname">${m.name}</span>
+        <span class="dmeta">${learned}/${all.length}</span>
+        <span class="dprog"><i style="width:${learned/all.length*100}%"></i></span>
+        <span class="chev">▶</span>
+      </summary>
+      <div class="grid"></div>`;
+    const grid=det.querySelector(".grid");items.forEach(x=>grid.appendChild(termCard(x)));
+    det.querySelector("summary").addEventListener("click",()=>setTimeout(()=>{det.open?openMods.add(m.n):openMods.delete(m.n);store.set("ndk_open",[...openMods]);},0));
+    list.appendChild(det);
   });
-  if(shown===0){const e=document.createElement("div");e.className="card";e.textContent="No terms match your filters.";list.appendChild(e);}
-}
-function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
-
-function updateStats(){
-  const total=TERMS.length;
-  const done=TERMS.filter(o=>defs[o.id]&&defs[o.id].trim()).length;
-  document.getElementById("barFill").style.width=(total?Math.round(done/total*100):0)+"%";
-  document.getElementById("stats").textContent=done+" of "+total+" defined ("+(total?Math.round(done/total*100):0)+"%)";
 }
 
-search.oninput=render; fMod.onchange=render; fState.onchange=render;
+/* ---- detail modal ---- */
+const modal=$("modal"),scrim=$("scrim");
+let navStack=[];
+function openTerm(id,fresh){
+  if(fresh)navStack=[];
+  const x=T.find(t=>t.id===id);if(!x)return;
+  navStack.push(id);
+  drawTerm(x);
+  scrim.classList.add("show");modal.classList.add("show");document.body.style.overflow="hidden";
+  modal.scrollTop=0;
+}
+function drawTerm(x){
+  const m=MODS[x.m-1];modal.style.setProperty("--mc",`var(${m.v})`);
+  const isFav=favs.has(x.id),isDone=done.has(x.id);
+  // related = explicit + same-module siblings (dedup), valid only
+  let rel=(x.rel||[]).filter(r=>byTerm[r]);
+  if(rel.length<3){T.filter(o=>o.m===x.m&&o.id!==x.id&&!rel.includes(o.t)).slice(0,3-rel.length).forEach(o=>rel.push(o.t));}
+  modal.innerHTML=`
+    <div class="mhead">
+      <button class="mback ${navStack.length>1?"show":""}" id="mBack">← Back</button>
+      <span class="m-tag">${m.code} · ${m.name}</span>
+      <span class="m-term" id="mTerm">${esc(x.t)}</span>
+      <button class="mclose" id="mClose" aria-label="Close">×</button>
+    </div>
+    <div class="mbody">
+      <div class="m-sec"><h5>Definition</h5><p class="m-def">${esc(x.d)}</p></div>
+      ${x.x?`<div class="m-sec"><h5>In depth</h5><p class="m-deep">${esc(x.x)}</p></div>`:""}
+      ${x.tip?`<div class="m-sec"><h5>⚑ Exam tip</h5><div class="m-tip"><b>Tip.</b> ${esc(x.tip)}</div></div>`:""}
+      ${x.c?`<div class="m-sec"><h5>Command</h5><div class="m-cmd"><button class="copy" id="mCopy">copy</button>${esc(x.c)}</div></div>`:""}
+      <div class="m-sec"><h5>Related terms</h5><div class="rel" id="mRel">${rel.map(r=>`<button data-id="${byTerm[r].id}">${esc(r)}</button>`).join("")}</div></div>
+      <div class="m-actions">
+        <button class="mAct ${isFav?"on-star":""}" id="mFav">${isFav?"★ Favorited":"☆ Favorite"}</button>
+        <button class="mAct ${isDone?"on-done":""}" id="mDone">✓ ${isDone?"Learned":"Mark learned"}</button>
+      </div>
+    </div>`;
+  $("mClose").onclick=closeModal;
+  $("mBack").onclick=()=>{navStack.pop();const prev=navStack[navStack.length-1];if(prev){drawTerm(T.find(t=>t.id===prev));modal.scrollTop=0;}};
+  if(x.c)$("mCopy").onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(x.c);toast("Command copied");};
+  $("mFav").onclick=()=>{toggleFav(x.id);drawTerm(x);render();};
+  $("mDone").onclick=()=>{toggleDone(x.id);drawTerm(x);render();};
+  modal.querySelectorAll("#mRel button").forEach(b=>b.onclick=()=>{const nx=T.find(t=>t.id===b.dataset.id);navStack.push(nx.id);drawTerm(nx);modal.scrollTop=0;});
+}
+function closeModal(){scrim.classList.remove("show");modal.classList.remove("show");$("studyModal").classList.remove("show");document.body.style.overflow="";}
+scrim.onclick=closeModal;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
 
-// ---- exports ----
-document.getElementById("expAnki").onclick=()=>{
-  // Anki: term <TAB> your definition. Only exports terms you've defined.
-  const lines=TERMS.filter(o=>defs[o.id]&&defs[o.id].trim())
-    .map(o=>o.t.replace(/\t/g," ")+"\t"+defs[o.id].replace(/\t/g," ").replace(/\n/g,"<br>"));
-  if(!lines.length){alert("Define some terms first, then export.");return;}
-  dl("netdef-anki.txt", lines.join("\n"), "text/plain");
-};
-document.getElementById("expJson").onclick=()=>dl("netdef-backup.json", JSON.stringify(defs,null,2), "application/json");
-document.getElementById("impJson").onclick=()=>document.getElementById("fileIn").click();
-document.getElementById("fileIn").onchange=(e)=>{
-  const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=()=>{try{const o=JSON.parse(r.result);if(confirm("Restore will merge saved definitions into this page. Continue?")){Object.assign(defs,o);save();render();updateStats();}}catch(err){alert("That file could not be read as a backup.");}};
-  r.readAsText(f);
-};
-function dl(name,content,type){
-  const b=new Blob([content],{type});const u=URL.createObjectURL(b);
-  const a=document.createElement("a");a.href=u;a.download=name;a.click();URL.revokeObjectURL(u);
+/* ---- search ---- */
+const si=$("search");
+si.addEventListener("input",e=>{query=e.target.value.trim();$("searchClear").style.display=query?"block":"none";render();});
+$("searchClear").onclick=()=>{si.value="";query="";$("searchClear").style.display="none";render();si.focus();};
+document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement!==si&&!modal.classList.contains("show")&&!$("studyModal").classList.contains("show")){e.preventDefault();si.focus();}});
+$("expandAll").onclick=()=>{document.querySelectorAll("details.domain").forEach(d=>d.open=true);MODS.forEach(m=>openMods.add(m.n));store.set("ndk_open",[...openMods]);};
+$("collapseAll").onclick=()=>{document.querySelectorAll("details.domain").forEach(d=>d.open=false);openMods.clear();store.set("ndk_open",[]);};
+
+/* ---- scrollspy + back-to-top ---- */
+const totop=$("totop");
+window.addEventListener("scroll",()=>{
+  totop.classList.toggle("show",window.scrollY>400);
+  let cur=null;
+  document.querySelectorAll("details.domain").forEach(d=>{if(d.getBoundingClientRect().top<140)cur=d.id;});
+  document.querySelectorAll(".toc a").forEach(a=>a.classList.toggle("active",a.getAttribute("href")==="#"+cur));
+});
+totop.onclick=()=>window.scrollTo({top:0,behavior:"smooth"});
+
+/* ================= STUDY MODAL ================= */
+const sm=$("studyModal");
+let studyTab="flash";
+$("studyBtn").onclick=()=>{scrim.classList.add("show");sm.classList.add("show");document.body.style.overflow="hidden";renderStudy();};
+function renderStudy(){
+  sm.innerHTML=`
+    <div class="mhead"><span class="m-term">Study</span><button class="mclose" id="sClose" aria-label="Close">×</button></div>
+    <div class="mbody">
+      <div class="tabs" role="tablist">
+        <button role="tab" aria-selected="${studyTab==="flash"}" data-t="flash">Flashcards</button>
+        <button role="tab" aria-selected="${studyTab==="quiz"}" data-t="quiz">Quiz</button>
+      </div>
+      <div id="studyArea"></div>
+    </div>`;
+  $("sClose").onclick=closeModal;
+  sm.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{studyTab=b.dataset.t;renderStudy();});
+  studyTab==="flash"?flashSetup():quizSetup();
 }
 
-render();updateStats();
+/* ---- flashcards ---- */
+let fScope=0,deck=[],fi=0;
+function flashSetup(){
+  const a=$("studyArea");
+  a.innerHTML=`
+    <div class="setrow"><span class="lbl">Deck</span><div id="fScope" style="display:flex;gap:7px;flex-wrap:wrap"></div></div>
+    <div class="flash" id="flash"><div class="inner">
+      <div class="face front"><span class="ft">term</span><span class="fg" id="fG"></span><div class="q" id="fQ"></div></div>
+      <div class="face back"><span class="ft">definition</span><div class="a" id="fA"></div></div>
+    </div></div>
+    <p class="hint">tap card / space to flip · ← → to move</p>
+    <div class="fcnav"><button id="fPrev">←</button><span class="ct" id="fCt">0 / 0</span><button id="fNext">→</button><button id="fShuf">⤮ shuffle</button></div>`;
+  const sc=$("fScope");
+  const mk=(l,v)=>{const b=document.createElement("button");b.className="pill";b.textContent=l;b.setAttribute("aria-pressed",v===fScope);
+    b.onclick=()=>{fScope=v;[...sc.children].forEach(c=>c.setAttribute("aria-pressed",false));b.setAttribute("aria-pressed",true);buildDeck();};sc.appendChild(b);};
+  mk("All",0);MODS.forEach(m=>mk(m.code,m.n));
+  buildDeck();
+  $("flash").onclick=()=>$("flash").classList.toggle("flip");
+  $("fPrev").onclick=()=>{fi=(fi-1+deck.length)%deck.length;showCard();};
+  $("fNext").onclick=()=>{fi=(fi+1)%deck.length;showCard();};
+  $("fShuf").onclick=buildDeck;
+}
+function buildDeck(){deck=T.filter(x=>fScope===0||x.m===fScope);for(let i=deck.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[deck[i],deck[j]]=[deck[j],deck[i]];}fi=0;showCard();}
+function showCard(){const f=$("flash");if(!f)return;f.classList.remove("flip");const x=deck[fi];if(!x)return;const m=MODS[x.m-1];f.style.setProperty("--mc",`var(${m.v})`);const g=$("fG");g.textContent=m.code;g.style.setProperty("--mc",`var(${m.v})`);$("fQ").textContent=x.t;$("fA").textContent=x.d;$("fCt").textContent=(fi+1)+" / "+deck.length;}
+
+/* ---- quiz ---- */
+let qScope=0,qCount=10,qFav=false,qList=[],qi=0,qScore=0,qMiss=[],qAns=false;
+function quizSetup(){
+  const a=$("studyArea");
+  a.innerHTML=`
+    <div class="setrow"><span class="lbl">Deck</span><div id="qScope" style="display:flex;gap:7px;flex-wrap:wrap"></div></div>
+    <div class="setrow"><span class="lbl">Questions</span><div id="qCount" style="display:flex;gap:7px"></div></div>
+    <div class="setrow"><button class="pill" id="qFav" aria-pressed="${qFav}">★ Favorites only</button></div>
+    <button class="go" id="qStart">Start quiz</button>`;
+  const sc=$("qScope");const mkS=(l,v)=>{const b=document.createElement("button");b.className="pill";b.textContent=l;b.setAttribute("aria-pressed",v===qScope);b.onclick=()=>{qScope=v;[...sc.children].forEach(c=>c.setAttribute("aria-pressed",false));b.setAttribute("aria-pressed",true);};sc.appendChild(b);};
+  mkS("All",0);MODS.forEach(m=>mkS(m.code,m.n));
+  const cc=$("qCount");[["10",10],["20",20],["All",999]].forEach(([l,v])=>{const b=document.createElement("button");b.className="pill";b.textContent=l;b.setAttribute("aria-pressed",v===qCount);b.onclick=()=>{qCount=v;[...cc.children].forEach(c=>c.setAttribute("aria-pressed",false));b.setAttribute("aria-pressed",true);};cc.appendChild(b);});
+  $("qFav").onclick=()=>{qFav=!qFav;$("qFav").setAttribute("aria-pressed",qFav);};
+  $("qStart").onclick=startQuiz;
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
+function startQuiz(){
+  let pool=T.filter(x=>(qScope===0||x.m===qScope)&&(!qFav||favs.has(x.id)));
+  if(pool.length<4){toast("Need at least 4 terms in this deck");return;}
+  qList=shuffle(pool.slice()).slice(0,Math.min(qCount,pool.length));qi=0;qScore=0;qMiss=[];showQ();
+}
+function showQ(){
+  if(qi>=qList.length)return showResult();
+  qAns=false;const x=qList[qi];
+  let pool=T.filter(o=>o.id!==x.id&&o.m===x.m);if(pool.length<3)pool=pool.concat(T.filter(o=>o.id!==x.id&&o.m!==x.m));
+  const opts=shuffle([x,...shuffle(pool).slice(0,3)]);
+  $("studyArea").innerHTML=`
+    <div class="qhead"><span>Q ${qi+1} / ${qList.length}</span><span>Score ${qScore}</span></div>
+    <p class="qdef">${esc(x.d)}</p>
+    <div id="opts"></div>
+    <div id="fb"></div>
+    <button class="qnext" id="qNext" disabled>${qi+1===qList.length?"See results":"Next question"}</button>`;
+  const o=$("opts");
+  opts.forEach((opt,idx)=>{
+    const b=document.createElement("button");b.className="opt";b.innerHTML=`<span class="n">${idx+1}</span>${esc(opt.t)}`;
+    b.onclick=()=>answer(opt,x,b,o);o.appendChild(b);
+  });
+  $("qNext").onclick=()=>{qi++;showQ();};
+}
+function answer(opt,x,b,o){
+  if(qAns)return;qAns=true;
+  [...o.children].forEach(z=>z.disabled=true);
+  if(opt.id===x.id){b.classList.add("right");qScore++;}
+  else{b.classList.add("wrong");[...o.children].forEach(z=>{if(z.textContent.replace(/^\d+/,"")===x.t)z.classList.add("right");});qMiss.push(x);}
+  if(x.tip)$("fb").innerHTML=`<div class="qfb"><b>${esc(x.t)}.</b> ${esc(x.tip)}</div>`;
+  else $("fb").innerHTML=`<div class="qfb"><b>${esc(x.t)}.</b> ${esc(x.d)}</div>`;
+  $("qNext").disabled=false;
+}
+function showResult(){
+  const pct=Math.round(qScore/qList.length*100);
+  const col=pct>=80?"var(--ok)":pct>=60?"var(--gold)":"var(--bad)";
+  $("studyArea").innerHTML=`
+    <div class="result">
+      <div>You scored</div><div class="big" style="color:${col}">${qScore}/${qList.length}</div>
+      <div style="color:var(--sub)">${pct}% correct</div>
+    </div>
+    ${qMiss.length?`<div class="review"><h5>Review (${qMiss.length} missed)</h5>${qMiss.map(x=>`<div class="rv"><div class="rt">${esc(x.t)}</div><div>${esc(x.d)}</div><button class="open" data-id="${x.id}">Open full entry →</button></div>`).join("")}</div>`:`<div class="review"><h5>Perfect run — nothing missed.</h5></div>`}
+    <div class="res-actions">
+      ${qMiss.length?`<button id="qRetry">Retry missed</button>`:""}
+      <button class="prime" id="qAgain">New quiz</button>
+    </div>`;
+  $("qAgain").onclick=quizSetup;
+  if(qMiss.length){
+    $("qRetry").onclick=()=>{qList=shuffle(qMiss.slice());qi=0;qScore=0;qMiss=[];showQ();};
+    $("studyArea").querySelectorAll(".open").forEach(btn=>btn.onclick=()=>{closeModal();openTerm(btn.dataset.id,true);});
+  }
+}
+document.addEventListener("keydown",e=>{
+  if(!sm.classList.contains("show")||studyTab!=="quiz")return;
+  if(["1","2","3","4"].includes(e.key)){const o=$("opts");if(o){const b=o.children[+e.key-1];if(b&&!qAns)b.click();}}
+  if(e.key==="Enter"){const n=$("qNext");if(n&&!n.disabled)n.click();}
+});
+document.addEventListener("keydown",e=>{
+  if(!sm.classList.contains("show")||studyTab!=="flash")return;
+  if(e.key===" "){e.preventDefault();const f=$("flash");if(f)f.classList.toggle("flip");}
+  if(e.key==="ArrowRight"){fi=(fi+1)%deck.length;showCard();}
+  if(e.key==="ArrowLeft"){fi=(fi-1+deck.length)%deck.length;showCard();}
+});
+
+/* ---- init ---- */
+buildShell();render();
 </script>
 </body>
 </html>
