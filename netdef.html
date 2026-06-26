@@ -292,7 +292,7 @@ footer{max-width:1280px;margin:0 auto;padding:24px 22px 50px;color:var(--faint);
 <div class="modal study" id="studyModal" role="dialog" aria-modal="true"></div>
 <button class="totop" id="totop" aria-label="Back to top">↑</button>
 <div class="toast" id="toast"></div>
-<footer>Built from Cisco NetAcad Network Defense modules 1&ndash;5 · fully offline · progress, favorites &amp; theme persist in this browser via localStorage · not affiliated with Cisco · study use only</footer>
+<footer>Built from Cisco NetAcad Network Defense modules 1&ndash;5 · fully offline · progress, favorites &amp; theme persist in this browser via localStorage · not affiliated with Cisco · study use only<br><span aria-live="polite">&#128065; <b id="gcCount" style="color:var(--accent)">0</b> page views</span></footer>
 
 <script>
 "use strict";
@@ -841,5 +841,14 @@ document.addEventListener("keydown",e=>{
 /* ---- init ---- */
 buildShell();render();
 </script>
+<script>
+(function(){
+  fetch('https://soaceace.goatcounter.com/counter/'+encodeURIComponent(location.pathname)+'.json')
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(d){ if(d&&d.count){ var n=document.getElementById('gcCount'); if(n) n.textContent=d.count; } })
+    .catch(function(){});
+})();
+</script>
+<script data-goatcounter="https://soaceace.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

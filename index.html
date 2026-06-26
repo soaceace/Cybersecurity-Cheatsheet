@@ -1711,5 +1711,17 @@ document.addEventListener('keydown',e=>{
   else if(e.key==='Enter' && qAnswered){ e.preventDefault(); nextQ(); }
 });
 </script>
+<footer style="max-width:1280px;margin:0 auto;padding:22px;text-align:center;color:var(--muted);font-size:12px;font-family:var(--mono);border-top:1px solid var(--border)">
+  <span aria-live="polite">&#128065; <b id="gcCount" style="color:var(--accent)">0</b> page views</span>
+</footer>
+<script>
+(function(){
+  fetch('https://soaceace.goatcounter.com/counter/'+encodeURIComponent(location.pathname)+'.json')
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(d){ if(d&&d.count){ var n=document.getElementById('gcCount'); if(n) n.textContent=d.count; } })
+    .catch(function(){});
+})();
+</script>
+<script data-goatcounter="https://soaceace.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
