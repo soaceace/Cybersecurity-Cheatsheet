@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network Defense — Define It Yourself</title>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#171e26; --panel2:#1d2630; --line:#2a3642;
+    --text:#e6edf3; --muted:#8b98a5; --accent:#4cc38a; --accent2:#2f81f7;
+    --warn:#d29922; --input:#0c1116; --done:#1a2b22;
+  }
+  [data-theme="light"]{
+    --bg:#f6f8fa; --panel:#ffffff; --panel2:#f0f3f6; --line:#d0d7de;
+    --text:#1f2328; --muted:#636c76; --accent:#1a7f4b; --accent2:#0969da;
+    --warn:#9a6700; --input:#ffffff; --done:#e8f5ee;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Calibri,-apple-system,Segoe UI,Roboto,sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.45}
+  header{position:sticky;top:0;z-index:10;background:var(--panel);
+    border-bottom:1px solid var(--line);padding:14px 18px}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  h1{font-size:18px;margin:0;font-weight:700}
+  .sub{color:var(--muted);font-size:13px;margin-top:2px}
+  .grow{flex:1}
+  input,select,button{font-family:inherit;font-size:14px}
+  #search{flex:1;min-width:180px;padding:9px 12px;background:var(--input);
+    color:var(--text);border:1px solid var(--line);border-radius:8px}
+  select{padding:9px 10px;background:var(--input);color:var(--text);
+    border:1px solid var(--line);border-radius:8px}
+  .btn{padding:8px 12px;background:var(--panel2);color:var(--text);
+    border:1px solid var(--line);border-radius:8px;cursor:pointer;white-space:nowrap}
+  .btn:hover{border-color:var(--accent)}
+  .btn.accent{background:var(--accent);color:#04130c;border-color:var(--accent);font-weight:600}
+  .bar{height:8px;background:var(--panel2);border-radius:6px;overflow:hidden;margin-top:10px}
+  .bar > div{height:100%;background:var(--accent);width:0;transition:width .3s}
+  .stats{font-size:13px;color:var(--muted);margin-top:6px}
+  main{max-width:900px;margin:0 auto;padding:18px}
+  .sec{margin:22px 0 8px;font-size:13px;letter-spacing:.5px;text-transform:uppercase;
+    color:var(--accent);font-weight:700;border-bottom:1px solid var(--line);padding-bottom:6px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:14px 16px;margin:10px 0}
+  .card.done{background:var(--done);border-color:var(--accent)}
+  .term{font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .tag{font-size:11px;color:var(--muted);border:1px solid var(--line);
+    border-radius:20px;padding:1px 8px;font-weight:400}
+  textarea{width:100%;margin-top:10px;min-height:64px;resize:vertical;
+    background:var(--input);color:var(--text);border:1px solid var(--line);
+    border-radius:8px;padding:10px;font-size:14px;font-family:inherit}
+  textarea:focus{outline:none;border-color:var(--accent2)}
+  .tools{display:flex;gap:8px;margin-top:8px;align-items:center;flex-wrap:wrap}
+  .reveal{font-size:13px;color:var(--accent2);cursor:pointer;user-select:none;
+    background:none;border:none;padding:4px 0;font-family:inherit}
+  .src{margin-top:8px;padding:10px 12px;background:var(--panel2);
+    border-left:3px solid var(--accent2);border-radius:6px;font-size:14px;
+    color:var(--text);display:none}
+  .src.show{display:block}
+  .src .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.5px;
+    color:var(--muted);display:block;margin-bottom:4px}
+  .saveddot{font-size:12px;color:var(--accent);opacity:0;transition:opacity .2s}
+  .saveddot.show{opacity:1}
+  .hidden{display:none !important}
+  footer{max-width:900px;margin:10px auto 40px;padding:0 18px;color:var(--muted);font-size:12px}
+  @media(max-width:600px){main{padding:12px}h1{font-size:16px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="row">
+    <div>
+      <h1>Network Defense — Define It Yourself</h1>
+      <div class="sub">Write each definition from memory, then reveal the reference to check yourself</div>
+    </div>
+    <div class="grow"></div>
+    <a class="btn" href="index.html">← Security+ Cheatsheet</a>
+    <button class="btn" id="theme">◐ Theme</button>
+  </div>
+  <div class="row" style="margin-top:12px">
+    <input id="search" placeholder="Search terms…">
+    <select id="filterMod">
+      <option value="">All modules</option>
+    </select>
+    <select id="filterState">
+      <option value="">All terms</option>
+      <option value="done">Defined only</option>
+      <option value="todo">Not yet defined</option>
+    </select>
+  </div>
+  <div class="bar"><div id="barFill"></div></div>
+  <div class="stats" id="stats"></div>
+  <div class="row" style="margin-top:10px">
+    <button class="btn accent" id="expAnki">Export for Anki (.txt)</button>
+    <button class="btn" id="expJson">Backup (.json)</button>
+    <button class="btn" id="impJson">Restore backup</button>
+    <input type="file" id="fileIn" accept=".json" class="hidden">
+  </div>
+</header>
+<main id="list"></main>
+<footer>
+  Your definitions save automatically in this browser. Use <b>Backup</b> to keep a copy, and
+  <b>Export for Anki</b> when you want to drill them with spaced repetition. The reveal text is a
+  short reference pulled from your slides, condensed for self-checking.
+</footer>
+
+<script>
+// ============================================================
+//  HOW TO ADD A NEW MODULE (do this when class unlocks one)
+//  1) Add the module's number + name to the MODULES map below.
+//  2) Append term objects to the TERMS array, copying this shape:
+//        {m:"3", s:"3.1 Access Controls", t:"Term name", d:"Reference definition."},
+//     - m = module number (as text)   - s = section heading
+//     - t = the term                  - d = the reference definition
+//  3) Save and re-upload netdef.html to GitHub. That's it.
+//  Terms group under their section automatically, and the module
+//  filter dropdown rebuilds itself from whatever modules exist.
+// ============================================================
+const MODULES = {
+  "1":"Understanding Defense",
+  "2":"System & Network Defense",
+  // "3":"Access Control",
+  // "4":"Access Control Lists",
+  // "5":"Firewall Technologies",
+};
+
+// ---- DATA: every term from both decks, with a concise reference definition ----
+const TERMS = [
+// ===== MODULE 1 =====
+{m:"1",s:"1.1 Defense-in-Depth",t:"Asset",d:"Anything of value to an organization that must be protected — servers, infrastructure devices, end devices, and the greatest asset, data."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Vulnerability",d:"A weakness in a system or its design that could be exploited by a threat actor."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Threat",d:"Any potential danger to an asset."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Attack surface",d:"The total collection of an organization's assets that threat actors could target."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Asset management",d:"Inventorying all assets, then developing and implementing policies and procedures to protect them."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Asset classification",d:"Assigning resources into groups based on common characteristics so the most critical info gets the highest protection."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Asset standardization",d:"Identifying specific hardware/software products an org uses, so replacements are fast and maintenance costs stay low."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Asset lifecycle",d:"The stages an asset moves through: Procurement, Deployment, Utilization, Maintenance, Disposal."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Defense-in-depth",d:"Using multiple layers of security at the network edge, within the network, and on endpoints so one failure doesn't break everything."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Edge router (R1)",d:"First line of defense; has rules specifying which traffic to allow or deny, passing internal-bound traffic to the firewall."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Firewall",d:"Second line of defense; a checkpoint device that performs additional filtering and tracks the state of connections."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Internal router (R2)",d:"A further line of defense that applies final filtering rules on traffic before forwarding it to its destination."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"IPS (Intrusion Prevention System)",d:"A security device used in defense-in-depth alongside routers and firewalls to detect and block intrusions."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"AMP (Advanced Malware Protection)",d:"A defense-in-depth security technology focused on detecting and stopping malware."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Security Onion",d:"Analogy where an attacker must peel away defenses layer by layer to reach the target. (Not the Security Onion tool suite.)"},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Security Artichoke",d:"Borderless-network analogy that benefits the attacker — they only remove certain 'leaves' to reach sensitive data."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Layering",d:"Setting up multiple defenses that work together, so a barrier of defenses must all be defeated to attack successfully."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Limiting",d:"Restricting access so each user only has the level of access required to do their job, reducing the threat surface."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Diversity",d:"Making layers different so that defeating one layer doesn't let the same technique defeat all the others."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Obscurity",d:"Not revealing information (like OS, equipment make/model) that attackers could use to plan an attack."},
+{m:"1",s:"1.1 Defense-in-Depth",t:"Simplicity",d:"Keeping security understandable; overly complex setups people can't configure properly are as easy to compromise."},
+{m:"1",s:"1.2 Cybersecurity Ops Management",t:"Configuration management",d:"Identifying, controlling, and auditing the implementation and any changes made to a system's established baseline."},
+{m:"1",s:"1.2 Cybersecurity Ops Management",t:"Baseline configuration",d:"All the settings configured for a system that form the foundation/template for all similar systems."},
+{m:"1",s:"1.2 Cybersecurity Ops Management",t:"OS hardening",d:"Securing an OS via log/audit config, changing default account names and passwords, account policies, and file-level access control."},
+{m:"1",s:"1.2 Cybersecurity Ops Management",t:"Log file",d:"A record of all events as they occur; made up of log entries, each containing the info for a specific event."},
+{m:"1",s:"1.2 Cybersecurity Ops Management",t:"Log management",d:"Procedures for generating, transmitting, storing, analyzing, and disposing of computer security log data."},
+{m:"1",s:"1.2 Cybersecurity Ops Management",t:"Operating system logs",d:"Logs of events tied to OS actions — e.g., client requests, server responses, successful authentications, usage info."},
+{m:"1",s:"1.2 Cybersecurity Ops Management",t:"Application security logs",d:"Logs generated by network/system security software to detect malicious activity, aid auditing, and prove compliance."},
+{m:"1",s:"1.2 Cybersecurity Ops Management",t:"Protocol analyzer (packet sniffer)",d:"Intercepts and logs network traffic, capturing each packet and analyzing field values on wired or wireless networks."},
+{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Business policies",d:"Guidelines an org develops to govern its actions and define correct behavior; a baseline whose violation may signal a breach."},
+{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Company policies",d:"Rules of conduct and responsibilities for employees and employers; protect worker rights and business interests."},
+{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Employee policies",d:"HR-maintained policies covering salary, pay schedule, benefits, work schedule, and vacations."},
+{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Security policies",d:"A set of security objectives, rules of behavior for users/admins, and system requirements that secure the org's networks and systems."},
+{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Identification and authentication policy",d:"Specifies who can access network resources and the identity verification procedures used."},
+{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Password policies",d:"Ensure passwords meet minimum requirements and are changed regularly."},
+{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Acceptable Use Policy (AUP)",d:"Identifies the network applications and uses that are acceptable to the organization."},
+{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Remote access policy",d:"Identifies how remote users can access the network and what is reachable via remote connectivity."},
+{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Network maintenance policy",d:"Specifies network device OS and end-user application update procedures."},
+{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Incident handling procedures",d:"Describe how security incidents are handled."},
+{m:"1",s:"1.3 Policies, Regulations, Standards",t:"BYOD (Bring Your Own Device)",d:"Letting employees use personal devices to access company systems; needs a policy covering access, devices, and safeguards."},
+{m:"1",s:"1.3 Policies, Regulations, Standards",t:"MDM (Mobile Device Management)",d:"Software letting IT enforce security settings and software configs on all devices that connect to company networks."},
+{m:"1",s:"1.3 Policies, Regulations, Standards",t:"INFOSEC",d:"Information Systems Security — the professionals bound by the laws and codes of ethics governing network security."},
+{m:"1",s:"1.3 Policies, Regulations, Standards",t:"Compliance regulations",d:"External rules defining what orgs must provide and their liability for failing to comply; depend on org type and data handled."},
+// ===== MODULE 2 =====
+{m:"2",s:"2.1 Physical Security",t:"Physical barriers / fencing",d:"Often the outermost, most visible layer of defense; includes perimeter fences, gates, bollards, vehicle barriers, guard shelters."},
+{m:"2",s:"2.1 Physical Security",t:"Bollards",d:"Short posts used to stop vehicle intrusions."},
+{m:"2",s:"2.1 Physical Security",t:"Biometrics",d:"Physiological or behavioral characteristics (face, fingerprint, iris, retina, voice, etc.) used to identify and grant access."},
+{m:"2",s:"2.1 Physical Security",t:"Type I error (false rejection)",d:"A biometric system rejects an authorized user; costly in retail/banking due to lost transactions."},
+{m:"2",s:"2.1 Physical Security",t:"Type II error (false acceptance)",d:"A biometric system accepts an imposter; the most important error for access control since it lets attackers in."},
+{m:"2",s:"2.1 Physical Security",t:"Crossover Error Rate (CER)",d:"The most common single metric for overall biometric accuracy (where false-accept and false-reject rates are equal)."},
+{m:"2",s:"2.1 Physical Security",t:"Acceptance rate",d:"The percentage rate at which a system accepts unenrolled individuals or imposters as authentic (rate of Type II errors)."},
+{m:"2",s:"2.1 Physical Security",t:"Surveillance (video/electronic)",d:"Monitoring that supplements or replaces guards; can record for long periods and link to motion detection and alerts."},
+{m:"2",s:"2.1 Physical Security",t:"Guards and escorts",d:"Provide instantaneous, adaptable response and on-the-spot decisions; downsides are cost and human error."},
+{m:"2",s:"2.1 Physical Security",t:"RFID",d:"Radio Frequency Identification asset tags that track assets leaving a secure area; no line-of-sight needed, can read many at once."},
+{m:"2",s:"2.2 Application Security",t:"Development environment",d:"A less-restrictive, lower-security space where software is built, tested, and debugged before deployment."},
+{m:"2",s:"2.2 Application Security",t:"Version control software",d:"Tracks and manages changes to software code."},
+{m:"2",s:"2.2 Application Security",t:"Sandbox environment",d:"An isolated space where developers work so code isn't overwritten as they develop it."},
+{m:"2",s:"2.2 Application Security",t:"Quality assurance (QA)",d:"Testing process used to find defects in the software."},
+{m:"2",s:"2.2 Application Security",t:"Staging environment",d:"An environment closely matching production, used to verify software runs under required security settings before release."},
+{m:"2",s:"2.2 Application Security",t:"Provisioning / deprovisioning",d:"Provisioning is creating or updating software; deprovisioning is removing it (often via a self-service portal)."},
+{m:"2",s:"2.2 Application Security",t:"Normalization",d:"Organizing data in a database and converting input to its simplest form so strings have unique binary representations and malicious input is caught."},
+{m:"2",s:"2.2 Application Security",t:"Stored procedure",d:"A group of precompiled SQL statements stored in a database that run a task, reducing network traffic and speeding results."},
+{m:"2",s:"2.2 Application Security",t:"Obfuscation",d:"Hides original data with random characters or data to help prevent software from being reverse engineered."},
+{m:"2",s:"2.2 Application Security",t:"Camouflage",d:"Replaces sensitive data with realistic fictional data to help prevent reverse engineering."},
+{m:"2",s:"2.2 Application Security",t:"Code reuse",d:"Using existing software to build new software to save time and cost — but it can introduce vulnerabilities."},
+{m:"2",s:"2.2 Application Security",t:"SDKs / third-party libraries",d:"Repositories of useful code that speed development; their vulnerabilities can affect many applications at once."},
+{m:"2",s:"2.2 Application Security",t:"Input validation",d:"Controlling the data input process to maintain database integrity and block malformed/malicious data."},
+{m:"2",s:"2.2 Application Security",t:"Validation rule",d:"Checks data against defined parameters using criteria: Size, Format, Consistency, Range, and Check digit."},
+{m:"2",s:"2.2 Application Security",t:"Integrity check",d:"Measures consistency of data in a file/record to ensure it hasn't been corrupted, using a hash function snapshot."},
+{m:"2",s:"2.2 Application Security",t:"Hash function",d:"An algorithm that takes a snapshot of data to verify it stays unchanged; common ones are MD5, SHA-1, SHA-256, SHA-512."},
+{m:"2",s:"2.2 Application Security",t:"Checksum",d:"An example of a hash function; converts info to a value and sums it, then compares before/after transfer to verify integrity."},
+{m:"2",s:"2.2 Application Security",t:"Authorization",d:"Determines who can access resources on a need-to-know basis (e.g., file permissions, read-only access)."},
+{m:"2",s:"2.2 Application Security",t:"Code signing",d:"Digitally signing executables to validate the author's identity and prove the code hasn't changed since signing."},
+{m:"2",s:"2.2 Application Security",t:"Secure cookies",d:"Cookies used with HTTPS so stored data isn't transmitted over unencrypted HTTP or exposed to hackers."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"Port scanner",d:"Sends a message to each port and waits for a response to reveal how the port is used and whether it's open (used by defenders and attackers)."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"DHCP",d:"Dynamic Host Configuration Protocol; a server that assigns IP addresses and config info to network devices."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"DHCP snooping",d:"Security measure that prevents rogue DHCP servers from issuing IPs by validating messages from untrusted sources."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"DNS",d:"Domain Name System; translates a URL/website address into a numerical IP address."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"DNSSEC",d:"DNS Security Extensions; uses digital signatures to strengthen authentication and protect against DNS threats."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"ICMP",d:"Internet Control Message Protocol; sends error messages (e.g., service unavailable). Can be abused for recon, DoS, covert channels."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"ping",d:"A network utility that uses ICMP to test the reachability of a host by sending messages and waiting for a reply."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"RIP",d:"Routing Information Protocol; exchanges routing info and picks routes by hop count (max 15 hops)."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"NTP",d:"Network Time Protocol; synchronizes system clocks, which matters for log/event correlation and digital certificates."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"SSH",d:"Secure Shell; provides an encrypted remote connection to a device. Uses TCP port 22."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"Telnet",d:"Older remote-access protocol using unsecure plaintext for auth and data. Uses TCP port 23; use SSH instead."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"SCP",d:"Secure Copy; securely transfers files between remote systems, using SSH for transfer and authentication."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"SNMP / SNMPv3",d:"Simple Network Management Protocol collects stats from TCP/IP devices; SNMPv3 adds cryptography against eavesdropping/tampering."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"HTTP",d:"Hypertext Transfer Protocol; basic web connectivity on port 80 with limited security, open to traffic monitoring."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"SSL",d:"Secure Sockets Layer; uses a handshake at session start to provide confidentiality and prevent eavesdropping/tampering."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"TLS",d:"Transport Layer Security; an updated, more secure replacement for SSL. SSL/TLS use shows as HTTPS in the URL."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"FTP / FTPS",d:"FTP transfers files using a plaintext username/password; FTPS adds TLS/SSL to prevent eavesdropping, tampering, and forgery."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"POP / IMAP / MIME",d:"Email protocols; POP (port 110) and IMAP (port 143) retrieve mail, MIME attaches non-text data. Secure with SSL/TLS."},
+{m:"2",s:"2.3 Hardening: Services & Protocols",t:"S/MIME",d:"Secure/MIME; sends digitally signed and encrypted email providing authentication, integrity, and nonrepudiation."},
+{m:"2",s:"2.4 Hardening: Segmentation",t:"VLAN",d:"Virtual LAN; groups devices logically to segment a network and create secure areas, even across switches."},
+{m:"2",s:"2.4 Hardening: Segmentation",t:"Trunk",d:"A switch port/link that interconnects switches and carries traffic for multiple VLANs between them."},
+{m:"2",s:"2.4 Hardening: Segmentation",t:"DMZ",d:"Demilitarized Zone; a small network between a trusted private network and the Internet, hosting web/mail servers."},
+{m:"2",s:"2.4 Hardening: Segmentation",t:"Zones of risk",d:"Most networks have 2–4: LAN (low risk/high trust), extranet (medium), DMZ (medium-high risk), Internet (high risk/low trust)."},
+{m:"2",s:"2.4 Hardening: Segmentation",t:"Zero Trust model",d:"Constantly monitors all users regardless of status or role instead of automatically trusting internal users/endpoints."},
+{m:"2",s:"2.4 Hardening: Segmentation",t:"East-west / north-south traffic",d:"East-west moves between servers inside the data center; north-south moves into and out of the organization's network."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"WEP",d:"Wired Equivalent Privacy; the first (weak) wireless security protocol, later replaced by WPA."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"WPA",d:"Wi-Fi Protected Access; response to WEP weaknesses, using 256-bit keys. WPA-PSK (pre-shared key) is the most common config."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"MIC (message integrity check)",d:"WPA feature that detects if an attacker captured and altered data between the access point and a wireless client."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"TKIP",d:"Temporal Key Integrity Protocol; helped handle, protect, and change encryption keys in WPA. Later superseded by AES."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"AES",d:"Advanced Encryption Standard; superseded TKIP for better key management and encryption; mandatory in WPA2."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"WPA2",d:"2006 standard mandating AES and replacing TKIP with CCMP."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"CCMP",d:"Counter Cipher Mode with Block Chaining Message Authentication Code Protocol; replaced TKIP in WPA2."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"WPA3",d:"Adds features to WPA2 such as stronger cryptographic algorithms and improved key exchange."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"WPS",d:"Wi-Fi Protected Setup; uses a PIN to connect devices but is vulnerable to brute force — should be disabled."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"Open system authentication",d:"Any wireless device can connect; used only where security is of no concern."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"Shared key authentication",d:"Provides mechanisms to authenticate and encrypt data between a wireless client and the AP/router."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"EAP",d:"Extensible Authentication Protocol; an authentication framework for wireless networks using an authentication server."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"EAP types (TLS/PEAP/TTLS/FAST)",d:"EAP-TLS (high security, needs client+server certs); PEAP & EAP-TTLS (server cert only); EAP-FAST (no certs, easiest)."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"Rogue access point",d:"An unauthorized AP that imitates a legitimate one to let users connect while stealing data or doing other harm."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"Mutual authentication",d:"Two-way authentication where both entities verify each other before connecting; helps prevent rogue access points."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"NFC",d:"Near-Field Communication; contactless communication between devices, e.g., tap-to-pay at a terminal."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"Infrared (IR)",d:"Short-range communication using an IR receiver, e.g., controlling a TV from a phone."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"USB communication",d:"The only wired method on the list; enables storage, modem/fax use, or connecting to forensic acquisition devices."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"COPE",d:"Corporate-Owned, Personally Enabled; an org-issued device holding both personal and organizational data."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"Storage segmentation / containerization",d:"Separates personal and work content via an authenticated, encrypted area; allows app isolation and remote wipe."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"Whitelisting (application management)",d:"Digitally signing apps to authorize which ones users may install, ensuring they come from a trusted source."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"Jailbreaking",d:"Removing the restriction that only Apple-authorized apps may run on an iOS device."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"Rooting",d:"Bypassing Android's security architecture to gain complete administrative access to the device."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"Sideloading",d:"Going around approved app settings to install unapproved apps; less invasive than jailbreaking/rooting but still a risk."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"Context-aware authentication",d:"Uses machine learning to determine access based on a user's normal behavior."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"Remote wiping",d:"Deletes a device's data if it is lost or stolen."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"Full device encryption",d:"Encrypts all data on a mobile device."},
+{m:"2",s:"2.5 Wireless & Mobile",t:"GPS / geofencing",d:"GPS locates a device via satellites (~5m); geolocation/geofencing can push location-based messages — and be abused to capture data."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"High availability",d:"Systems designed to avoid downtime by eliminating single points of failure, reliable crossover, and detecting failures."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"Five nines",d:"99.999% availability — less than ~5.26 minutes of downtime per year."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"Single point of failure",d:"Any hardware, process, data, or utility whose failure causes complete failure of the entire system."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"N+1 redundancy",d:"Components (N) each have at least one backup (+1) on standby; redundant but not fully redundant (like a spare tire)."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"RAID",d:"Spreads data across several drives; except RAID 0, data can be recovered if one disk is lost, and can speed recovery."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"Mirroring",d:"RAID method that stores data, then duplicates it on a second drive."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"Striping",d:"RAID method that writes data across multiple drives so consecutive segments sit on different drives."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"Parity",d:"Striping with parity; checksums generated after striping are stored on a separate drive to detect errors."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"STP (Spanning Tree Protocol)",d:"Keeps redundant physical links loop-free with one logical path; recalculates and unblocks ports if a link/switch fails."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"Default gateway",d:"The router providing devices access to the rest of the network/internet; a single one is a single point of failure."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"First-hop redundancy",d:"A network's ability to dynamically recover from failure of a device acting as the default gateway, using a standby router."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"Location redundancy",d:"Synchronous (real-time, high bandwidth, close), asynchronous (near real-time, less bandwidth), or point-in-time replication."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"Resiliency",d:"The methods and configurations used to make a system or network tolerant of failure."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"Application resilience",d:"An app's ability to react to component problems while still functioning (via fault-tolerant hardware, clustering, backup/restore)."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"Fault tolerance",d:"Lets a system keep operating if one or more components fail; data mirroring is one example."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"System resiliency",d:"Maintaining availability of data and operations despite attacks or disruptions, usually via redundant power and processing."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"IOS resilience / primary bootset",d:"Cisco feature keeping a secure, unremovable copy of the IOS image and running config for faster recovery."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"Data backup",d:"A copy of information stored to backup media (often off-site) so data can be restored after loss or hardware failure."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"UPS",d:"Uninterruptible Power Supply; provides power to gracefully shut down systems during a power event."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"Power events",d:"Spike (momentary high V), Surge (prolonged high V), Fault (momentary loss), Blackout (full loss), Sag/dip (momentary low V), Brownout (prolonged low V), Inrush (initial surge)."},
+{m:"2",s:"2.6 Cybersecurity Resilience",t:"HVAC",d:"Heating, Ventilation, Air Conditioning; controls temperature, humidity, airflow — critical to system stability and security."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Stuxnet",d:"A worm that targeted SCADA systems, proving malware could destroy or interrupt critical infrastructure."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"SCADA",d:"Supervisory Control And Data Acquisition; systems controlling/monitoring industrial processes — segregate from the LAN to protect."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"ICS (Industrial Control Systems)",d:"Systems used in manufacturing, production, energy, and communications; SCADA is one type."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"IoT",d:"Internet of Things; technologies connecting billions of devices to the Internet, greatly expanding the attack surface."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Embedded systems",d:"Systems that capture, store, and access data (smart TVs, medical devices, cars); pose unique security challenges."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Side-channel / timing attack",d:"Attack based on implementation info (timing, power, EM leaks, sound) rather than software weaknesses; timing attacks are one type."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"SoC (System on Chip)",d:"Small Form Factor module (e.g., Raspberry Pi, Arduino) integrating microcontroller, processor, and peripherals; often hard to patch."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"FPGA",d:"Field-Programmable Gate Array; an integrated circuit that can be programmed or modified in the field after deployment."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"RTOS",d:"Real-Time Operating System; small OS for rapid task switching focused on timing; vulnerable to code injection, DoS, priority inversion."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Shodan",d:"An IoT scanner used to tell whether a home-automation/IoT device is vulnerable to attack."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Zigbee",d:"A wireless set of protocols for Wireless Personal Area Networks (WPANs)."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"VoIP",d:"Uses the internet to make/receive phone calls; only as secure as the underlying network — targeted for eavesdropping and fraud."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"VoIP attacks",d:"Registration spoofing (rerouting incoming calls), proxy impersonating (rogue proxy), and call hijacking (rerouting calls)."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"UAV (drone) threats",d:"Drones are susceptible to hijacking, Wi-Fi attacks, GPS spoofing, jamming, and deauthentication attacks."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Deception technologies",d:"Fake infrastructure layer used to distract attackers, learn their methods, and warn of potential attacks."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Honeypot",d:"A decoy system mimicking a real server, left exposed to lure attackers whose activity is then logged and monitored."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Honeynet",d:"A collection of honeypots that mimics a network to distract attackers."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"Honeyfiles",d:"Dummy files that attract an attacker but contain no real information."},
+{m:"2",s:"2.7 Embedded & Specialized Systems",t:"DNS sinkhole",d:"Prevents resolution of hostnames for specified URLs, pushing users away from malicious resources."},
+];
+
+// ---- slug for stable storage keys ----
+function slug(t){return t.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+TERMS.forEach(o=>o.id=slug(o.t));
+
+// ---- build the module filter from whatever modules exist in TERMS ----
+(function buildModuleFilter(){
+  const sel=document.getElementById("filterMod");
+  [...new Set(TERMS.map(o=>o.m))].sort((a,b)=>(+a)-(+b)).forEach(m=>{
+    const opt=document.createElement("option");
+    opt.value=m;
+    opt.textContent="Module "+m+(MODULES[m]?": "+MODULES[m]:"");
+    sel.appendChild(opt);
+  });
+})();
+
+const KEY="netdef_defs_v1", THEMEKEY="netdef_theme";
+let defs={};
+try{defs=JSON.parse(localStorage.getItem(KEY)||"{}");}catch(e){defs={};}
+
+function save(){try{localStorage.setItem(KEY,JSON.stringify(defs));}catch(e){}}
+
+// ---- theme ----
+function applyTheme(t){document.documentElement.setAttribute("data-theme",t);}
+let theme=localStorage.getItem(THEMEKEY)|| (matchMedia&&matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");
+applyTheme(theme);
+document.getElementById("theme").onclick=()=>{theme=theme==="dark"?"light":"dark";applyTheme(theme);localStorage.setItem(THEMEKEY,theme);};
+
+const list=document.getElementById("list");
+const search=document.getElementById("search");
+const fMod=document.getElementById("filterMod");
+const fState=document.getElementById("filterState");
+
+function render(){
+  const q=search.value.trim().toLowerCase();
+  const mod=fMod.value, st=fState.value;
+  list.innerHTML="";
+  let curSec=null, shown=0;
+  TERMS.forEach(o=>{
+    const has=!!(defs[o.id]&&defs[o.id].trim());
+    if(mod&&o.m!==mod)return;
+    if(st==="done"&&!has)return;
+    if(st==="todo"&&has)return;
+    if(q && !(o.t.toLowerCase().includes(q)||o.d.toLowerCase().includes(q)||o.s.toLowerCase().includes(q)))return;
+    if(o.s!==curSec){curSec=o.s;const h=document.createElement("div");h.className="sec";h.textContent="Module "+o.m+" · "+o.s;list.appendChild(h);}
+    shown++;
+    const card=document.createElement("div");
+    card.className="card"+(has?" done":"");
+    card.innerHTML=
+      '<div class="term">'+esc(o.t)+' <span class="tag">'+esc(o.s)+'</span></div>'+
+      '<textarea placeholder="Write the definition in your own words…">'+esc(defs[o.id]||"")+'</textarea>'+
+      '<div class="tools">'+
+        '<button class="reveal">▸ Reveal source definition</button>'+
+        '<span class="saveddot">saved ✓</span>'+
+      '</div>'+
+      '<div class="src"><span class="lbl">Reference</span>'+esc(o.d)+'</div>';
+    const ta=card.querySelector("textarea");
+    const dot=card.querySelector(".saveddot");
+    let tmr;
+    ta.addEventListener("input",()=>{
+      defs[o.id]=ta.value;save();
+      card.classList.toggle("done",!!ta.value.trim());
+      dot.classList.add("show");clearTimeout(tmr);tmr=setTimeout(()=>dot.classList.remove("show"),900);
+      updateStats();
+    });
+    const rev=card.querySelector(".reveal");
+    const src=card.querySelector(".src");
+    rev.onclick=()=>{const on=src.classList.toggle("show");rev.textContent=(on?"▾ Hide":"▸ Reveal")+" source definition";};
+    list.appendChild(card);
+  });
+  if(shown===0){const e=document.createElement("div");e.className="card";e.textContent="No terms match your filters.";list.appendChild(e);}
+}
+function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+function updateStats(){
+  const total=TERMS.length;
+  const done=TERMS.filter(o=>defs[o.id]&&defs[o.id].trim()).length;
+  document.getElementById("barFill").style.width=(total?Math.round(done/total*100):0)+"%";
+  document.getElementById("stats").textContent=done+" of "+total+" defined ("+(total?Math.round(done/total*100):0)+"%)";
+}
+
+search.oninput=render; fMod.onchange=render; fState.onchange=render;
+
+// ---- exports ----
+document.getElementById("expAnki").onclick=()=>{
+  // Anki: term <TAB> your definition. Only exports terms you've defined.
+  const lines=TERMS.filter(o=>defs[o.id]&&defs[o.id].trim())
+    .map(o=>o.t.replace(/\t/g," ")+"\t"+defs[o.id].replace(/\t/g," ").replace(/\n/g,"<br>"));
+  if(!lines.length){alert("Define some terms first, then export.");return;}
+  dl("netdef-anki.txt", lines.join("\n"), "text/plain");
+};
+document.getElementById("expJson").onclick=()=>dl("netdef-backup.json", JSON.stringify(defs,null,2), "application/json");
+document.getElementById("impJson").onclick=()=>document.getElementById("fileIn").click();
+document.getElementById("fileIn").onchange=(e)=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const o=JSON.parse(r.result);if(confirm("Restore will merge saved definitions into this page. Continue?")){Object.assign(defs,o);save();render();updateStats();}}catch(err){alert("That file could not be read as a backup.");}};
+  r.readAsText(f);
+};
+function dl(name,content,type){
+  const b=new Blob([content],{type});const u=URL.createObjectURL(b);
+  const a=document.createElement("a");a.href=u;a.download=name;a.click();URL.revokeObjectURL(u);
+}
+
+render();updateStats();
+</script>
+</body>
+</html>
