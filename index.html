@@ -7,7 +7,7 @@
   localStorage is blocked, so those toggles will reset on reload. Download the
   file to keep your progress.
 -->
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -384,6 +384,67 @@ html[data-theme="light"] .qr-item{background:var(--mantle)}
   .hero{border:0;padding:0 0 10px;background:none}
   @page{margin:1.4cm}
 }
+
+/* ===== added: accessibility & touch ===== */
+@media (prefers-reduced-motion: reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+button,.chip,.quiz-opt,.rb,.icon-btn,.study-tab,select{min-height:34px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+mark{background:color-mix(in srgb,var(--yellow) 42%,transparent);color:var(--text);border-radius:3px;padding:0 1px}
+.card.kbfocus{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 40%,transparent)}
+.tip-flag{color:var(--yellow);font-size:12px}
+.card.mst-mastered{border-left:2px solid color-mix(in srgb,var(--green) 55%,var(--border))}
+.card.mst-learning{border-left:2px solid color-mix(in srgb,var(--yellow) 55%,var(--border))}
+/* ===== added: TOC mastery rings ===== */
+.toc a .ring{width:16px;height:16px;border-radius:50%;flex-shrink:0;background:var(--border);position:relative}
+.toc a .ring::after{content:"";position:absolute;inset:3.5px;border-radius:50%;background:var(--surface)}
+.toc a .tname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* ===== added: progress heatmap ===== */
+.heatwrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin:0 0 18px}
+.heathead{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.heathead h3{font-size:13px;margin:0}
+.heatkey{display:flex;gap:12px;font-size:11px;color:var(--subtext)}
+.heatkey span{display:flex;align-items:center;gap:5px}
+.hc{width:11px;height:11px;border-radius:3px;display:inline-block}
+.hc.new{background:var(--surface2)}.hc.learning{background:var(--yellow)}.hc.mastered{background:var(--green)}
+.heatrow{display:flex;align-items:flex-start;gap:9px;margin-bottom:6px}
+.hml{font-family:ui-monospace,Menlo,monospace;font-size:10px;font-weight:700;width:30px;flex-shrink:0;padding-top:2px}
+.heatcells{display:flex;flex-wrap:wrap;gap:3px}
+.hcell{width:12px;height:12px;border-radius:3px;background:var(--surface2);cursor:pointer;transition:transform .1s}
+.hcell:hover{transform:scale(1.35)}
+.hcell.learning{background:color-mix(in srgb,var(--cat) 45%,var(--surface2))}
+.hcell.mastered{background:var(--cat)}
+/* ===== added: SRS flashcard ratings ===== */
+.fc-rate{display:flex;gap:8px;margin:10px 0 4px}
+.rb{flex:1;border:1px solid var(--border);border-radius:11px;padding:11px;font-weight:700;font-size:14px;background:var(--surface);color:var(--text);cursor:pointer}
+.rb.again{border-color:color-mix(in srgb,var(--red) 45%,var(--border));color:var(--red)}
+.rb.good{border-color:color-mix(in srgb,var(--accent) 45%,var(--border));color:var(--accent)}
+.rb.easy{border-color:color-mix(in srgb,var(--green) 45%,var(--border));color:var(--green)}
+.rb:hover{filter:brightness(1.08)}
+.fc-tip{margin-top:10px;font-size:12.5px;color:var(--yellow);line-height:1.45;text-align:left}
+.chip.tts[aria-pressed="true"]{color:#fff;background:var(--teal);border-color:var(--teal)}
+/* ===== added: exam mode ===== */
+.exam-clock{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--peach);font-weight:700}
+.quiz-opt.picked{outline:2px solid var(--accent)}
+.exam-banner{text-align:center;font-weight:800;letter-spacing:.5px;border-radius:11px;padding:11px;margin-bottom:12px;font-size:14px}
+.exam-banner.pass{background:color-mix(in srgb,var(--green) 20%,var(--surface));color:var(--green);border:1px solid var(--green)}
+.exam-banner.fail{background:color-mix(in srgb,var(--red) 18%,var(--surface));color:var(--red);border:1px solid var(--red)}
+/* ===== added: stats ===== */
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:16px}
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center}
+.scard b{display:block;font-family:ui-monospace,Menlo,monospace;font-size:20px;color:var(--accent)}
+.scard span{font-size:10.5px;color:var(--subtext);text-transform:uppercase;letter-spacing:.5px}
+.mbars{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.mbar{display:flex;align-items:center;gap:9px}
+.mbar .ml{font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:700;width:30px;flex-shrink:0}
+.mtrack{flex:1;height:9px;background:var(--surface2);border-radius:5px;position:relative;overflow:hidden}
+.mtrack .mm{position:absolute;left:0;top:0;height:100%;border-radius:5px}
+.mtrack .mlrn{position:absolute;top:0;height:100%;background:color-mix(in srgb,var(--yellow) 45%,transparent)}
+.mbar .mnum{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:var(--subtext);width:82px;text-align:right;flex-shrink:0}
+.histwrap .qr-h{margin:0 0 8px}
+.hist{display:flex;align-items:flex-end;gap:5px;height:56px;padding:4px 0}
+.hbar{flex:1;max-width:22px;height:100%;display:flex;align-items:flex-end;background:var(--surface2);border-radius:4px}
+.hbar i{display:block;width:100%;border-radius:4px;min-height:5px}
+
 </style>
 </head>
 <body>
@@ -452,8 +513,15 @@ html[data-theme="light"] .qr-item{background:var(--mantle)}
       <button class="chip star" id="favFilter" aria-pressed="false">★ Favorites</button>
       <button class="chip" id="hideLearned" aria-pressed="false">Hide learned</button>
       <button class="chip" id="resetBtn" title="Clear all filters">Reset</button>
+      <span class="sep"></span>
+      <button class="chip" id="heatToggle" aria-pressed="false">Progress map</button>
+      <button class="chip" id="exportBtn" title="Save progress to a file">Export</button>
+      <button class="chip" id="importBtn" title="Load progress from a file">Import</button>
+      <button class="chip" id="printBtn" title="Printable cram sheet">Print sheet</button>
+      <input type="file" id="fileImport" accept="application/json" hidden>
     </div>
 
+    <section class="heatwrap" id="heatwrap" hidden></section>
     <div id="content"></div>
     <div class="empty" id="emptyState" style="display:none">
       <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -470,6 +538,8 @@ html[data-theme="light"] .qr-item{background:var(--mantle)}
       <div class="study-tabs" role="tablist" aria-label="Study mode">
         <button class="study-tab active" id="tabFlash" role="tab" aria-selected="true">Flashcards</button>
         <button class="study-tab" id="tabQuiz" role="tab" aria-selected="false">Quiz</button>
+        <button class="study-tab" id="tabExam" role="tab" aria-selected="false">Exam</button>
+        <button class="study-tab" id="tabStats" role="tab" aria-selected="false">Stats</button>
       </div>
       <button class="x" id="fcClose" aria-label="Close study">&times;</button>
     </div>
@@ -478,8 +548,14 @@ html[data-theme="light"] .qr-item{background:var(--mantle)}
     <div id="fcView">
       <div class="fc-bar">
         <select id="fcDeck" aria-label="Choose deck"></select>
+        <select id="fcMode" aria-label="Card mode">
+          <option value="due">Due now</option>
+          <option value="all">All</option>
+          <option value="new">New only</option>
+        </select>
         <button class="chip" id="fcShuffle">⤮ Shuffle</button>
         <button class="chip" id="fcFavOnly" aria-pressed="false">★ Favorites only</button>
+        <button class="chip tts" id="fcTts" aria-pressed="false" title="Read cards aloud">🔊 Audio</button>
         <span class="fc-count" id="fcCount">0 / 0</span>
       </div>
       <div class="fc-progress"><i id="fcProgBar"></i></div>
@@ -493,9 +569,11 @@ html[data-theme="light"] .qr-item{background:var(--mantle)}
           <div class="fc-face fc-back">
             <span class="side">Definition</span><span class="cat" id="fcBackCat"></span>
             <div class="fc-def" id="fcDef"></div>
+            <div class="fc-tip" id="fcTip"></div>
           </div>
         </div>
       </div>
+      <div class="fc-rate" id="fcRate"></div>
       <div class="fc-actions">
         <button class="icon-btn" id="fcPrev">‹ Prev</button>
         <button class="icon-btn" id="fcStar">★ Star</button>
@@ -514,6 +592,7 @@ html[data-theme="light"] .qr-item{background:var(--mantle)}
             <option value="20">20 questions</option>
             <option value="0">All in deck</option>
           </select>
+          <button class="chip" id="quizWeak" aria-pressed="false" title="Draw more from terms you miss or have not mastered">🎯 Weak spots</button>
           <button class="chip" id="quizFavOnly" aria-pressed="false">★ Favorites only</button>
         </div>
         <p class="quiz-intro">Read the definition and pick the term it describes. You get instant feedback on each question and a full review of anything you miss at the end. Use keys <span class="kbd">1</span>-<span class="kbd">4</span> to answer.</p>
@@ -551,6 +630,34 @@ html[data-theme="light"] .qr-item{background:var(--mantle)}
         </div>
       </div>
     </div>
+
+    <!-- ===== EXAM VIEW ===== -->
+    <div id="examView" hidden>
+      <div id="examIntro">
+        <p class="quiz-intro"><b>Exam simulation.</b> Up to <b>90 questions</b> drawn from every domain, timed, with no feedback until the end. Pass bar is <b>83%</b> to match the SY0-701 cut of 750/900. This mirrors this kit's content, not the real item bank.</p>
+        <p class="quiz-note" id="examBest" hidden></p>
+        <button class="icon-btn primary quiz-start" id="examStart">Begin exam &rarr;</button>
+      </div>
+      <div id="examPlay" hidden>
+        <div class="quiz-status">
+          <span class="fc-count" id="examPos">1 / 90</span>
+          <span class="exam-clock" id="examClock">00:00</span>
+        </div>
+        <div class="fc-progress"><i id="examBar"></i></div>
+        <div class="quiz-prompt"><span class="quiz-cat" id="examCat"></span><p id="examQ"></p></div>
+        <div class="quiz-options" id="examOptions" role="group" aria-label="Answer choices"></div>
+        <div class="fc-actions"><button class="icon-btn primary" id="examNext" hidden>Next &rsaquo;</button></div>
+      </div>
+      <div id="examResult" hidden>
+        <div class="exam-banner" id="examBanner"></div>
+        <div class="quiz-result-score"><div class="qr-pct" id="exPct">0%</div><div class="qr-sub" id="exSub">0 of 0</div></div>
+        <div id="exReviewWrap"><h4 class="qr-h">Review</h4><div id="exReview"></div></div>
+        <div class="fc-actions"><button class="icon-btn primary" id="exNew">Back to exam setup</button></div>
+      </div>
+    </div>
+
+    <!-- ===== STATS VIEW ===== -->
+    <div id="statsView" hidden></div>
   </div>
 </div>
 
@@ -977,6 +1084,54 @@ function saveSet(k,s){ try{ localStorage.setItem(k,JSON.stringify([...s])); }cat
 function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function stripTags(s){ return s.replace(/<[^>]+>/g,''); }
 
+/* ---- spaced repetition (Leitner) ---- */
+const LS_SRS='secplus_srs', LS_STATS='secplus_stats', LS_STREAK='secplus_streak';
+const SRS_INT=[0,6e4,864e5,3*864e5,7*864e5,16*864e5,40*864e5];
+let srs; try{ srs=JSON.parse(localStorage.getItem(LS_SRS)||'{}'); }catch(e){ srs={}; }
+function saveSrs(){ try{ localStorage.setItem(LS_SRS,JSON.stringify(srs)); }catch(e){} }
+function srsOf(id){ return srs[id]||(srs[id]={b:0,due:0,s:0}); }
+function rate(id,grade){ const r=srsOf(id); r.s++;
+  if(grade==='again') r.b=Math.max(0,r.b-2);
+  else if(grade==='good') r.b=Math.min(6,r.b+1);
+  else r.b=Math.min(6,r.b+2);
+  r.due=Date.now()+SRS_INT[Math.min(r.b,SRS_INT.length-1)]; r.l=grade; saveSrs(); bumpStreak();
+  if(r.b>=5){ learned.add(id); saveSet(LS.learned,learned); } }
+function mastery(id){ if(learned.has(id)||(srs[id]&&srs[id].b>=5)) return 'mastered';
+  if(srs[id]&&srs[id].s>0) return 'learning'; return 'new'; }
+function dueCount(key){ return TERMS.filter(t=>(key==='__all'||t.d===key)&&srsOf(t.id).due<=Date.now()&&mastery(t.id)!=='mastered').length; }
+
+/* ---- quiz stats + study streak ---- */
+let stats; try{ stats=JSON.parse(localStorage.getItem(LS_STATS)||'{"cat":{},"hist":[]}'); }catch(e){ stats={cat:{},hist:[]}; }
+if(!stats.cat) stats.cat={}; if(!stats.hist) stats.hist=[];
+function saveStats(){ try{ localStorage.setItem(LS_STATS,JSON.stringify(stats)); }catch(e){} }
+function recordAnswer(cat,ok){ const o=stats.cat[cat]||(stats.cat[cat]={s:0,c:0}); o.s++; if(ok)o.c++; }
+function recordQuiz(score,total,exam){ stats.hist.push({t:Date.now(),score,total,exam:!!exam}); if(stats.hist.length>50) stats.hist=stats.hist.slice(-50); saveStats(); }
+let streak; try{ streak=JSON.parse(localStorage.getItem(LS_STREAK)||'{"last":"","days":0}'); }catch(e){ streak={last:'',days:0}; }
+function saveStreak(){ try{ localStorage.setItem(LS_STREAK,JSON.stringify(streak)); }catch(e){} }
+function bumpStreak(){ const t=new Date().toISOString().slice(0,10); if(streak.last===t) return;
+  const y=new Date(Date.now()-864e5).toISOString().slice(0,10); streak.days=(streak.last===y)?streak.days+1:1; streak.last=t; saveStreak(); }
+
+/* ---- progress export / import (cross-device) ---- */
+function exportProgress(){
+  const data={v:1,app:'secplus',learned:[...learned],favs:[...favs],srs,stats,streak,theme:document.documentElement.getAttribute('data-theme')};
+  const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='secplus-progress-'+new Date().toISOString().slice(0,10)+'.json'; a.click(); URL.revokeObjectURL(a.href);
+  toast('Progress exported');
+}
+function importProgress(file){
+  const rd=new FileReader();
+  rd.onload=()=>{ try{ const d=JSON.parse(rd.result);
+    if(d.learned){ learned=new Set(d.learned); saveSet(LS.learned,learned); }
+    if(d.favs){ favs=new Set(d.favs); saveSet(LS.favs,favs); }
+    if(d.srs){ srs=d.srs; saveSrs(); }
+    if(d.stats){ stats=d.stats; saveStats(); }
+    if(d.streak){ streak=d.streak; saveStreak(); }
+    render(); toast('Progress imported');
+  }catch(e){ toast('Import failed: bad file'); } };
+  rd.readAsText(file);
+}
+
 /* ============================================================
    RENDER
    ============================================================ */
@@ -996,6 +1151,11 @@ function termMatches(t){
   return true;
 }
 
+function hl(s){ if(!query) return esc(s); const q=query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  try{ return esc(s).replace(new RegExp('('+q+')','gi'),'<mark>$1</mark>'); }catch(e){ return esc(s); } }
+function hlHTML(htmlStr){ if(!query) return htmlStr; const q=query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  let re; try{ re=new RegExp('('+q+')','gi'); }catch(e){ return htmlStr; }
+  return htmlStr.split(/(<[^>]+>)/).map(seg=> seg.startsWith('<')?seg:seg.replace(re,'<mark>$1</mark>')).join(''); }
 function cardHTML(t){
   const d = domainOf(t.d);
   const star = favs.has(t.id), lrn = learned.has(t.id);
@@ -1004,14 +1164,15 @@ function cardHTML(t){
     code = '<div class="code"><button class="copy" data-code="'+encodeURIComponent(t.code)+'" aria-label="Copy commands" title="Copy">'
       + iconCopy() + '</button><pre>'+ t.code.split('\n').map(l=> l.trim().startsWith('#') ? '<span class="cmt">'+esc(l)+'</span>' : esc(l)).join('\n') +'</pre></div>';
   }
-  return '<div class="card'+(lrn?' learned':'')+'" style="--cat:'+d.color+'" data-id="'+t.id+'" tabindex="0" role="button" aria-label="'+esc(t.t)+', open details">'
-    + '<div class="card-top"><span class="term-name">'+esc(t.t)+'</span>'
+  const mst=mastery(t.id), tip=t.e&&t.e.x;
+  return '<div class="card mst-'+mst+(lrn?' learned':'')+'" style="--cat:'+d.color+'" data-id="'+t.id+'" tabindex="0" role="button" aria-label="'+esc(t.t)+', open details">'
+    + '<div class="card-top"><span class="term-name">'+hl(t.t)+(tip?' <span class="tip-flag" title="Has exam tip">⚑</span>':'')+'</span>'
     + '<span class="term-tools">'
     + '<button class="tool js-expand" data-id="'+t.id+'" aria-label="Open in-depth details" title="In-depth details"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18h6M10 21h4M12 2a7 7 0 0 0-4 12c.6.5 1 1.2 1 2h6c0-.8.4-1.5 1-2a7 7 0 0 0-4-12z"/></svg></button>'
     + '<button class="tool js-star'+(star?' on-star':'')+'" data-id="'+t.id+'" aria-pressed="'+star+'" aria-label="Favorite" title="Favorite">'+(star?'★':'☆')+'</button>'
     + '<button class="tool js-learn'+(lrn?' on-learn':'')+'" data-id="'+t.id+'" aria-pressed="'+lrn+'" aria-label="Mark as learned" title="Mark as learned">'+iconCheck()+'</button>'
     + '</span></div>'
-    + '<div class="term-def">'+t.def+'</div>'
+    + '<div class="term-def">'+hlHTML(t.def)+'</div>'
     + code
     + '<span class="term-tag">'+(t.x==='Core'?'Core':'Domain '+t.x)+'</span>'
     + '</div>';
@@ -1050,7 +1211,29 @@ function render(){
   content.innerHTML = html;
   $('#emptyState').style.display = anyVisible? 'none':'block';
   updateGlobalProgress();
+  renderHeat();
   bindCopyEarly();
+}
+function renderHeat(){
+  const h=$('#heatwrap'); if(!h||h.hidden) return;
+  let out='<div class="heathead"><h3>Progress map</h3><div class="heatkey"><span><i class="hc new"></i>new</span><span><i class="hc learning"></i>learning</span><span><i class="hc mastered"></i>mastered</span></div></div>';
+  DOMAINS.forEach(d=>{ const items=TERMS.filter(t=>t.d===d.key);
+    out+='<div class="heatrow"><span class="hml" style="color:'+d.color+'">'+d.num+'</span><div class="heatcells">'
+      +items.map(t=>'<i class="hcell '+mastery(t.id)+'" data-id="'+t.id+'" title="'+esc(t.t)+'" style="--cat:'+d.color+'"></i>').join('')+'</div></div>';
+  });
+  h.innerHTML=out;
+  h.querySelectorAll('.hcell').forEach(c=>c.onclick=()=>{ dtStack=[]; openDetail(c.dataset.id,true); });
+}
+function printSheet(){
+  const style='<style>body{font:12px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;color:#111;margin:24px;max-width:900px}h1{font-size:20px;margin:0 0 2px}.sub{color:#666;margin:0 0 16px;font-size:11px}h2{font-size:13px;margin:16px 0 6px;border-bottom:1px solid #ccc;padding-bottom:3px}.row{margin:3px 0}.t{font-weight:700}table{border-collapse:collapse;width:100%;margin:6px 0}td{border:1px solid #ddd;padding:3px 7px;font-size:11px;vertical-align:top}td:first-child{font-family:ui-monospace,Menlo,monospace;white-space:nowrap;background:#f6f6f6}.refs{display:grid;grid-template-columns:1fr 1fr;gap:14px}</style>';
+  let body='<h1>Security+ SY0-701 — cram sheet</h1><p class="sub">'+TERMS.length+' terms · exam tips + quick reference · generated '+new Date().toLocaleDateString()+'</p>';
+  body+='<div class="refs"><table><tr><td colspan="2" style="background:#eee;font-weight:700">Ports</td></tr>'+PORTS.map(p=>'<tr><td>'+esc(String(p[0]))+'</td><td>'+esc(p[1])+' ('+esc(p[2])+') '+esc(stripTags(p[3]||''))+'</td></tr>').join('')+'</table>';
+  body+='<table><tr><td colspan="2" style="background:#eee;font-weight:700">OSI model</td></tr>'+OSI.map(o=>'<tr><td>'+esc(String(o[0]))+' '+esc(o[1])+'</td><td>'+esc(o[2]||'')+(o[3]?' — '+esc(o[3]):'')+'</td></tr>').join('')+'</table></div>';
+  DOMAINS.forEach(d=>{ const tips=TERMS.filter(t=>t.d===d.key && t.e && t.e.x); if(!tips.length) return;
+    body+='<h2>'+d.num+' · '+esc(d.name)+'</h2>'+tips.map(t=>'<div class="row"><span class="t">'+esc(t.t)+'.</span> '+esc(stripTags(t.e.x))+'</div>').join(''); });
+  const w=window.open('','_blank'); if(!w){ toast('Allow pop-ups to print the sheet'); return; }
+  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Security+ cram sheet</title>'+style+'</head><body>'+body+'</body></html>');
+  w.document.close(); w.focus(); setTimeout(()=>w.print(),300);
 }
 
 function updateGlobalProgress(){
@@ -1058,9 +1241,12 @@ function updateGlobalProgress(){
   $('#globalBar').style.width = pct+'%';
   $('#globalTxt').textContent = pct+'% learned ('+learned.size+'/'+TERMS.length+')';
   document.querySelectorAll('#toc a').forEach(a=>{
-    const st = domainStats(a.dataset.key);
-    const dot = a.querySelector('.mini-dot');
-    if(dot) dot.style.opacity = st.pct===100?1:.35;
+    const key=a.dataset.key, all=TERMS.filter(t=>t.d===key), n=all.length||1;
+    const mstr=all.filter(t=>mastery(t.id)==='mastered').length;
+    const learn=all.filter(t=>mastery(t.id)==='learning').length;
+    const ring=a.querySelector('.ring'); if(!ring) return;
+    const p=Math.round(mstr/n*100), lp=Math.round((mstr+learn)/n*100);
+    ring.style.background='conic-gradient(var(--cat) '+p+'%, color-mix(in srgb,var(--cat) 30%,transparent) '+p+'% '+lp+'%, var(--border) '+lp+'%)';
   });
 }
 
@@ -1069,8 +1255,8 @@ function buildTOC(){
   const toc = $('#toc');
   toc.innerHTML = DOMAINS.map(d=>
     '<a href="#'+d.key+'" data-key="'+d.key+'" style="--cat:'+d.color+'">'
-    +'<span class="num">'+d.num+'</span><span class="dot mini-dot"></span>'
-    +'<span>'+d.name+'</span></a>'
+    +'<span class="num">'+d.num+'</span><span class="ring mini-dot" id="ring-'+d.key+'"></span>'
+    +'<span class="tname">'+d.name+'</span></a>'
   ).join('');
 }
 
@@ -1135,6 +1321,11 @@ $('#filters').addEventListener('click', e=>{
 });
 $('#favFilter').addEventListener('click',function(){ favOnly=!favOnly; this.setAttribute('aria-pressed',favOnly); render(); });
 $('#hideLearned').addEventListener('click',function(){ hideLearned=!hideLearned; this.setAttribute('aria-pressed',hideLearned); render(); });
+$('#heatToggle').addEventListener('click',function(){ const h=$('#heatwrap'); h.hidden=!h.hidden; this.setAttribute('aria-pressed',!h.hidden); renderHeat(); });
+$('#exportBtn').addEventListener('click',exportProgress);
+$('#importBtn').addEventListener('click',()=>$('#fileImport').click());
+$('#fileImport').addEventListener('change',e=>{ if(e.target.files[0]) importProgress(e.target.files[0]); e.target.value=''; });
+$('#printBtn').addEventListener('click',printSheet);
 $('#resetBtn').addEventListener('click',()=>{ activeExam=null;favOnly=false;hideLearned=false;query='';
   $('#search').value=''; $('#searchClear').style.display='none';
   $('#favFilter').setAttribute('aria-pressed',false); $('#hideLearned').setAttribute('aria-pressed',false);
@@ -1174,7 +1365,7 @@ function initSpy(){
    FLASHCARDS / QUIZ
    ============================================================ */
 const fcModal=$('#fcModal');
-let deck=[], fcIdx=0, fcFav=false;
+let deck=[], fcIdx=0, fcFav=false, fcMode="due", ttsOn=false;
 function openFC(){ buildDeckSelect(); buildDeck(); setStudyMode('flash'); fcModal.classList.add('open'); document.body.style.overflow='hidden'; $('#flashcard').focus(); }
 function closeFC(){ fcModal.classList.remove('open'); document.body.style.overflow=''; render(); }
 $('#studyBtn').addEventListener('click',openFC);
@@ -1190,26 +1381,39 @@ function buildDeckSelect(){
 }
 function buildDeck(){
   const key=$('#fcDeck').value;
-  deck = TERMS.filter(t=> (key==='__all'||t.d===key) && (!fcFav||favs.has(t.id)));
-  shuffle(deck); fcIdx=0; showCard();
+  let pool = TERMS.filter(t=> (key==='__all'||t.d===key) && (!fcFav||favs.has(t.id)));
+  if(fcMode==='due'){ let d=pool.filter(t=>srsOf(t.id).due<=Date.now()&&mastery(t.id)!=='mastered');
+    if(!d.length) d=pool.filter(t=>mastery(t.id)!=='mastered'); pool=d; }
+  else if(fcMode==='new'){ pool=pool.filter(t=>mastery(t.id)==='new'); }
+  deck=pool.slice(); shuffle(deck); fcIdx=0; showCard();
 }
+function fcSpeak(){ if(!ttsOn||!window.speechSynthesis) return; const t=deck[fcIdx]; if(!t) return;
+  speechSynthesis.cancel(); const flipped=$('#flashcard').classList.contains('flipped');
+  const u=new SpeechSynthesisUtterance(flipped?stripTags(t.def):t.t); u.rate=1; speechSynthesis.speak(u); }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
 function showCard(){
   const card=$('#flashcard'); card.classList.remove('flipped');
-  const t=deck[fcIdx];
-  if(!t){ $('#fcTerm').textContent='No cards'; $('#fcDef').textContent='This deck is empty. Star some terms or pick another deck.'; $('#fcCount').textContent='0 / 0'; $('#fcProgBar').style.width='0%'; $('#fcFrontCat').textContent=''; $('#fcBackCat').textContent=''; return; }
+  const t=deck[fcIdx]; const rate=$('#fcRate');
+  if(!t){ $('#fcTerm').textContent='Nothing due'; $('#fcDef').textContent='Great work. Switch mode to All or New, pick another deck, or star some terms.'; $('#fcTip').innerHTML=''; $('#fcCount').textContent='0 / 0'; $('#fcProgBar').style.width='0%'; $('#fcFrontCat').textContent=''; $('#fcBackCat').textContent=''; if(rate)rate.innerHTML=''; return; }
   const d=domainOf(t.d);
   $('#fcTerm').textContent=t.t;
   $('#fcDef').innerHTML=t.def;
-  $('#fcFrontCat').textContent=d.num; $('#fcFrontCat').style.setProperty('--fc-cat',d.color);
+  $('#fcTip').innerHTML = (t.e&&t.e.x)?('⚑ '+t.e.x):'';
+  $('#fcFrontCat').textContent=d.num+' · box '+srsOf(t.id).b; $('#fcFrontCat').style.setProperty('--fc-cat',d.color);
   $('#fcBackCat').textContent=d.name; $('#fcBackCat').style.setProperty('--fc-cat',d.color);
   document.querySelectorAll('.fc-face').forEach(f=>f.style.setProperty('--fc-cat',d.color));
   $('#fcCount').textContent=(fcIdx+1)+' / '+deck.length;
   $('#fcProgBar').style.width=((fcIdx+1)/deck.length*100)+'%';
   $('#fcStar').innerHTML = favs.has(t.id)?'★ Starred':'☆ Star';
   $('#fcLearn').innerHTML = learned.has(t.id)?'✓ Learned':'✓ Mark learned';
+  if(rate){ rate.innerHTML='<button class="rb again" data-g="again">Again</button><button class="rb good" data-g="good">Good</button><button class="rb easy" data-g="easy">Easy</button>';
+    rate.querySelectorAll('.rb').forEach(b=>b.onclick=(ev)=>{ ev.stopPropagation(); rate_card(t.id,b.dataset.g); }); }
+  fcSpeak();
 }
-function flip(){ $('#flashcard').classList.toggle('flipped'); }
+function rate_card(id,g){ rate(id,g); deck.splice(fcIdx,1); if(fcIdx>=deck.length) fcIdx=0; showCard(); }
+function flip(){ $('#flashcard').classList.toggle('flipped'); fcSpeak(); }
+$('#fcMode').addEventListener('change',function(){ fcMode=this.value; buildDeck(); });
+$('#fcTts').addEventListener('click',function(){ ttsOn=!ttsOn; this.setAttribute('aria-pressed',ttsOn); if(!ttsOn&&window.speechSynthesis) speechSynthesis.cancel(); });
 $('#flashcard').addEventListener('click',flip);
 $('#flashcard').addEventListener('keydown',e=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); flip(); } });
 $('#fcNext').addEventListener('click',()=>{ if(deck.length){ fcIdx=(fcIdx+1)%deck.length; showCard(); } });
@@ -1231,11 +1435,24 @@ document.addEventListener('keydown',e=>{
   }
 });
 
+/* ---- keyboard nav through visible term cards ---- */
+let kbIdx=-1;
+function visCards(){ return [...content.querySelectorAll('.card')]; }
+function kbFocus(i){ const c=visCards(); if(!c.length) return; kbIdx=(i+c.length)%c.length;
+  c.forEach(el=>el.classList.remove('kbfocus')); const el=c[kbIdx]; el.classList.add('kbfocus'); el.scrollIntoView({block:'center',behavior:'smooth'}); }
+document.addEventListener('keydown',e=>{
+  if(fcModal.classList.contains('open')||dtModal.classList.contains('open')) return;
+  const inSearch=document.activeElement===search;
+  if(e.key==='ArrowDown'){ e.preventDefault(); if(inSearch) search.blur(); kbFocus(kbIdx+1); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); kbFocus(kbIdx-1); }
+  else if(e.key==='Enter'&&kbIdx>=0&&!inSearch){ const c=visCards()[kbIdx]; if(c){ dtStack=[]; openDetail(c.dataset.id,true); } }
+});
+
 /* ============================================================
    INIT
    ============================================================ */
 (function init(){
-  let saved='dark'; try{ saved=localStorage.getItem(LS.theme)|| (window.matchMedia&&matchMedia('(prefers-color-scheme:light)').matches?'light':'dark'); }catch(e){}
+  let saved='light'; try{ saved=localStorage.getItem(LS.theme)||'light'; }catch(e){}
   setTheme(saved);
   buildTOC(); buildHero(); buildExamChips(); render(); initSpy();
 })();
@@ -1614,16 +1831,20 @@ const QUIZ_ALL=(()=>{ const seen={},out=[];
 let quizPool=[], qIdx=0, qScore=0, qMissed=[], qAnswered=false;
 
 function setStudyMode(mode){
-  const flash=mode==='flash';
-  document.getElementById('fcView').hidden=!flash;
-  document.getElementById('quizView').hidden=flash;
-  const tf=$('#tabFlash'), tq=$('#tabQuiz');
-  tf.classList.toggle('active',flash); tf.setAttribute('aria-selected',flash);
-  tq.classList.toggle('active',!flash); tq.setAttribute('aria-selected',!flash);
-  if(!flash){ $('#quizSetup').hidden=false; $('#quizPlay').hidden=true; $('#quizResult').hidden=true; $('#quizNote').hidden=true; }
+  const views={flash:'fcView',quiz:'quizView',exam:'examView',stats:'statsView'};
+  Object.keys(views).forEach(k=>{ const el=document.getElementById(views[k]); if(el) el.hidden=(k!==mode); });
+  [['flash','tabFlash'],['quiz','tabQuiz'],['exam','tabExam'],['stats','tabStats']].forEach(([k,id])=>{
+    const b=$('#'+id); if(!b) return; b.classList.toggle('active',k===mode); b.setAttribute('aria-selected',k===mode); });
+  if(mode==='quiz'){ $('#quizSetup').hidden=false; $('#quizPlay').hidden=true; $('#quizResult').hidden=true; $('#quizNote').hidden=true; }
+  if(mode==='exam'){ examMode=false; clearInterval(examTimer); $('#examIntro').hidden=false; $('#examPlay').hidden=true; $('#examResult').hidden=true;
+    const best=stats.hist.filter(h=>h.exam).reduce((a,h)=>Math.max(a,Math.round(h.score/h.total*100)),0);
+    const eb=$('#examBest'); if(best){ eb.hidden=false; eb.textContent='Your best exam score: '+best+'%'; } else eb.hidden=true; }
+  if(mode==='stats') statsView();
 }
 $('#tabFlash').onclick=()=>setStudyMode('flash');
 $('#tabQuiz').onclick=()=>setStudyMode('quiz');
+$('#tabExam').onclick=()=>setStudyMode('exam');
+$('#tabStats').onclick=()=>setStudyMode('stats');
 
 function buildQuizDeckSelect(){
   const sel=$('#quizDeck'); if(sel.dataset.built) return;
@@ -1634,10 +1855,22 @@ function quizCandidates(){
   const key=$('#quizDeck').value, fav=$('#quizFavOnly').getAttribute('aria-pressed')==='true';
   return QUIZ_ALL.filter(t=>(key==='__all'||t.d===key)&&(!fav||favs.has(t.id)));
 }
+function weightPick(pool,n){
+  const missed=new Set(qMissed.map(q=>q.t.id));
+  const w=t=>{ const r=srsOf(t.id); let s=1; const m=mastery(t.id);
+    if(m==='new') s+=2; else if(r.b<=1) s+=2; else if(r.b<=3) s+=1;
+    if(r.l==='again') s+=2; if(missed.has(t.id)) s+=1; return s; };
+  const bag=[]; pool.forEach(t=>{ const k=w(t); for(let i=0;i<k;i++) bag.push(t); });
+  shuffle(bag); const out=[], seen=new Set();
+  for(const t of bag){ if(seen.has(t.id)) continue; seen.add(t.id); out.push(t); if(out.length>=n) break; }
+  return out;
+}
 function buildQuiz(terms, useAll){
   const count=parseInt($('#quizCount').value,10);
-  let pick=terms.slice(); shuffle(pick);
-  if(!useAll && count>0) pick=pick.slice(0,count);
+  const weak=$('#quizWeak')&&$('#quizWeak').getAttribute('aria-pressed')==='true';
+  let pick;
+  if(!useAll && weak && count>0){ pick=weightPick(terms,count); }
+  else { pick=terms.slice(); shuffle(pick); if(!useAll && count>0) pick=pick.slice(0,count); }
   quizPool=pick.map(t=>{
     let pool=QUIZ_ALL.filter(x=>x.d===t.d && x.t!==t.t); shuffle(pool);
     let distract=pool.slice(0,3);
@@ -1674,6 +1907,7 @@ function answerQ(i){
   $('#quizOptions').querySelectorAll('.quiz-opt').forEach((b,bi)=>{ b.disabled=true;
     if(bi===correct) b.classList.add('correct'); else if(bi===i) b.classList.add('wrong'); });
   const fb=$('#quizFeedback'), tip=(q.t.e&&q.t.e.x)?q.t.e.x:'';
+  recordAnswer(q.t.d, i===correct); bumpStreak();
   if(i===correct){ qScore++; fb.className='quiz-feedback ok'; fb.innerHTML='<b>Correct.</b> '+tip; }
   else { qMissed.push(q); fb.className='quiz-feedback no'; fb.innerHTML='<b>Not quite.</b> The answer is <b>'+esc(q.t.t)+'</b>. '+tip; }
   fb.hidden=false;
@@ -1684,6 +1918,7 @@ function nextQ(){ if(!qAnswered) return; if(qIdx+1>=quizPool.length){ showQuizRe
 function showQuizResult(){
   $('#quizPlay').hidden=true; $('#quizResult').hidden=false;
   const total=quizPool.length, correct=total-qMissed.length, pct=Math.round(correct/total*100);
+  recordQuiz(correct,total,false); render();
   $('#qrPct').textContent=pct+'%';
   $('#qrPct').style.color = pct>=80?'var(--green)':pct>=60?'var(--yellow)':'var(--red)';
   $('#qrSub').textContent=correct+' of '+total+' correct';
@@ -1696,10 +1931,112 @@ function showQuizResult(){
     rev.querySelectorAll('.qopen').forEach(b=>b.onclick=()=>{ closeFC(); dtStack=[]; openDetail(b.dataset.id,true); });
   }
 }
+/* ============================================================
+   EXAM SIMULATION
+   ============================================================ */
+let examMode=false, examTimer=null, examStart=0, examPool=[], exIdx=0, exScore=0, exMissed=[], exAnswered=false;
+function buildExamPool(){
+  let cands=QUIZ_ALL.slice(); shuffle(cands); cands=cands.slice(0,Math.min(90,cands.length));
+  examPool=cands.map(t=>{
+    let pool=QUIZ_ALL.filter(x=>x.d===t.d && x.t!==t.t); shuffle(pool);
+    let distract=pool.slice(0,3);
+    if(distract.length<3){ const more=QUIZ_ALL.filter(x=>x.t!==t.t && distract.indexOf(x)<0); shuffle(more); distract=distract.concat(more.slice(0,3-distract.length)); }
+    const opts=[t,...distract]; shuffle(opts);
+    return {t,options:opts,answer:opts.findIndex(o=>o.t===t.t)};
+  });
+  exIdx=0; exScore=0; exMissed=[];
+}
+function startExam(){
+  examMode=true; buildExamPool();
+  $('#examIntro').hidden=true; $('#examResult').hidden=true; $('#examPlay').hidden=false;
+  examStart=Date.now(); clearInterval(examTimer); examTimer=setInterval(examClock,1000); examClock();
+  examRenderQ();
+}
+function examClock(){ const el=$('#examClock'); if(!el){ clearInterval(examTimer); return; } const s=Math.floor((Date.now()-examStart)/1000);
+  el.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); }
+function examRenderQ(){
+  exAnswered=false; const q=examPool[exIdx], t=q.t, d=domainOf(t.d), keys=['1','2','3','4'];
+  $('#examPos').textContent=(exIdx+1)+' / '+examPool.length;
+  $('#examBar').style.width=(exIdx/examPool.length*100)+'%';
+  $('#examCat').textContent=d.name; $('#examCat').style.setProperty('--q-cat',d.color);
+  $('#examQ').innerHTML='<strong>Which term matches this definition?</strong><br><br>'+t.def;
+  const wrap=$('#examOptions');
+  wrap.innerHTML=q.options.map((o,i)=>'<button class="quiz-opt" data-i="'+i+'"><span class="key">'+keys[i]+'</span><span>'+esc(o.t)+'</span></button>').join('');
+  wrap.querySelectorAll('.quiz-opt').forEach(b=>b.onclick=()=>examAnswer(parseInt(b.dataset.i,10)));
+  const nx=$('#examNext'); nx.hidden=true;
+}
+function examAnswer(i){
+  if(exAnswered) return; exAnswered=true;
+  const q=examPool[exIdx], correct=q.answer;
+  $('#examOptions').querySelectorAll('.quiz-opt').forEach(b=>b.disabled=true);
+  const chosen=$('#examOptions').querySelector('.quiz-opt[data-i="'+i+'"]'); if(chosen) chosen.classList.add('picked');
+  recordAnswer(q.t.d, i===correct); bumpStreak();
+  if(i===correct) exScore++; else exMissed.push(q);
+  const nx=$('#examNext'); nx.hidden=false; nx.textContent=(exIdx+1>=examPool.length)?'Finish exam ›':'Next ›'; nx.focus();
+}
+function examNext(){ if(!exAnswered) return; if(exIdx+1>=examPool.length){ examShowResult(); return; } exIdx++; examRenderQ(); }
+function examShowResult(){
+  clearInterval(examTimer);
+  $('#examPlay').hidden=true; $('#examResult').hidden=false;
+  const total=examPool.length, pct=Math.round(exScore/total*100), pass=pct>=83;
+  const secs=Math.floor((Date.now()-examStart)/1000);
+  recordQuiz(exScore,total,true); render();
+  const bn=$('#examBanner'); bn.className='exam-banner '+(pass?'pass':'fail');
+  bn.textContent=(pass?'PASS':'BELOW PASS')+' · bar 83% · '+String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0');
+  $('#exPct').textContent=pct+'%'; $('#exPct').style.color=pass?'var(--green)':pct>=60?'var(--yellow)':'var(--red)';
+  $('#exSub').textContent=exScore+' of '+total+' correct';
+  const rev=$('#exReview');
+  rev.innerHTML = exMissed.length? exMissed.map(q=>'<div class="qr-item"><div class="qdef">'+q.t.def+'</div><div class="qans"><span class="ok">✓ '+esc(q.t.t)+'</span></div><button class="qopen" data-id="'+q.t.id+'">Open full entry ›</button></div>').join('')
+    : '<div class="qr-perfect">Perfect run. Nothing to review.</div>';
+  rev.querySelectorAll('.qopen').forEach(b=>b.onclick=()=>{ closeFC(); dtStack=[]; openDetail(b.dataset.id,true); });
+}
+$('#examStart').onclick=startExam;
+$('#examNext').onclick=examNext;
+$('#exNew').onclick=()=>setStudyMode('exam');
+document.addEventListener('keydown',e=>{
+  if(!fcModal.classList.contains('open')||document.getElementById('examView').hidden) return;
+  if($('#examPlay').hidden) return;
+  if(['1','2','3','4'].indexOf(e.key)>=0){ const b=$('#examOptions').querySelector('.quiz-opt[data-i="'+(parseInt(e.key,10)-1)+'"]'); if(b&&!b.disabled){ e.preventDefault(); b.click(); } }
+  else if(e.key==='Enter' && exAnswered){ e.preventDefault(); examNext(); }
+});
+
+/* ============================================================
+   STATS
+   ============================================================ */
+function statsView(){
+  const rows=DOMAINS.map(d=>{ const all=TERMS.filter(t=>t.d===d.key);
+    const mstr=all.filter(t=>mastery(t.id)==='mastered').length;
+    const learn=all.filter(t=>mastery(t.id)==='learning').length;
+    const q=stats.cat[d.key]||{s:0,c:0}; const acc=q.s?Math.round(q.c/q.s*100):null;
+    return {d,all:all.length,mstr,learn,acc,seen:q.s}; });
+  const tested=rows.filter(r=>r.acc!=null);
+  const weakest=tested.slice().sort((a,b)=>a.acc-b.acc)[0];
+  const totalMstr=rows.reduce((a,r)=>a+r.mstr,0);
+  const due=dueCount('__all');
+  const hist=stats.hist.slice(-12);
+  $('#statsView').innerHTML=
+    '<div class="statgrid">'
+    +'<div class="scard"><b>'+totalMstr+'/'+TERMS.length+'</b><span>mastered</span></div>'
+    +'<div class="scard"><b>'+due+'</b><span>due now</span></div>'
+    +'<div class="scard"><b>'+(streak.days||0)+'🔥</b><span>day streak</span></div>'
+    +'<div class="scard"><b>'+(weakest?weakest.d.num:'—')+'</b><span>weakest domain</span></div>'
+    +'</div>'
+    +'<div class="mbars">'+rows.map(r=>
+      '<div class="mbar"><span class="ml" style="color:'+r.d.color+'">'+r.d.num+'</span>'
+      +'<span class="mtrack"><i class="mm" style="width:'+(r.mstr/r.all*100)+'%;background:'+r.d.color+'"></i>'
+      +'<i class="mlrn" style="left:'+(r.mstr/r.all*100)+'%;width:'+(r.learn/r.all*100)+'%"></i></span>'
+      +'<span class="mnum">'+r.mstr+'/'+r.all+(r.acc!=null?' · '+r.acc+'%':'')+'</span></div>'
+    ).join('')+'</div>'
+    +(hist.length?'<div class="histwrap"><h4 class="qr-h">Recent quizzes</h4><div class="hist">'+hist.map(h=>{const p=Math.round(h.score/h.total*100);return '<span class="hbar" title="'+new Date(h.t).toLocaleDateString()+' · '+p+'%'+(h.exam?' (exam)':'')+'"><i style="height:'+Math.max(6,p)+'%;background:'+(p>=83?'var(--green)':p>=60?'var(--yellow)':'var(--red)')+'"></i></span>';}).join('')+'</div></div>':'<p class="quiz-intro" style="text-align:center">Take a quiz to start tracking accuracy.</p>')
+    +'<div class="fc-actions"><button class="icon-btn" id="stReset">Reset schedule</button></div>';
+  $('#stReset').onclick=()=>{ if(confirm('Clear spaced-repetition schedule? Learned marks and favorites stay.')){ srs={}; saveSrs(); statsView(); render(); } };
+}
+
 buildQuizDeckSelect();
 $('#quizStart').onclick=startQuiz;
 $('#quizNext').onclick=nextQ;
 $('#quizFavOnly').onclick=function(){ this.setAttribute('aria-pressed', this.getAttribute('aria-pressed')!=='true'); };
+$('#quizWeak').onclick=function(){ this.setAttribute('aria-pressed', this.getAttribute('aria-pressed')!=='true'); };
 $('#quizDeck').addEventListener('change',()=>{ $('#quizNote').hidden=true; });
 $('#qrNew').onclick=()=>{ $('#quizResult').hidden=true; $('#quizSetup').hidden=false; };
 $('#qrRetry').onclick=()=>{ const m=qMissed.map(q=>q.t); $('#quizResult').hidden=true; $('#quizPlay').hidden=false; buildQuiz(m,true); renderQ(); };

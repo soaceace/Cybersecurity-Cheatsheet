@@ -70,7 +70,10 @@ header{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--base)
 .toc a{display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:9px;text-decoration:none;color:var(--sub);font-size:13.5px;font-weight:600;border-left:2px solid transparent}
 .toc a:hover{background:var(--mantle)}
 .toc a.active{background:var(--mantle);color:var(--text);border-left-color:var(--mc)}
-.toc a .dot{width:9px;height:9px;border-radius:50%;background:var(--mc);flex-shrink:0}
+.toc a .ring{width:16px;height:16px;border-radius:50%;flex-shrink:0;background:var(--s0);position:relative}
+.toc a .ring::after{content:"";position:absolute;inset:3.5px;border-radius:50%;background:var(--mantle)}
+.toc a.active .ring::after{background:var(--base)}
+.toc a .tname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .toc a .ct{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--faint)}
 .toc-prog{margin-top:20px;padding:0 11px}
 .toc-prog .bar{height:7px;background:var(--s0);border-radius:4px;overflow:hidden}
@@ -234,6 +237,77 @@ footer{max-width:1280px;margin:0 auto;padding:24px 22px 50px;color:var(--faint);
   .shell{grid-template-columns:1fr}details{open:true}.tcard{break-inside:avoid;cursor:default}
   body{background:#fff;color:#000}
 }
+
+/* ===== accessibility & touch ===== */
+@media (prefers-reduced-motion: reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+button,.pill,.chip,.opt,.rb,.domchip,.mini{min-height:34px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+mark{background:color-mix(in srgb,var(--gold) 40%,transparent);color:var(--text);border-radius:3px;padding:0 1px}
+.tcard.kbfocus{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 40%,transparent)}
+/* ===== domain filter ===== */
+.domrow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 10px}
+.domlbl{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--faint);margin-right:2px}
+.domchip{background:var(--mantle);border:1px solid var(--s0);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;font-family:var(--mono);color:var(--sub)}
+.domchip[aria-pressed="true"]{color:var(--crust);background:var(--lav);border-color:var(--lav)}
+.barspacer{flex:1}
+/* ===== card mastery + flag ===== */
+.tc-flag{color:var(--gold);font-size:12px;margin-left:2px}
+.tcard.mst-mastered{border-left:2px solid color-mix(in srgb,var(--ok) 60%,var(--s0))}
+.tcard.mst-learning{border-left:2px solid color-mix(in srgb,var(--gold) 55%,var(--s0))}
+/* ===== progress heatmap ===== */
+.heatwrap{background:var(--mantle);border:1px solid var(--s0);border-radius:14px;padding:14px 16px;margin:4px 0 20px}
+.heathead{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.heathead h3{font-size:13px;margin:0}
+.heatkey{display:flex;gap:12px;font-size:11px;color:var(--sub)}
+.heatkey span{display:flex;align-items:center;gap:5px}
+.hc{width:11px;height:11px;border-radius:3px;display:inline-block}
+.hc.new{background:var(--s1)}.hc.learning{background:var(--gold)}.hc.mastered{background:var(--ok)}
+.heatrow{display:flex;align-items:flex-start;gap:9px;margin-bottom:6px}
+.hml{font-family:var(--mono);font-size:10px;font-weight:700;width:34px;flex-shrink:0;padding-top:2px}
+.heatcells{display:flex;flex-wrap:wrap;gap:3px}
+.hcell{width:12px;height:12px;border-radius:3px;background:var(--s0);cursor:pointer;transition:transform .1s}
+.hcell:hover{transform:scale(1.35)}
+.hcell.learning{background:color-mix(in srgb,var(--mc) 45%,var(--s0))}
+.hcell.mastered{background:var(--mc)}
+/* ===== SRS flashcard ratings ===== */
+.frate{display:flex;gap:8px;margin:12px 0 4px}
+.rb{flex:1;border:1px solid var(--s0);border-radius:11px;padding:11px;font-weight:700;font-size:14px;background:var(--mantle);color:var(--text)}
+.rb.again{border-color:color-mix(in srgb,var(--bad) 45%,var(--s0));color:var(--bad)}
+.rb.good{border-color:color-mix(in srgb,var(--accent) 45%,var(--s0));color:var(--accent)}
+.rb.easy{border-color:color-mix(in srgb,var(--ok) 45%,var(--s0));color:var(--ok)}
+.rb:hover{filter:brightness(1.08)}
+.atip{margin-top:10px;font-size:12.5px;color:var(--gold);line-height:1.45}
+.pill.tts[aria-pressed="true"]{color:var(--crust);background:var(--teal);border-color:var(--teal)}
+.pill .due{font-family:var(--mono);font-size:10px;background:var(--peach);color:var(--crust);border-radius:6px;padding:0 5px;margin-left:3px}
+/* ===== exam mode ===== */
+.examclk{font-family:var(--mono);font-size:13px;color:var(--peach)}
+.qprog{height:4px;background:var(--s0);border-radius:3px;overflow:hidden;margin:-6px 0 14px}
+.qprog i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.exambanner{text-align:center;font-weight:800;letter-spacing:.5px;border-radius:11px;padding:11px;margin-bottom:12px;font-size:14px}
+.exambanner.pass{background:color-mix(in srgb,var(--ok) 20%,var(--mantle));color:var(--ok);border:1px solid var(--ok)}
+.exambanner.fail{background:color-mix(in srgb,var(--bad) 18%,var(--mantle));color:var(--bad);border:1px solid var(--bad)}
+.examintro{text-align:center;padding:10px 4px}
+.examintro h4{font-size:16px;margin:0 0 8px}
+.examintro p{font-size:13.5px;color:var(--sub);line-height:1.55;margin:0 0 10px}
+.examintro .pb{color:var(--gold)}
+.rvm{font-family:var(--mono);font-size:10px;color:var(--faint);font-weight:600}
+/* ===== stats ===== */
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:16px}
+.scard{background:var(--mantle);border:1px solid var(--s0);border-radius:12px;padding:12px 8px;text-align:center}
+.scard b{display:block;font-family:var(--mono);font-size:20px;color:var(--accent)}
+.scard span{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.5px}
+.mbars{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.mbar{display:flex;align-items:center;gap:9px}
+.mbar .ml{font-family:var(--mono);font-size:11px;font-weight:700;width:34px;flex-shrink:0}
+.mtrack{flex:1;height:9px;background:var(--s0);border-radius:5px;position:relative;overflow:hidden}
+.mtrack .mm{position:absolute;left:0;top:0;height:100%;border-radius:5px}
+.mtrack .mlrn{position:absolute;top:0;height:100%;background:color-mix(in srgb,var(--gold) 45%,transparent)}
+.mbar .mnum{font-family:var(--mono);font-size:10.5px;color:var(--sub);width:78px;text-align:right;flex-shrink:0}
+.histwrap h5{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--faint);margin:0 0 8px}
+.hist{display:flex;align-items:flex-end;gap:5px;height:56px;padding:4px 0}
+.hbar{flex:1;max-width:22px;height:100%;display:flex;align-items:flex-end;background:var(--mantle);border-radius:4px}
+.hbar i{display:block;width:100%;border-radius:4px;min-height:5px}
+
 </style>
 </head>
 <body>
@@ -245,7 +319,7 @@ footer{max-width:1280px;margin:0 auto;padding:24px 22px 50px;color:var(--faint);
         <path d="M16 2.5 27 7v8.5c0 7-4.7 11.8-11 14.2C9.7 27.3 5 22.5 5 15.5V7z" stroke="var(--accent)" stroke-width="1.8"/>
         <path d="m11 16 3.4 3.4L21 12.5" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      <div class="name"><b>Network Defense <span class="ver">NetDef</span></b><small>Cisco NetAcad · modules 1&ndash;11</small></div>
+      <div class="name"><b>Network Defense <span class="ver">NetDef</span></b><small>Cisco NetAcad · modules 1&ndash;5</small></div>
     </div>
     <label class="search-wrap" aria-label="Search">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -279,11 +353,19 @@ footer{max-width:1280px;margin:0 auto;padding:24px 22px 50px;color:var(--faint);
       </div>
     </section>
 
+    <div class="domrow" id="domrow"><span class="domlbl">Exam domain</span></div>
     <div class="chips" id="chips"></div>
     <div class="barwrap">
       <button class="btn-sm" id="expandAll">Expand all</button>
       <button class="btn-sm" id="collapseAll">Collapse all</button>
+      <button class="btn-sm" id="heatToggle">Progress map</button>
+      <span class="barspacer"></span>
+      <button class="btn-sm" id="btnExport" title="Save progress to a file">Export</button>
+      <button class="btn-sm" id="btnImport" title="Load progress from a file">Import</button>
+      <button class="btn-sm" id="btnPrint" title="Printable cram sheet">Print sheet</button>
+      <input type="file" id="fileImport" accept="application/json" style="display:none">
     </div>
+    <section class="heatwrap" id="heatwrap" hidden></section>
 
     <section class="refgrid" id="refgrid"></section>
     <div id="list"></div>
@@ -338,7 +420,7 @@ const T=[
 {t:"Attack surface",m:1,d:"The collection of all devices and information owned or managed by an organization that threat actors could target.",x:"Every asset added expands the attack surface. BYOD and IoT dramatically enlarge it, which is why inventory and asset management are foundational to defense.",rel:["Asset","BYOD","IoT"]},
 {t:"Asset management",m:1,d:"Inventorying all assets, then developing and implementing policies and procedures to protect them.",x:"It includes finding where critical information is stored and how access to it is gained, so protection and monitoring can be applied where the value is highest.",rel:["Asset classification","Asset standardization"]},
 {t:"Asset classification",m:1,d:"Assigning resources into groups by common characteristics so the most critical and sensitive information receives the highest level of protection.",x:"A labeling system marks how valuable, sensitive, and critical information is. The four steps are: identify the category, establish accountability, set classification criteria, and implement a schema.",tip:"Know the four-step order: category, accountability (owner), criteria, then schema.",rel:["Asset classification steps","Asset management"]},
-{t:"Asset classification steps",m:1,d:"1) Determine identification category (information, software, physical, services); 2) Establish accountability (owner of each asset and software); 3) Determine criteria (confidentiality, value, time, access rights, destruction); 4) Implement a classification schema.",rel:["Asset classification"]},
+{t:"Asset classification steps",m:1,d:"1) Determine identification category (information, software, physical, services); 2) Establish accountability (owner of each asset and software); 3) Determine criteria (confidentiality, value, time, access rights, destruction); 4) Implement a classification schema.",tip:"Order: category, accountability (owner), criteria, then schema.",rel:["Asset classification"]},
 {t:"Asset standardization",m:1,d:"Identifying the specific hardware and software products an organization uses so failures are handled quickly; non-standard environments cost more to maintain.",x:"Standard hardware lets staff swap a known replacement when something fails. Non-standard environments need more expertise and raise maintenance and inventory costs.",rel:["Asset management"]},
 {t:"Asset lifecycle",m:1,d:"The five stages of managing an asset: Procurement, Deployment, Utilization, Maintenance, and Disposal.",x:"Utilization is the longest stage (patching, audits, upgrades). At disposal, all data must be wiped and hazardous parts disposed of per local guidelines.",tip:"At disposal the key control is data sanitization (wiping) before the device leaves.",rel:["Asset management"]},
 {t:"Defense-in-depth",m:1,d:"Using multiple layers of security at the network edge, within the network, and on endpoints so the failure of one safeguard does not affect the others.",x:"Layers include the edge router, firewall, internal router, plus IPS, AMP, content security, and NAC. The point is that no single failure collapses the whole defense.",tip:"Defense-in-depth = redundant, diverse layers. One control failing should not expose the asset.",rel:["Edge router (first line)","Security Onion","Layering"]},
@@ -782,6 +864,391 @@ let favs=new Set(store.get("ndk_favs",[]));
 const saveDone=()=>store.set("ndk_done",[...done]);
 const saveFavs=()=>store.set("ndk_favs",[...favs]);
 
+/* Exam tips added for previously-untipped terms. Merged into T at load
+   so the 412 term entries stay clean. Grounded in each term's definition. */
+const TIPS={
+/* M1 */
+"Asset":"Data is the greatest asset. Identify assets first; the full set of them is your attack surface.",
+"Vulnerability":"Vulnerability = the weakness. Threat = the danger. Risk = the chance a threat exploits it.",
+"Threat":"A threat is only potential harm. It becomes risk when paired with a matching vulnerability.",
+"Attack surface":"BYOD and IoT dramatically enlarge the attack surface, which is why inventory comes first.",
+"Asset management":"Asset management = inventory + protective policies. It underpins classification and hardening.",
+"Asset standardization":"Standard gear = fast, cheap swaps. Non-standard environments cost more to maintain and secure.",
+"Baseline configuration":"A baseline is the template of known-good settings; deviations from it can signal compromise.",
+"Configuration management":"Config management controls and audits changes against the baseline; it enables OS hardening.",
+"Defense-in-depth":"Redundant, DIVERSE layers. One control failing must not expose the asset.",
+"Edge router (first line)":"Order of defense: edge router (1st) -> firewall (2nd) -> internal router (final filtering).",
+"Firewall (defense layer)":"Second line of defense; the stateful checkpoint that tracks connection state.",
+"Internal router":"Third/last line; applies final filtering before traffic reaches its destination.",
+"Security Artichoke":"Artichoke = borderless-network update of the onion; peel a few leaves, not every layer.",
+"Layering":"Layering keeps a barrier standing even after one layer is penetrated.",
+"Limiting":"Limiting = least privilege: only the access needed to do the job.",
+"Diversity":"Diversity means the same technique can't defeat every layer; vary the defenses.",
+"Obscurity":"Obscurity = don't reveal OS/vendor/software. It supports, never replaces, real controls.",
+"Simplicity":"Complexity does not equal security; simple configs get set up correctly.",
+"OS hardening":"Classic hardening step: change default account names and passwords.",
+"Log file":"A log file records events; each entry holds everything about one specific event.",
+"Log management":"Covers the full lifecycle: generate, transmit, store, analyze, and dispose of log data.",
+"Operating system logs":"OS logs = authentications and usage. App security logs = from security software.",
+"Application security logs":"Used for auditing, spotting trends, and proving regulatory compliance.",
+"Protocol analyzer (packet sniffer)":"Wireshark reads plaintext (e.g. Telnet creds); defensive tool, offensive in the wrong hands.",
+"Business policy":"A policy is a baseline of expected behavior; violating it can indicate a breach.",
+"Security policy":"Sets objectives + rules and gives security staff management backing for audits.",
+"Acceptable Use Policy (AUP)":"AUP defines which apps and uses are acceptable on the network.",
+"BYOD":"BYOD boosts productivity but enlarges the attack surface; requires its own policy + MDM.",
+"BYOD best practices":"Includes MDM, updates, backups, Find My Device, antivirus, and manual wireless control.",
+"MDM":"MDM lets IT enforce settings on every device touching the network; pairs with containerization.",
+"Regulatory compliance":"External laws define what you must provide; depends on org type and data handled.",
+"INFOSEC":"INFOSEC pros must know binding laws and codes of ethics, not just technology.",
+/* M2 */
+"Physical barriers":"Outermost, most visible layer: fences, gates, bollards, barriers. Deters and delays, doesn't stop.",
+"Bollards":"Bollards specifically stop VEHICLE intrusions.",
+"Biometrics":"Accuracy is the top selection factor, measured by CER (lower CER = more accurate).",
+"RFID asset tags":"RFID needs no line of sight, so readers hide in door frames to flag assets leaving.",
+"Development environment":"Dev = low security, where code is written/tested. Staging matches production.",
+"Sandbox environment":"Sandbox = isolated space so code isn't overwritten as devs work.",
+"Staging environment":"Staging mirrors production to verify software runs under required security settings.",
+"Provisioning / deprovisioning":"Provision = create/update software. Deprovision = remove it. Can be self-service.",
+"Normalization":"Normalization reduces input to its simplest form so malicious strings are spotted.",
+"Stored procedure":"Precompiled SQL: less network traffic, faster results, and safer input handling.",
+"Obfuscation":"Obfuscation hides data with random junk; camouflage swaps in realistic fake data.",
+"Camouflage":"Camouflage = realistic fictional data. Obfuscation = random characters.",
+"Integrity check":"Integrity check uses a hash snapshot to detect corruption; a checksum is one example.",
+"Checksum":"Checksums sum converted values; equal totals = unchanged, mismatch = tampered/corrupt.",
+"Code signing":"Code signing proves author identity AND that code is unchanged since signing.",
+"Secure cookies":"Secure cookies require HTTPS so they never travel over unencrypted HTTP.",
+"Validation rule":"Criteria: size, format, consistency, range, check digit. First defense vs injection.",
+"DHCP snooping":"DHCP snooping blocks ROGUE DHCP servers by validating untrusted messages.",
+"DNSSEC":"DNSSEC adds digital signatures to authenticate DNS and resist spoofing/poisoning.",
+"DNS sinkhole":"A sinkhole redirects malicious URLs so users can't reach them.",
+"RIP":"RIP: hop-count metric, max 15 hops. Protect with authentication and patching.",
+"SSH":"SSH = TCP 22 (encrypted). Telnet = TCP 23 (plaintext). Always prefer SSH.",
+"Telnet":"Telnet sends credentials in plaintext; a sniffer reads them. Replace with SSH.",
+"SCP":"SCP rides on SSH for secure file transfer.",
+"SNMPv3":"SNMPv3 adds crypto; v1/v2 send community strings in cleartext.",
+"SSL / TLS":"TLS replaces SSL. On the exam, TLS is the modern/preferred answer.",
+"FTPS":"FTPS = FTP + TLS/SSL. Plain FTP sends credentials in plaintext.",
+"S/MIME":"S/MIME signs and encrypts email: authentication, integrity, and nonrepudiation.",
+"Trunk":"A trunk port carries MULTIPLE VLANs between switches; access ports carry one.",
+"DMZ":"Public-facing servers go in the DMZ; the internal LAN stays blocked from the internet.",
+"Zones of risk":"Trust order high-to-low: LAN, extranet, DMZ, Internet.",
+"Zero Trust model":"Never trust, always verify. Internal location no longer implies trust.",
+"East-west vs north-south traffic":"East-west = server-to-server inside the data center. North-south = in/out of the network.",
+"WEP":"WEP is broken; never the right Wi-Fi answer. WPA2/WPA3 are.",
+"WPA / WPA2 / WPA3":"WPA2 = AES + CCMP. WPA3 is newest/strongest. TKIP is legacy.",
+"TKIP":"TKIP improved WPA key handling but was superseded by AES; treat as legacy.",
+"WPS":"WPS PIN is brute-forceable; correct guidance is to DISABLE WPS.",
+"Open vs shared key authentication":"Open = anyone connects, no security. Shared key = authenticate + encrypt.",
+"EAP":"EAP is the wireless auth framework (supplicant, authenticator, auth server).",
+"EAP methods compared":"EAP-TLS is most secure: certificates on BOTH client and server.",
+"Mutual authentication":"Mutual auth defeats rogue APs because the client verifies the AP too.",
+"Rogue access point":"A rogue AP imitates a real one to harvest data; mutual auth defeats it.",
+"NFC":"NFC = short-range contactless, used for tap-to-pay.",
+"COPE":"COPE = company-owned device that also holds personal data (opposite trade-off from BYOD).",
+"Containerization":"Containerization separates work and personal data in an encrypted area; enables remote wipe.",
+"Context-aware authentication":"Uses ML on normal behavior to decide access.",
+"Mobile safeguards":"Screen locks, biometrics, context-aware auth, remote wipe, full device encryption.",
+"High availability":"Three HA principles: no single point of failure, reliable crossover, failure detection.",
+"Five nines":"Five nines = 99.999% = under ~5.26 minutes downtime per year.",
+"Single point of failure":"Any part whose failure kills the whole system; fix with redundancy.",
+"Fault tolerance":"Fault tolerance = keep running when components fail (e.g. data mirroring).",
+"First-hop redundancy":"A standby router assumes the default gateway via a virtual IP if the active one fails.",
+"System resiliency":"Resiliency = availability despite attack/disruption; needs redundant power and processing.",
+"RAID storage methods":"Mirroring = duplicate. Striping = spread across drives. Parity = checksums to rebuild.",
+"Location redundancy":"Synchronous = real-time/close/high-bandwidth. Asynchronous = near real-time/farther. Point-in-time = snapshots.",
+"UPS":"A UPS buys time to shut down GRACEFULLY during a power event.",
+"IoT":"IoT devices massively expand the attack surface and have been hijacked into botnets.",
+"Embedded systems":"Embedded systems (smart TVs, medical, autos) are hard to patch, so they linger vulnerable.",
+"RTOS":"RTOS prioritizes timing; vulnerable to code injection, DoS, and priority manipulation.",
+"System on Chip (SoC)":"SoC (Raspberry Pi, Arduino) packs CPU + peripherals; often ships with weak defaults.",
+"SCADA / ICS":"SCADA/ICS run critical infrastructure; legacy and fragile, so isolate and segment them.",
+"Stuxnet":"Stuxnet targeted SCADA, proving malware can physically damage critical infrastructure.",
+"Shodan":"Shodan is the search engine that finds exposed/vulnerable internet-connected devices.",
+"Honeynet / honeyfiles":"Honeynet = network of honeypots. Honeyfiles = decoy files with no real value.",
+/* M3 */
+"Identification":"Identification = who you claim to be (username). Authentication = proving it.",
+"Authentication":"Factors: something you KNOW, HAVE, or ARE. Combining types = MFA.",
+"Authorization":"Authorization happens AFTER authentication: what you may access and do.",
+"Accounting":"Accounting = the record of what users did (access, duration, changes) for auditing.",
+"Accountability":"Accountability ties an action to a person/process via logs, for audit or billing.",
+"Multi-factor authentication (MFA)":"MFA = 2+ DIFFERENT factor types. Two passwords is NOT MFA. 2FA = exactly two.",
+"KBA":"KBA (security questions) is weak; used mainly for password resets.",
+"OAuth":"OAuth lets a third party use your account info (delegated access), e.g. sign in with Google.",
+"Password vault":"A vault stores all credentials behind one strong master password.",
+"802.1X":"802.1X = port-based network access control; authenticates via a RADIUS server before access.",
+"CHAP":"CHAP authenticates with a one-way hash challenge; the password never crosses the wire.",
+"Kerberos":"Kerberos uses tickets and strong encryption with MUTUAL authentication.",
+"ABAC":"ABAC grants access by attributes of subject, object, and environment (most granular/flexible).",
+"Rule-based access control":"Rule-based = conditions set by the admin (IPs, protocols); users can't change them.",
+"Account types":"Admin, user, service, guest. Never share privileged accounts; rename/disable defaults.",
+"Permission levels":"Full Control > Modify > Read & Execute > Write > Read. Apply least privilege.",
+"Federated identity management":"Federation enables SSO across organizations; trade-off is a wider blast radius if breached.",
+"Privilege escalation":"Privilege escalation = gaining higher rights than assigned; a top exploit goal.",
+"NAC":"NAC checks device identity and compliance (posture) before allowing network access.",
+"Zero Trust pillars":"Three pillars: Workforce, Workloads, Workplace.",
+"Clipping level":"A clipping level is the error threshold before an alert fires.",
+"Physical access controls":"Physical = guards, fences, locks, cameras, mantraps. Logical = software/hardware controls.",
+"Logical access controls":"Logical = encryption, passwords, biometrics, ACLs, firewalls. Physical = barriers.",
+"Administrative access controls":"Administrative = policies and people practices (hiring, background checks, training).",
+"Mantrap":"A mantrap staggers entry and can trap an unauthorized person (anti-tailgating).",
+"AAA accounting types":"Types: network, connection, EXEC, system, command, resource.",
+"Local vs server-based AAA":"Local AAA = small networks. Server-based (RADIUS/TACACS+) = scalable, central.",
+"Audit policy":"Audit policy defines which security events get logged (logon, object access, policy change).",
+"Local Security Policy":"secpol.msc sets password/lockout/audit policy on a NON-domain computer.",
+"Authorization policy":"Group-membership policy grants by group; authority-level policy grants by rank/position.",
+/* M4 */
+"Packet filtering":"Packet filtering permits/denies at Layers 3-4 by criteria; the core job of an ACL.",
+"ACE":"An ACE is one permit/deny line in an ACL (an ACL statement).",
+"Named ACL":"Named ACLs are preferred: descriptive, editable by sequence number, case-sensitive names.",
+"Inbound vs outbound ACL":"Inbound is more efficient: dropped packets skip the routing lookup.",
+"Apply an ACL":"Interface: ip access-group. VTY lines: ip access-class. Always specify in/out.",
+"Wildcard mask calculation":"Wildcard = 255.255.255.255 minus the subnet mask.",
+"show access-lists":"show access-lists shows ACEs, sequence numbers, and hit counters; running-config omits counters.",
+"Sequence number method":"Edit a named ACL by deleting one sequence number and re-adding it at the same number.",
+"Text editor method":"Text-editor edit = copy out, fix, remove old ACL, paste corrected version back.",
+"IP address spoofing":"Spoofing forges the source IP to hide identity; anti-spoofing ACLs block bogus sources.",
+"Mitigate ICMP with ACLs":"Block inbound echo/redirect; allow inbound echo-reply, source-quench, unreachable.",
+"Mitigate SNMP with ACLs":"Filter SNMP from unauthorized systems, or disable SNMP where it isn't needed.",
+"Dual stack":"Running IPv4 + IPv6 lets attackers pivot via IPv6 (rogue RAs, tunnels); secure both stacks.",
+"Teredo tunneling":"Teredo hides IPv6 inside IPv4 UDP; block it if IPv6 transition isn't intended.",
+/* M5 */
+"Firewall":"A firewall is the single enforced transit point between networks for an access policy.",
+"Firewall benefits":"Blocks exposure, sanitizes protocol flow, blocks malicious data, enforces policy.",
+"Firewall limitations":"Misconfig is the big risk; users may bypass it and traffic can be tunneled as legit.",
+"Packet filtering (stateless) firewall":"Stateless = no state table; fast/cheap but weak vs spoofing and fragments.",
+"Packet filter pros and cons":"Pro: fast, cheap, simple. Con: spoofable, poor with fragments, no dynamic filtering.",
+"Stateful firewall":"Stateful tracks connections in a state table; can't stop application-layer attacks.",
+"Stateful pros and cons":"Pro: strong, defends spoofing/DoS. Con: no app-layer defense, UDP/ICMP are stateless.",
+"Application gateway firewall (proxy)":"The proxy/application gateway is the one that inspects Layer 7 content.",
+"Next-generation firewall (NGFW)":"NGFW = stateful + IPS + application awareness/control.",
+"Host-based firewall":"Host-based firewall = software on one PC/server, not a network appliance.",
+"Transparent firewall":"Transparent firewall filters between two BRIDGED interfaces (invisible at Layer 3).",
+"Hybrid firewall":"Hybrid = mix of types, e.g. stateful + application gateway.",
+"Private and public design":"2-interface firewall: inside trusted, outside untrusted; public-to-private blocked.",
+"Bastion host":"A bastion host is a hardened, screened host that discards suspect packets.",
+/* M6 */
+"ZPF model":"Classic = policy on interfaces. ZPF = interfaces in zones, policy between zones.",
+"C3PL":"C3PL = the structured event/condition/action language that makes ZPF policies scalable.",
+"Security zone":"Same-zone traffic passes freely; crossing a zone triggers policy checks.",
+"Self zone":"Self zone = the router's own IP addresses; default is PASS (opposite of transit default).",
+"zone security command":"zone security NAME creates a zone; it does nothing until interfaces join it.",
+"class-map type inspect":"Use the inspect keyword and match-any for a ZPF class matching http/https/dns.",
+"class-map match statements":"match access-group (ACL), match protocol, or match class-map (nesting).",
+"policy-map type inspect":"Policy-map ties a class to an action (inspect/drop/pass); build the class-map first.",
+"zone-pair security":"A zone-pair is UNIDIRECTIONAL: source zone -> destination zone. Return traffic needs its own pair.",
+"service-policy type inspect":"service-policy attaches the policy-map to the zone-pair, activating it.",
+"ZPF verification commands":"show policy-map type inspect zone-pair sessions verifies active inspection and hits.",
+"inspect action":"inspect = stateful; auto-permits return traffic. Best for most application traffic.",
+/* M7 */
+"Hypervisor":"Type 1 = bare metal (runs on hardware). Type 2 = hosted (app on a host OS).",
+"Type 2 hypervisor":"Type 2 = hosted virtualization (VirtualBox, VMware Workstation). Type 1 = bare metal.",
+"VM escape risk":"VM escape: compromise a VM, then reach the host because VMs share hardware at high privilege.",
+"Container":"A container ships app + dependencies only; lighter than a VM but shares the host OS.",
+"Docker":"Docker = OS-level virtualization packaging apps into portable containers.",
+"Kubernetes":"Kubernetes ORCHESTRATES/manages many containers; Docker builds/runs them.",
+"Virtual Desktop Infrastructure (VDI)":"VDI stores desktops on a server for thin clients; needs high availability + storage.",
+"XaaS":"XaaS = SaaS + PaaS + IaaS collectively.",
+"SaaS":"SaaS = use the app. PaaS = build the app. IaaS = rent the infrastructure.",
+"PaaS":"PaaS gives dev tools/services on subscription; you build and deploy, provider runs the platform.",
+"IaaS":"IaaS = rent virtualized hardware; you manage OS and up, provider manages physical.",
+"Public cloud":"Public cloud = cheaper, less control. Private = more control, more cost.",
+"Hybrid cloud":"Hybrid mixes private control with public hosting of the data.",
+"Community cloud":"Community cloud = shared by orgs in one industry (healthcare, energy).",
+"Fog computing":"Fog = processed at a LAN gateway/fog node. Edge = processed on the device itself.",
+"Edge computing":"Edge processes on the device/sensor with no trip to a data center.",
+"Cloud data breach":"Data breach = unauthorized access to protected sensitive data.",
+"Compromised cloud credentials":"A hijacked service account can control ALL cloud resources; guard high-privilege accounts.",
+"Insider threat (cloud)":"Insider threat = employee/contractor/partner, malicious OR accidental.",
+"Insecure UI or API":"Cloud UIs/APIs are the most internet-exposed points, so they're prime targets.",
+"Limited cloud usage visibility":"Low visibility makes spotting safe vs malicious files harder.",
+"Compromised cloud abuse":"Abused cloud resources launch DDoS, host malware/pirated content, and send spam/phishing.",
+"CSA Security Guidance":"CSA guidance v4 covers 14 cloud security domains; the go-to best-practice reference.",
+"Management plane (cloud)":"Management plane = the protocols/resources used to run the cloud; secure it plus DR/BC.",
+"Cloud infrastructure layers":"Two layers: physical/logical compute vs the user's virtual infrastructure.",
+"SDN security (cloud)":"SDN gives software isolation and flexible SDN firewalls (security groups).",
+"Security groups":"Security groups = the cloud's SDN firewalls (allow/deny rules) replacing physical ones.",
+"Shared responsibility model":"Client ALWAYS owns the data. CSP always owns physical infrastructure in cloud models.",
+"Layered cloud security":"Defense-in-depth in the cloud: platform DDoS, VPC subnets, virtual firewalls, flow logs, VPNs, IAM.",
+"Virtual private cloud":"A VPC = private subnets logically isolated from the internet.",
+"Flow logs":"Flow logs monitor traffic crossing individual network interfaces in the cloud.",
+"IAM (cloud)":"Proper IAM is critical; misused identity is a top cloud abuse vector.",
+"Unsanctioned apps":"Shadow IT/unsanctioned apps create blind spots; manage via policy and training.",
+"Code reuse":"Reusing code saves time but can import the original code's vulnerabilities.",
+"SDKs":"A vulnerable SDK/library can compromise MANY apps at once.",
+"Data at rest":"At rest = in storage. In transit = moving. In process = being used.",
+"Data in transit":"Protect data in transit with cryptography and hashing; critical for the cloud.",
+"Data in process":"In process = during input, computation, or output (neither at rest nor in transit).",
+"Protecting VMs checklist":"Subnet placement, disable unused ports/services, account policies, antimalware, host firewall + IDS/IPS.",
+"VM sprawl":"VM sprawl = too many unmanaged VMs. Fix: log, monitor, and audit cloud resource usage.",
+/* M8 */
+"Cryptography":"Cryptography = making and breaking codes. Encryption is one application of it.",
+"Encryption":"Encryption scrambles plaintext to ciphertext; a key is required to reverse it.",
+"Plaintext and ciphertext":"Plaintext = readable input. Ciphertext = encrypted, unreadable output.",
+"Symmetric encryption":"Symmetric = same key both ends, fast, for bulk/VPN data. Min 128-bit keys.",
+"Pre-shared key":"A pre-shared (secret) key is the basis of symmetric/private-key encryption.",
+"Block cipher":"Block cipher = fixed 64/128-bit blocks. Stream cipher = bit/byte at a time.",
+"Stream cipher":"Stream ciphers (SEAL, RC4) encrypt continuously and are typically faster than block ciphers.",
+"3DES":"3DES = avoid (being retired). DES = never. AES = recommended.",
+"SEAL":"SEAL = fast stream cipher, 160-bit key, low CPU; an AES alternative.",
+"MD5":"MD5 = 128-bit, legacy, avoid. Use SHA-2 or SHA-3.",
+"SHA-1":"SHA-1 = 160-bit, has known flaws, legacy. Prefer SHA-256+.",
+"SHA-3 family":"SHA-3 is the newest family and eventual SHA-2 replacement; use when possible.",
+"Asymmetric encryption":"Asymmetric = slow, for signatures/key exchange. Trust 2048-bit or longer keys.",
+"Asymmetric protocols":"IKE, SSL/TLS, SSH, and PGP all rely on asymmetric key algorithms.",
+"RSA":"RSA security rests on the difficulty of factoring very large numbers.",
+"ElGamal":"ElGamal roughly doubles message size, so it's used only for small data like keys.",
+"Elliptic curve cryptography":"ECC gives equivalent security with much SHORTER keys (efficient for mobile).",
+"Private key authentication formula":"Encrypt with YOUR private key = authentication. Encrypt with THEIR public key = confidentiality.",
+"Cipher suite":"Cipher suite = MAC + encryption + key-exchange + authentication algorithms, swappable.",
+"Data masking":"Masking swaps sensitive data for realistic non-sensitive data usable by normal processes.",
+"Substitution (masking)":"Substitution = authentic-looking replacement values for anonymity.",
+"Shuffling (masking)":"Shuffling reorders values within the SAME column; good for test financial data.",
+"Nulling out":"Nulling out = null the field entirely, hiding the data completely.",
+"Steganography":"Cryptography scrambles the message; steganography hides that a message even exists.",
+"LSB steganography":"LSB hides data in the least-significant bit of each RGB channel (3 bits per pixel).",
+"Social steganography":"Social steganography hides meaning in plain-sight text via preset rules or misspellings.",
+"Steganalysis":"Steganalysis detects hidden data via patterns, disk analysis, and signature filters.",
+"Dictionary attack":"Dictionary attack uses precomputed hashes of common passwords; salting defeats it.",
+"Brute-force attack":"Brute force tries every combination; slow but guaranteed given enough time.",
+"Hashing passwords":"Systems store only the hash, never the password; hashing is one-way.",
+"Lookup tables":"Lookup tables map precomputed hashes to passwords; salting makes them useless.",
+"Reverse lookup tables":"Reverse tables map hashes to user lists, attacking many hashes without a precomputed table.",
+"Key stretching":"Key stretching deliberately slows guessing, blunting billions-per-second cracking hardware.",
+"CSPRNG":"A CSPRNG generates unpredictable salt; never use a weak/predictable RNG.",
+"Salting implementation":"Salt must be unique per user, never reused, and as long as the hash output; hash server-side.",
+"Encrypted traffic monitoring":"Encrypted traffic hides threats; decrypt at an SSL appliance and feed IPS, or validate certs.",
+"Digital certificate":"A digital certificate = electronic passport binding identity to a public key.",
+"SSL certificate":"An SSL certificate confirms a website domain's identity; the browser checks it over HTTPS.",
+"Certificate authority (CA)":"A CA binds a public key to a verified identity and signs certificates with its private key.",
+"Registration authority (RA)":"An RA is a subordinate CA that issues certificates for specific uses.",
+"PKI":"PKI = the whole system to create, manage, distribute, store, and revoke certificates.",
+"X.509":"X.509 v3 defines the certificate format used across SSL/TLS, IPsec, and S/MIME.",
+"DSS algorithms":"DSS signature algorithms: DSA, RSA, and ECDSA.",
+"ECDSA":"ECDSA = elliptic-curve DSA: smaller signatures, less bandwidth, efficient.",
+"Digital signatures for code signing":"Code signing signature assures authenticity, integrity, and nonrepudiation of software.",
+"Certificate enrollment":"Only a ROOT CA issues a self-signed cert; enroll in-band, verify the CA fingerprint out-of-band.",
+"Certificate warnings":"Browser warnings: expired validity range, or signature validation failure (root not trusted).",
+"Certificate revocation":"CRL = periodic list polling. OCSP = real-time online status check.",
+"PKI applications":"PKI powers SSL/TLS, IPsec, S/MIME, 802.1x, code signing, EFS, smart cards.",
+"Hashing IOS images":"Compare Cisco's published MD5/SHA digest to your image to confirm it wasn't tampered with.",
+"Digital forensics fixity":"Fixity = a matching hash proves the forensic copy is identical to the original.",
+/* M9 */
+"HTTP monitoring risks":"HTTP is plaintext and fully at risk; HTTPS is transit-only, not server security.",
+"iFrame injection":"iFrame injection hides malware in an invisible frame, often loaded from another URL.",
+"DNS tunneling detection":"Long, random, spiking subdomains = DNS exfiltration; watch subdomain-length distribution.",
+"CnC (command and control)":"Malware phones home to CnC via DNS, HTTPS tunnels, or Tor.",
+"DLP":"DLP detects sensitive data leaving the network; encoding in DNS can evade basic DLP.",
+"Email protocol threats":"SMTP exfiltrates outbound; IMAP/POP3 bring malware IN. Monitor for attachments.",
+"ICMP tunneling":"ICMP tunneling (LOKI, Ping Tunnel) smuggles files in crafted ICMP packets.",
+"NAT/PAT monitoring impact":"NAT/PAT hides internal IPs and breaks NetFlow flows at the gateway.",
+"Encrypted tunneling exfiltration":"Malware tunnels data inside a trusted encrypted protocol to slip past monitoring.",
+/* M10 */
+"Alert data":"Alert data = IDS/IPS messages from a rule or signature match (e.g. Snort into Sguil).",
+"Session data":"Session data describes the conversation (five-tuple, bytes, duration), not its content.",
+"Zeek connection log":"Zeek conn log fields: ts, uid, orig/resp host and port, proto, service, duration, bytes.",
+"Full packet captures":"Full PCAP = everything, highest storage. NetFlow = metadata only.",
+"Extracted content":"Extracted content = files pulled from PCAP to check for malware or policy violations.",
+"Statistical data":"NBA/NBAD baseline normal traffic (NetFlow/IPFIX) and flag anomalies.",
+"IPFIX":"IPFIX = the standardized cousin of NetFlow analyzed by behavior-based monitoring.",
+"HIDS logs":"HIDS runs on a host, detects/prevents intrusions, and can ship logs to a central server.",
+"Windows event types":"Error, Warning, Information, Success Audit, Failure Audit.",
+"Server logs":"Know Apache access logs and Microsoft IIS access logs as key server-log formats.",
+"DNS proxy logs":"DNS proxy logs expose hosts visiting dangerous sites and DNS exfiltration/CnC.",
+"Cisco Umbrella":"Umbrella = hosted DNS security that blocks CnC/exploit domains before resolution.",
+"SOAR":"SIEM correlates and reports; SOAR adds automated response and incident-response workflows.",
+"tcpdump":"tcpdump = CLI packet analyzer; Wireshark is the GUI built on it.",
+"Cisco AVC":"AVC uses NBAR2 to identify 1000+ apps; port-only ID gives almost no visibility.",
+"Content filter logs":"Cisco ESA = email appliance logs; WSA = web proxy logs (ACL, malware, reputation).",
+"Cisco syslog messages":"In Cisco syslog, Facility has two meanings: the standard PRI value and a Cisco MSG label.",
+"Proxy server logs":"Proxy logs show who requested what and whether the destination is malicious; enable DLP.",
+"NGFW events":"NGFW event types: Connection, Intrusion, Host/Endpoint, Network Discovery, NetFlow.",
+/* M11 */
+"Security Onion (NSM suite)":"Three functions: full packet capture, network + host IDS, and analyst tools.",
+"CapME":"CapME renders pcap transcripts (tcpflow/Zeek) and opens them in Wireshark.",
+"Snort":"Snort = signature NIDS feeding Sguil; PulledPork auto-updates its rules.",
+"PulledPork":"PulledPork = the utility that auto-downloads Snort rules in Security Onion.",
+"Zeek (NIDS)":"Snort/Suricata = signature-based. Zeek = behavior/policy-based.",
+"OSSEC":"OSSEC = HIDS (file integrity, log/process monitoring, rootkit detection); needs an agent.",
+"Wazuh":"Wazuh is the full-featured HIDS replacing OSSEC in Security Onion.",
+"Suricata":"Suricata = signature NIDS with native multithreading and inline IPS capability.",
+"Sguil":"Sguil = the alert console and starting point; pivot to Kibana, Zeek, Wireshark.",
+"Kibana":"Kibana = Elasticsearch dashboards; pivot from Sguil for context on an alert's IPs.",
+"Wireshark (Security Onion)":"Wireshark shows full packet captures, opened directly from other Security Onion tools.",
+"Alert structure":"Alerts carry the five-tuple, timestamps, and the source device/system.",
+"Snort rule structure":"Two parts: rule header (action/proto/addresses/ports/direction) + rule options (in parentheses).",
+"Snort rule header":"$HOME_NET and $EXTERNAL_NET are configured in snort.conf; port ranges use lower:upper.",
+"Snort rule options":"Options include msg, content, reference, classtype, sid, rev.",
+"Snort rule sources":"GPL (Sourcefire, not Talos-certified), ET (Emerging Threats/BSD), VRT (Talos, subscribers first).",
+"Alert evaluation need":"Detection rules should be overly conservative; Tier 1 analysts verify alerts in Sguil.",
+"True and false positives":"False positives waste analyst time; false negatives are the dangerous ones.",
+"False negatives":"False negative = a real, undetected incident; often found later via retrospective analysis.",
+"Benign trigger":"A benign trigger is benign activity causing a false positive; excess means tune the rules.",
+"Alert escalation":"Escalate suspected true positives so senior staff can contain and remediate.",
+"Retrospective security analysis":"RSA applies new intel to archived data, surfacing past false negatives.",
+"Probabilistic analysis":"Deterministic = worst case, all steps known. Probabilistic = likelihood per step, real-time."
+};
+T.forEach(x=>{ if(!x.tip && TIPS[x.t]) x.tip=TIPS[x.t]; });
+
+/* ---- SY0-701 domain alignment (module-level, approximate) ---- */
+const DOMAINS=[
+  {id:"1.0",name:"1.0 General Security Concepts"},
+  {id:"3.0",name:"3.0 Security Architecture"},
+  {id:"4.0",name:"4.0 Security Operations"},
+];
+const MOD_DOM={1:["1.0","3.0"],2:["3.0"],3:["1.0","4.0"],4:["3.0"],5:["3.0"],6:["3.0"],7:["3.0"],8:["1.0"],9:["4.0"],10:["4.0"],11:["4.0"]};
+MODS.forEach(m=>m.dom=MOD_DOM[m.n]||[]);
+
+/* ---- spaced repetition (Leitner) ---- */
+const SRS_INT=[0, 6e4, 864e5, 3*864e5, 7*864e5, 16*864e5, 40*864e5]; // ms per box 0..6
+let srs=store.get("ndk_srs",{});               // id -> {b:box, due:ts, s:seen, l:lastResult}
+const saveSrs=()=>store.set("ndk_srs",srs);
+function srsOf(id){return srs[id]||(srs[id]={b:0,due:0,s:0});}
+function rate(id,grade){ // grade: 'again' | 'good' | 'easy'
+  const r=srsOf(id); r.s++;
+  if(grade==='again') r.b=Math.max(0,r.b-2);
+  else if(grade==='good') r.b=Math.min(6,r.b+1);
+  else r.b=Math.min(6,r.b+2);
+  r.due=Date.now()+SRS_INT[Math.min(r.b,SRS_INT.length-1)];
+  r.l=grade; saveSrs(); bumpStreak(); if(r.b>=5){done.add(id);saveDone();}
+}
+function mastery(id){ // 'mastered' | 'learning' | 'new'
+  if(done.has(id)||(srs[id]&&srs[id].b>=5))return"mastered";
+  if(srs[id]&&srs[id].s>0)return"learning";
+  return"new";
+}
+function dueCount(scope){return T.filter(x=>(scope===0||x.m===scope)&&srsOf(x.id).due<=Date.now()&&mastery(x.id)!=="mastered").length;}
+
+/* ---- quiz stats + study streak ---- */
+let stats=store.get("ndk_stats",{mod:{},hist:[]});    // mod:{m:{s,c}}, hist:[{t,score,total,scope,exam}]
+const saveStats=()=>store.set("ndk_stats",stats);
+function recordAnswer(m,correct){const o=stats.mod[m]||(stats.mod[m]={s:0,c:0});o.s++;if(correct)o.c++;}
+function recordQuiz(score,total,scope,exam){stats.hist.push({t:Date.now(),score,total,scope,exam:!!exam});if(stats.hist.length>50)stats.hist=stats.hist.slice(-50);saveStats();}
+let streak=store.get("ndk_streak",{last:"",days:0});
+const saveStreak=()=>store.set("ndk_streak",streak);
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function bumpStreak(){const t=todayStr();if(streak.last===t)return;const y=new Date(Date.now()-864e5).toISOString().slice(0,10);streak.days=(streak.last===y)?streak.days+1:1;streak.last=t;saveStreak();}
+
+/* ---- progress export / import (cross-device) ---- */
+function exportProgress(){
+  const data={v:1,done:[...done],favs:[...favs],srs,stats,streak,theme:root.getAttribute("data-theme")};
+  const blob=new Blob([JSON.stringify(data,null,0)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="netdef-progress-"+todayStr()+".json";a.click();URL.revokeObjectURL(a.href);
+  toast("Progress exported");
+}
+function importProgress(file){
+  const rd=new FileReader();
+  rd.onload=()=>{try{const d=JSON.parse(rd.result);
+    if(d.done){done=new Set(d.done);saveDone();}
+    if(d.favs){favs=new Set(d.favs);saveFavs();}
+    if(d.srs){srs=d.srs;saveSrs();}
+    if(d.stats){stats=d.stats;saveStats();}
+    if(d.streak){streak=d.streak;saveStreak();}
+    render();toast("Progress imported");
+  }catch(e){toast("Import failed: bad file");}};
+  rd.readAsText(file);
+}
+
 const $=id=>document.getElementById(id);
 const esc=s=>(s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
 const root=document.documentElement;
@@ -792,7 +1259,7 @@ let toT;const toastEl=$("toast");
 const toast=m=>{toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(toT);toT=setTimeout(()=>toastEl.classList.remove("show"),1400);};
 
 /* ---- state ---- */
-let activeMods=new Set(),favOnly=false,query="";
+let activeMods=new Set(),activeDoms=new Set(),favOnly=false,query="";
 const openMods=new Set(store.get("ndk_open",[1,2,3,4,5]));
 
 /* sidebar + chips + refs */
@@ -801,7 +1268,7 @@ function buildShell(){
   MODS.forEach(m=>{
     const all=T.filter(x=>x.m===m.n).length;
     const a=document.createElement("a");a.href="#mod"+m.n;a.style.setProperty("--mc",`var(${m.v})`);a.dataset.mod=m.n;
-    a.innerHTML=`<span class="dot"></span>${m.code} ${m.name}<span class="ct" id="tc${m.n}"></span>`;
+    a.innerHTML=`<span class="ring" id="rg${m.n}" style="--mc:var(${m.v})"></span><span class="tname">${m.code} ${m.name}</span><span class="ct" id="tc${m.n}"></span>`;
     toc.appendChild(a);
   });
   const chips=$("chips");
@@ -824,21 +1291,49 @@ function buildShell(){
   });
   $("stTerms").textContent=T.length;
   $("stCmd").textContent=T.filter(x=>x.c).length;
+
+  const dr=$("domrow");
+  DOMAINS.forEach(d=>{
+    const b=document.createElement("button");b.className="domchip";b.setAttribute("aria-pressed","false");b.textContent=d.id;b.title=d.name;
+    b.onclick=()=>{activeDoms.has(d.id)?activeDoms.delete(d.id):activeDoms.add(d.id);b.setAttribute("aria-pressed",activeDoms.has(d.id));render();};
+    dr.appendChild(b);
+  });
+
+  $("btnExport").onclick=exportProgress;
+  $("btnImport").onclick=()=>$("fileImport").click();
+  $("fileImport").onchange=e=>{if(e.target.files[0])importProgress(e.target.files[0]);e.target.value="";};
+  $("btnPrint").onclick=printSheet;
+  $("heatToggle").onclick=()=>{const h=$("heatwrap");h.hidden=!h.hidden;$("heatToggle").setAttribute("aria-pressed",!h.hidden);if(!h.hidden)renderHeat();};
+}
+function renderHeat(){
+  const h=$("heatwrap");if(!h||h.hidden)return;
+  h.innerHTML=`<div class="heathead"><h3>Progress map</h3><div class="heatkey"><span><i class="hc new"></i>new</span><span><i class="hc learning"></i>learning</span><span><i class="hc mastered"></i>mastered</span></div></div>`+
+    MODS.map(m=>{const items=T.filter(x=>x.m===m.n);
+      return `<div class="heatrow"><span class="hml" style="color:var(${m.v})">${m.code}</span><div class="heatcells">`+
+        items.map(x=>`<i class="hcell ${mastery(x.id)}" data-id="${x.id}" title="${esc(x.t)}" style="--mc:var(${m.v})"></i>`).join("")+`</div></div>`;
+    }).join("");
+  h.querySelectorAll(".hcell").forEach(c=>c.onclick=()=>openTerm(c.dataset.id,true));
 }
 
 function matches(x){
   if(activeMods.size&&!activeMods.has(x.m))return false;
+  if(activeDoms.size&&!MODS[x.m-1].dom.some(d=>activeDoms.has(d)))return false;
   if(favOnly&&!favs.has(x.id))return false;
   if(query){const q=query.toLowerCase();if(!((x.t+" "+x.d+" "+(x.x||"")+" "+(x.c||"")).toLowerCase().includes(q)))return false;}
   return true;
 }
 
+function hl(text){
+  const s=esc(text);if(!query)return s;
+  const q=query.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  try{return s.replace(new RegExp("("+q+")","gi"),"<mark>$1</mark>");}catch(e){return s;}
+}
 function termCard(x){
-  const m=MODS[x.m-1],isFav=favs.has(x.id),isDone=done.has(x.id);
-  const el=document.createElement("div");el.className="tcard"+(isDone?" done":"");el.style.setProperty("--mc",`var(${m.v})`);
+  const m=MODS[x.m-1],isFav=favs.has(x.id),isDone=done.has(x.id),mst=mastery(x.id);
+  const el=document.createElement("div");el.className="tcard mst-"+mst+(isDone?" done":"");el.style.setProperty("--mc",`var(${m.v})`);el.dataset.id=x.id;
   el.innerHTML=`
-    <div class="tc-top"><span class="tc-tag">${m.code}</span><span class="tc-term">${esc(x.t)}</span>${x.c?'<span class="tc-cmd">&gt;_</span>':""}</div>
-    <div class="tc-def">${esc(x.d)}</div>
+    <div class="tc-top"><span class="tc-tag">${m.code}</span><span class="tc-term">${hl(x.t)}</span>${x.tip?'<span class="tc-flag" title="Has exam tip">⚑</span>':""}${x.c?'<span class="tc-cmd">&gt;_</span>':""}</div>
+    <div class="tc-def">${hl(x.d)}</div>
     <div class="tc-actions">
       <button class="mini star ${isFav?"on-star":""}" aria-label="Favorite">${isFav?"★":"☆"}</button>
       <button class="mini done ${isDone?"on-done":""}" aria-label="Mark learned">✓ ${isDone?"Learned":"Learn"}</button>
@@ -857,7 +1352,11 @@ function render(){
   const list=$("list");list.innerHTML="";
   const shown=T.filter(matches);
   // progress
-  MODS.forEach(m=>{const all=T.filter(x=>x.m===m.n);const l=all.filter(x=>done.has(x.id)).length;const tc=$("tc"+m.n);if(tc)tc.textContent=l+"/"+all.length;});
+  MODS.forEach(m=>{const all=T.filter(x=>x.m===m.n);const l=all.filter(x=>done.has(x.id)).length;
+    const learn=all.filter(x=>mastery(x.id)==="learning").length;
+    const tc=$("tc"+m.n);if(tc)tc.textContent=l+"/"+all.length;
+    const rg=$("rg"+m.n);if(rg){const p=Math.round(l/all.length*100),lp=Math.round((l+learn)/all.length*100);
+      rg.style.background=`conic-gradient(var(--mc) ${p}%, color-mix(in srgb,var(--mc) 32%,transparent) ${p}% ${lp}%, var(--s0) ${lp}%)`;}});
   const g=done.size/T.length;$("gBar").style.width=(g*100)+"%";$("gTxt").textContent=Math.round(g*100)+"% learned ("+done.size+"/"+T.length+")";
 
   if(!shown.length){list.innerHTML=`<div class="empty"><b>No matches</b>Clear the search or filters to see terms.</div>`;return;}
@@ -878,6 +1377,7 @@ function render(){
     det.querySelector("summary").addEventListener("click",()=>setTimeout(()=>{det.open?openMods.add(m.n):openMods.delete(m.n);store.set("ndk_open",[...openMods]);},0));
     list.appendChild(det);
   });
+  renderHeat();
 }
 
 /* ---- detail modal ---- */
@@ -955,60 +1455,107 @@ function renderStudy(){
       <div class="tabs" role="tablist">
         <button role="tab" aria-selected="${studyTab==="flash"}" data-t="flash">Flashcards</button>
         <button role="tab" aria-selected="${studyTab==="quiz"}" data-t="quiz">Quiz</button>
+        <button role="tab" aria-selected="${studyTab==="exam"}" data-t="exam">Exam</button>
+        <button role="tab" aria-selected="${studyTab==="stats"}" data-t="stats">Stats</button>
       </div>
       <div id="studyArea"></div>
     </div>`;
   $("sClose").onclick=closeModal;
   sm.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{studyTab=b.dataset.t;renderStudy();});
-  studyTab==="flash"?flashSetup():quizSetup();
+  ({flash:flashSetup,quiz:quizSetup,exam:examSetup,stats:statsView}[studyTab]||flashSetup)();
 }
 
-/* ---- flashcards ---- */
-let fScope=0,deck=[],fi=0;
+/* ---- flashcards (spaced repetition) ---- */
+let fScope=0,fMode="due",deck=[],fi=0,ttsOn=false;
 function flashSetup(){
   const a=$("studyArea");
   a.innerHTML=`
     <div class="setrow"><span class="lbl">Deck</span><div id="fScope" style="display:flex;gap:7px;flex-wrap:wrap"></div></div>
+    <div class="setrow"><span class="lbl">Mode</span><div id="fMode" style="display:flex;gap:7px">
+      <button class="pill" data-m="due">Due now</button><button class="pill" data-m="all">All</button><button class="pill" data-m="new">New only</button></div>
+      <button class="pill tts" id="fTts" aria-pressed="false" title="Read cards aloud">🔊 Audio</button></div>
     <div class="flash" id="flash"><div class="inner">
       <div class="face front"><span class="ft">term</span><span class="fg" id="fG"></span><div class="q" id="fQ"></div></div>
-      <div class="face back"><span class="ft">definition</span><div class="a" id="fA"></div></div>
+      <div class="face back"><span class="ft">definition</span><div class="a" id="fA"></div><div class="atip" id="fTip"></div></div>
     </div></div>
-    <p class="hint">tap card / space to flip · ← → to move</p>
+    <div id="fRate" class="frate"></div>
+    <p class="hint">tap card / space to flip · rate to schedule · ← → to skip</p>
     <div class="fcnav"><button id="fPrev">←</button><span class="ct" id="fCt">0 / 0</span><button id="fNext">→</button><button id="fShuf">⤮ shuffle</button></div>`;
   const sc=$("fScope");
-  const mk=(l,v)=>{const b=document.createElement("button");b.className="pill";b.textContent=l;b.setAttribute("aria-pressed",v===fScope);
-    b.onclick=()=>{fScope=v;[...sc.children].forEach(c=>c.setAttribute("aria-pressed",false));b.setAttribute("aria-pressed",true);buildDeck();};sc.appendChild(b);};
+  const mk=(l,v)=>{const b=document.createElement("button");b.className="pill";b.innerHTML=l;b.setAttribute("aria-pressed",v===fScope);
+    b.onclick=()=>{fScope=v;[...sc.children].forEach(c=>c.setAttribute("aria-pressed",false));b.setAttribute("aria-pressed",true);renderScopeCounts();buildDeck();};sc.appendChild(b);};
   mk("All",0);MODS.forEach(m=>mk(m.code,m.n));
+  renderScopeCounts();
+  $("fMode").querySelectorAll("button").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.m===fMode);
+    b.onclick=()=>{fMode=b.dataset.m;$("fMode").querySelectorAll("button").forEach(z=>z.setAttribute("aria-pressed",z.dataset.m===fMode));buildDeck();};});
+  $("fTts").onclick=()=>{ttsOn=!ttsOn;$("fTts").setAttribute("aria-pressed",ttsOn);if(!ttsOn&&window.speechSynthesis)speechSynthesis.cancel();};
   buildDeck();
-  $("flash").onclick=()=>$("flash").classList.toggle("flip");
+  $("flash").onclick=()=>{$("flash").classList.toggle("flip");if(ttsOn)speak(deck[fi]);};
   $("fPrev").onclick=()=>{fi=(fi-1+deck.length)%deck.length;showCard();};
   $("fNext").onclick=()=>{fi=(fi+1)%deck.length;showCard();};
   $("fShuf").onclick=buildDeck;
 }
-function buildDeck(){deck=T.filter(x=>fScope===0||x.m===fScope);for(let i=deck.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[deck[i],deck[j]]=[deck[j],deck[i]];}fi=0;showCard();}
-function showCard(){const f=$("flash");if(!f)return;f.classList.remove("flip");const x=deck[fi];if(!x)return;const m=MODS[x.m-1];f.style.setProperty("--mc",`var(${m.v})`);const g=$("fG");g.textContent=m.code;g.style.setProperty("--mc",`var(${m.v})`);$("fQ").textContent=x.t;$("fA").textContent=x.d;$("fCt").textContent=(fi+1)+" / "+deck.length;}
+function renderScopeCounts(){const sc=$("fScope");if(!sc)return;[...sc.children].forEach((b,i)=>{const v=i===0?0:MODS[i-1].n;const d=dueCount(v);const base=i===0?"All":MODS[i-1].code;b.innerHTML=base+(d?` <span class="due">${d}</span>`:"");});}
+function buildDeck(){
+  let pool=T.filter(x=>fScope===0||x.m===fScope);
+  if(fMode==="due"){pool=pool.filter(x=>srsOf(x.id).due<=Date.now()&&mastery(x.id)!=="mastered");
+    if(!pool.length)pool=T.filter(x=>(fScope===0||x.m===fScope)&&mastery(x.id)!=="mastered");}
+  else if(fMode==="new")pool=pool.filter(x=>mastery(x.id)==="new");
+  deck=pool.slice();for(let i=deck.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[deck[i],deck[j]]=[deck[j],deck[i]];}
+  fi=0;showCard();
+}
+function speak(x){if(!x||!window.speechSynthesis)return;speechSynthesis.cancel();const flipped=$("flash").classList.contains("flip");const u=new SpeechSynthesisUtterance(flipped?x.d:x.t);u.rate=1;speechSynthesis.speak(u);}
+function showCard(){
+  const f=$("flash");if(!f)return;f.classList.remove("flip");
+  if(!deck.length){$("fQ").textContent="Nothing due — great work!";$("fA").textContent="Switch mode to All or New to keep going.";$("fTip").textContent="";$("fCt").textContent="0 / 0";$("fRate").innerHTML="";return;}
+  const x=deck[fi];const m=MODS[x.m-1];f.style.setProperty("--mc",`var(${m.v})`);
+  const g=$("fG");g.textContent=m.code+" · box "+srsOf(x.id).b;g.style.setProperty("--mc",`var(${m.v})`);
+  $("fQ").textContent=x.t;$("fA").textContent=x.d;$("fTip").innerHTML=x.tip?("⚑ "+esc(x.tip)):"";
+  $("fCt").textContent=(fi+1)+" / "+deck.length;
+  $("fRate").innerHTML=`<button class="rb again" data-g="again">Again</button><button class="rb good" data-g="good">Good</button><button class="rb easy" data-g="easy">Easy</button>`;
+  $("fRate").querySelectorAll(".rb").forEach(b=>b.onclick=(e)=>{e.stopPropagation();rate(x.id,b.dataset.g);renderScopeCounts();deck.splice(fi,1);if(fi>=deck.length)fi=0;showCard();});
+  if(ttsOn)speak(x);
+}
 
 /* ---- quiz ---- */
-let qScope=0,qCount=10,qFav=false,qList=[],qi=0,qScore=0,qMiss=[],qAns=false;
+let qScope=0,qCount=10,qFav=false,qWeak=false,qList=[],qi=0,qScore=0,qMiss=[],qAns=false,examMode=false,examStart=0,examTimer=null;
 function quizSetup(){
   const a=$("studyArea");
   a.innerHTML=`
     <div class="setrow"><span class="lbl">Deck</span><div id="qScope" style="display:flex;gap:7px;flex-wrap:wrap"></div></div>
     <div class="setrow"><span class="lbl">Questions</span><div id="qCount" style="display:flex;gap:7px"></div></div>
-    <div class="setrow"><button class="pill" id="qFav" aria-pressed="${qFav}">★ Favorites only</button></div>
+    <div class="setrow"><button class="pill" id="qWeak" aria-pressed="${qWeak}" title="Draw more from terms you miss or haven't mastered">🎯 Weak spots</button>
+      <button class="pill" id="qFav" aria-pressed="${qFav}">★ Favorites only</button></div>
     <button class="go" id="qStart">Start quiz</button>`;
   const sc=$("qScope");const mkS=(l,v)=>{const b=document.createElement("button");b.className="pill";b.textContent=l;b.setAttribute("aria-pressed",v===qScope);b.onclick=()=>{qScope=v;[...sc.children].forEach(c=>c.setAttribute("aria-pressed",false));b.setAttribute("aria-pressed",true);};sc.appendChild(b);};
   mkS("All",0);MODS.forEach(m=>mkS(m.code,m.n));
   const cc=$("qCount");[["10",10],["20",20],["All",999]].forEach(([l,v])=>{const b=document.createElement("button");b.className="pill";b.textContent=l;b.setAttribute("aria-pressed",v===qCount);b.onclick=()=>{qCount=v;[...cc.children].forEach(c=>c.setAttribute("aria-pressed",false));b.setAttribute("aria-pressed",true);};cc.appendChild(b);});
   $("qFav").onclick=()=>{qFav=!qFav;$("qFav").setAttribute("aria-pressed",qFav);};
-  $("qStart").onclick=startQuiz;
+  $("qWeak").onclick=()=>{qWeak=!qWeak;$("qWeak").setAttribute("aria-pressed",qWeak);};
+  $("qStart").onclick=()=>startQuiz(false);
 }
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
-function startQuiz(){
+function weightPick(pool,n){
+  // weight: unmastered/low-box/recently-missed terms appear more often
+  const missed=new Set(qMiss.map(x=>x.id));
+  const w=x=>{const r=srsOf(x.id);let s=1; if(mastery(x.id)==="new")s+=2; else if(r.b<=1)s+=2; else if(r.b<=3)s+=1; if(r.l==="again")s+=2; if(missed.has(x.id))s+=1; return s;};
+  const bag=[];pool.forEach(x=>{const k=w(x);for(let i=0;i<k;i++)bag.push(x);});
+  shuffle(bag);const out=[],seen=new Set();
+  for(const x of bag){if(seen.has(x.id))continue;seen.add(x.id);out.push(x);if(out.length>=n)break;}
+  return out;
+}
+function startQuiz(exam){
+  examMode=!!exam;
   let pool=T.filter(x=>(qScope===0||x.m===qScope)&&(!qFav||favs.has(x.id)));
   if(pool.length<4){toast("Need at least 4 terms in this deck");return;}
-  qList=shuffle(pool.slice()).slice(0,Math.min(qCount,pool.length));qi=0;qScore=0;qMiss=[];showQ();
+  const n=exam?Math.min(90,pool.length):Math.min(qCount,pool.length);
+  qList=(qWeak&&!exam)?weightPick(pool,n):shuffle(pool.slice()).slice(0,n);
+  qi=0;qScore=0;qMiss=[];
+  if(exam){examStart=Date.now();clearInterval(examTimer);examTimer=setInterval(updateExamClock,1000);}
+  showQ();
 }
+function startExam(){examMode=true;qScope=0;qFav=false;startQuiz(true);}
+function updateExamClock(){const el=$("examClock");if(!el){clearInterval(examTimer);return;}const s=Math.floor((Date.now()-examStart)/1000);el.textContent=String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");}
 /* Blank out the answer term (name, acronym, and word-stems) so the
    definition prompt can't give itself away. Falls back to a lighter
    redaction if the aggressive pass would blank too much of the text. */
@@ -1057,11 +1604,13 @@ function showQ(){
     ? `<p class="qdef">${esc(redact(x.d,x.t))}</p>`
     : `<p class="qdef"><span class="qask">Which definition matches</span> <b style="color:var(${m.v})">${esc(x.t)}</b>?</p>`;
   $("studyArea").innerHTML=`
-    <div class="qhead"><span>Q ${qi+1} / ${qList.length} <span style="color:var(${m.v})">${m.code}</span></span><span>Score ${qScore}</span></div>
+    <div class="qhead"><span>Q ${qi+1} / ${qList.length} <span style="color:var(${m.v})">${m.code}</span></span>${examMode?`<span class="examclk">⏱ <b id="examClock">00:00</b></span>`:`<span>Score ${qScore}</span>`}</div>
+    ${examMode?`<div class="qprog"><i style="width:${qi/qList.length*100}%"></i></div>`:""}
     ${prompt}
     <div id="opts"></div>
     <div id="fb"></div>
     <button class="qnext" id="qNext" disabled>${qi+1===qList.length?"See results":"Next question"}</button>`;
+  if(examMode)updateExamClock();
   const o=$("opts");
   opts.forEach((opt,idx)=>{
     const b=document.createElement("button");b.className="opt";
@@ -1075,30 +1624,86 @@ function showQ(){
 function answer(opt,x,b,o){
   if(qAns)return;qAns=true;
   [...o.children].forEach(z=>z.disabled=true);
-  if(opt.id===x.id){b.classList.add("right");qScore++;}
+  const correct=opt.id===x.id;
+  recordAnswer(x.m,correct);bumpStreak();
+  if(correct){b.classList.add("right");qScore++;}
   else{b.classList.add("wrong");[...o.children].forEach(z=>{if(z.dataset.correct)z.classList.add("right");});qMiss.push(x);}
-  const body=x.tip?esc(x.tip):esc(x.d);
-  $("fb").innerHTML=`<div class="qfb"><b>${esc(x.t)}.</b> ${body}</div>`;
+  if(!examMode){const body=x.tip?esc(x.tip):esc(x.d);$("fb").innerHTML=`<div class="qfb"><b>${esc(x.t)}.</b> ${body}</div>`;}
   $("qNext").disabled=false;
 }
 function showResult(){
+  clearInterval(examTimer);
   const pct=Math.round(qScore/qList.length*100);
-  const col=pct>=80?"var(--ok)":pct>=60?"var(--gold)":"var(--bad)";
+  recordQuiz(qScore,qList.length,qScope,examMode);
+  let banner="";
+  if(examMode){
+    const pass=pct>=83; // SY0-701 ≈ 750/900
+    const secs=Math.floor((Date.now()-examStart)/1000);
+    banner=`<div class="exambanner ${pass?"pass":"fail"}">${pass?"PASS":"BELOW PASS"} · exam bar 83% · ${String(Math.floor(secs/60)).padStart(2,"0")}:${String(secs%60).padStart(2,"0")}</div>`;
+  }
+  const col=pct>=83?"var(--ok)":pct>=60?"var(--gold)":"var(--bad)";
   $("studyArea").innerHTML=`
+    ${banner}
     <div class="result">
       <div>You scored</div><div class="big" style="color:${col}">${qScore}/${qList.length}</div>
       <div style="color:var(--sub)">${pct}% correct</div>
     </div>
-    ${qMiss.length?`<div class="review"><h5>Review (${qMiss.length} missed)</h5>${qMiss.map(x=>`<div class="rv"><div class="rt">${esc(x.t)}</div><div>${esc(x.d)}</div><button class="open" data-id="${x.id}">Open full entry →</button></div>`).join("")}</div>`:`<div class="review"><h5>Perfect run — nothing missed.</h5></div>`}
+    ${qMiss.length?`<div class="review"><h5>Review (${qMiss.length} missed)</h5>${qMiss.map(x=>`<div class="rv"><div class="rt">${esc(x.t)} <span class="rvm">${MODS[x.m-1].code}</span></div><div>${esc(x.d)}</div><button class="open" data-id="${x.id}">Open full entry →</button></div>`).join("")}</div>`:`<div class="review"><h5>Perfect run — nothing missed.</h5></div>`}
     <div class="res-actions">
       ${qMiss.length?`<button id="qRetry">Retry missed</button>`:""}
-      <button class="prime" id="qAgain">New quiz</button>
+      <button class="prime" id="qAgain">${examMode?"Back to quiz setup":"New quiz"}</button>
     </div>`;
-  $("qAgain").onclick=quizSetup;
+  $("qAgain").onclick=()=>{examMode=false;quizSetup();};
+  render();
   if(qMiss.length){
-    $("qRetry").onclick=()=>{qList=shuffle(qMiss.slice());qi=0;qScore=0;qMiss=[];showQ();};
+    $("qRetry").onclick=()=>{examMode=false;qList=shuffle(qMiss.slice());qi=0;qScore=0;qMiss=[];showQ();};
     $("studyArea").querySelectorAll(".open").forEach(btn=>btn.onclick=()=>{closeModal();openTerm(btn.dataset.id,true);});
   }
+}
+/* ---- exam setup ---- */
+function examSetup(){
+  const best=stats.hist.filter(h=>h.exam).reduce((a,h)=>Math.max(a,Math.round(h.score/h.total*100)),0);
+  $("studyArea").innerHTML=`
+    <div class="examintro">
+      <h4>Exam simulation</h4>
+      <p>Up to <b>90 questions</b> pulled from all 11 modules, timed, no feedback until the end. Pass bar is <b>83%</b>, matching the SY0-701 cut of 750/900. This mirrors NetAcad content, not the real item bank.</p>
+      ${best?`<p class="pb">Your best exam-mode score: <b>${best}%</b></p>`:""}
+      <button class="go" id="examGo">Begin exam</button>
+    </div>`;
+  $("examGo").onclick=startExam;
+}
+/* ---- stats ---- */
+function statsView(){
+  const rows=MODS.map(m=>{
+    const all=T.filter(x=>x.m===m.n);
+    const mstr=all.filter(x=>mastery(x.id)==="mastered").length;
+    const learn=all.filter(x=>mastery(x.id)==="learning").length;
+    const q=stats.mod[m.n]||{s:0,c:0};
+    const acc=q.s?Math.round(q.c/q.s*100):null;
+    return {m,all:all.length,mstr,learn,acc,seen:q.s};
+  });
+  const tested=rows.filter(r=>r.acc!=null);
+  const weakest=tested.slice().sort((a,b)=>a.acc-b.acc)[0];
+  const totalMstr=rows.reduce((a,r)=>a+r.mstr,0);
+  const due=dueCount(0);
+  const hist=stats.hist.slice(-12);
+  $("studyArea").innerHTML=`
+    <div class="statgrid">
+      <div class="scard"><b>${totalMstr}/${T.length}</b><span>mastered</span></div>
+      <div class="scard"><b>${due}</b><span>due now</span></div>
+      <div class="scard"><b>${streak.days||0}🔥</b><span>day streak</span></div>
+      <div class="scard"><b>${weakest?weakest.m.code:"—"}</b><span>weakest module</span></div>
+    </div>
+    <div class="mbars">
+      ${rows.map(r=>`<div class="mbar">
+        <span class="ml" style="color:var(${r.m.v})">${r.m.code}</span>
+        <span class="mtrack"><i class="mm" style="width:${r.mstr/r.all*100}%;background:var(${r.m.v})"></i><i class="mlrn" style="left:${r.mstr/r.all*100}%;width:${r.learn/r.all*100}%"></i></span>
+        <span class="mnum">${r.mstr}/${r.all}${r.acc!=null?` · ${r.acc}%`:""}</span>
+      </div>`).join("")}
+    </div>
+    ${hist.length?`<div class="histwrap"><h5>Recent quizzes</h5><div class="hist">${hist.map(h=>{const p=Math.round(h.score/h.total*100);return `<span class="hbar" title="${new Date(h.t).toLocaleDateString()} · ${p}%"><i style="height:${Math.max(6,p)}%;background:${p>=83?"var(--ok)":p>=60?"var(--gold)":"var(--bad)"}"></i></span>`;}).join("")}</div></div>`:`<p class="hint" style="text-align:center">Take a quiz to start tracking accuracy.</p>`}
+    <div class="res-actions"><button id="stResetSrs">Reset schedule</button></div>`;
+  $("stResetSrs").onclick=()=>{if(confirm("Clear spaced-repetition schedule? Learned marks and favorites stay.")){srs={};saveSrs();statsView();}};
 }
 document.addEventListener("keydown",e=>{
   if(!sm.classList.contains("show")||studyTab!=="quiz")return;
@@ -1113,6 +1718,43 @@ document.addEventListener("keydown",e=>{
 });
 
 /* ---- init ---- */
+/* ---- printable cram sheet ---- */
+function printSheet(){
+  const style=`<style>
+    body{font:12px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;color:#111;margin:24px;max-width:900px}
+    h1{font-size:20px;margin:0 0 2px}.sub{color:#666;margin:0 0 16px;font-size:11px}
+    h2{font-size:13px;margin:16px 0 6px;border-bottom:1px solid #ccc;padding-bottom:3px}
+    .row{margin:3px 0}.t{font-weight:700}.rt{color:#333}
+    table{border-collapse:collapse;width:100%;margin:6px 0}td{border:1px solid #ddd;padding:3px 7px;font-size:11px;vertical-align:top}
+    td:first-child{font-family:ui-monospace,Menlo,monospace;white-space:nowrap;background:#f6f6f6}
+    .refs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media print{a{color:#111}}
+  </style>`;
+  let body=`<h1>Network Defense — cram sheet</h1><p class="sub">${T.length} terms · ${MODS.length} modules · exam tips + quick reference · generated ${new Date().toLocaleDateString()}</p>`;
+  body+=`<h2>Quick reference</h2><div class="refs">`+REFS.map(r=>`<table><tr><td colspan="2" style="background:#eee;font-weight:700">${esc(r.title)}</td></tr>`+r.rows.map(row=>`<tr><td>${esc(row[0])}</td><td>${esc(row[1])}</td></tr>`).join("")+`</table>`).join("")+`</div>`;
+  MODS.forEach(m=>{
+    const tips=T.filter(x=>x.m===m.n&&x.tip);
+    if(!tips.length)return;
+    body+=`<h2>${m.code} · ${m.name}</h2>`+tips.map(x=>`<div class="row"><span class="t">${esc(x.t)}.</span> <span class="rt">${esc(x.tip)}</span></div>`).join("");
+  });
+  const w=window.open("","_blank");
+  if(!w){toast("Allow pop-ups to print the sheet");return;}
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>NetDef cram sheet</title>${style}</head><body>${body}</body></html>`);
+  w.document.close();w.focus();setTimeout(()=>w.print(),300);
+}
+
+/* ---- keyboard nav through visible cards ---- */
+let kbIdx=-1;
+function visCards(){return [...document.querySelectorAll("details.domain[open] .tcard")];}
+function kbFocus(i){const c=visCards();if(!c.length)return;kbIdx=(i+c.length)%c.length;c.forEach(e=>e.classList.remove("kbfocus"));const el=c[kbIdx];el.classList.add("kbfocus");el.scrollIntoView({block:"center",behavior:"smooth"});}
+document.addEventListener("keydown",e=>{
+  if(modal.classList.contains("show")||$("studyModal").classList.contains("show"))return;
+  const inSearch=document.activeElement===$("search");
+  if(e.key==="ArrowDown"){e.preventDefault();if(inSearch)$("search").blur();kbFocus(kbIdx+1);}
+  else if(e.key==="ArrowUp"){e.preventDefault();kbFocus(kbIdx-1);}
+  else if(e.key==="Enter"&&kbIdx>=0&&!inSearch){const c=visCards()[kbIdx];if(c)openTerm(c.dataset.id,true);}
+});
+
 buildShell();render();
 </script>
 <script>
