@@ -194,8 +194,9 @@ details[open] .chev{transform:rotate(90deg)}
 /* quiz */
 .qhead{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12.5px;color:var(--sub);margin-bottom:13px}
 .qdef{font-size:16.5px;font-weight:600;line-height:1.45;margin:0 0 16px}
-.opt{display:flex;gap:10px;width:100%;text-align:left;background:var(--mantle);border:1px solid var(--s0);border-radius:11px;padding:12px 14px;margin-bottom:9px;font-size:14.5px;font-weight:600;color:var(--text)}
-.opt .n{font-family:var(--mono);font-size:11px;color:var(--faint);border:1px solid var(--s1);border-radius:5px;padding:1px 6px;flex-shrink:0}
+.opt{display:flex;gap:10px;width:100%;text-align:left;align-items:flex-start;background:var(--mantle);border:1px solid var(--s0);border-radius:11px;padding:12px 14px;margin-bottom:9px;font-size:14.5px;font-weight:600;color:var(--text);line-height:1.45}
+.opt .n{font-family:var(--mono);font-size:11px;color:var(--faint);border:1px solid var(--s1);border-radius:5px;padding:1px 6px;flex-shrink:0;margin-top:1px}
+.qask{color:var(--sub);font-weight:600}
 .opt:hover:not(:disabled){border-color:var(--s1)}
 .opt:disabled{cursor:default}
 .opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--mantle))}
@@ -1008,20 +1009,65 @@ function startQuiz(){
   if(pool.length<4){toast("Need at least 4 terms in this deck");return;}
   qList=shuffle(pool.slice()).slice(0,Math.min(qCount,pool.length));qi=0;qScore=0;qMiss=[];showQ();
 }
+/* Blank out the answer term (name, acronym, and word-stems) so the
+   definition prompt can't give itself away. Falls back to a lighter
+   redaction if the aggressive pass would blank too much of the text. */
+const QSTOP=new Set(["the","and","for","with","that","this","from","are","use","used","using","between","into","within","based","type","types","its","how","when","only","any","all","one","two","per","via","each"]);
+function redactPass(text,term,useStems){
+  const targets=[];
+  const paren=(term.match(/\(([^)]+)\)/)||[])[1];
+  const bare=term.replace(/\([^)]*\)/g,"").trim();
+  if(paren)targets.push(paren);
+  if(bare)targets.push(bare);
+  if(useStems){
+    bare.toLowerCase().split(/[^a-z0-9]+/).forEach(w=>{
+      if(w.length>=4&&!QSTOP.has(w)){
+        targets.push(w);
+        const stem=w.replace(/(ing|tion|ed|es|s)$/,"");
+        if(stem.length>=4&&stem!==w)targets.push(stem);
+      }
+    });
+  }
+  let out=text;
+  [...new Set(targets)].sort((a,b)=>b.length-a.length).forEach(t=>{
+    const e=t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+    const acr=/^[A-Za-z0-9+/.-]{2,5}$/.test(t)&&t===t.toUpperCase();
+    const re=acr?new RegExp("\\b"+e+"\\b","g"):new RegExp("\\b"+e+"[a-z]*\\b","gi");
+    out=out.replace(re,"\u2003_____\u2003");
+  });
+  return out;
+}
+function redact(text,term){
+  if(!text)return text;
+  const strong=redactPass(text,term,true);
+  const total=text.split(/\s+/).length;
+  const blanks=(strong.match(/_____/g)||[]).length;
+  return (blanks/total>0.45)?redactPass(text,term,false):strong;
+}
 function showQ(){
   if(qi>=qList.length)return showResult();
   qAns=false;const x=qList[qi];
-  let pool=T.filter(o=>o.id!==x.id&&o.m===x.m);if(pool.length<3)pool=pool.concat(T.filter(o=>o.id!==x.id&&o.m!==x.m));
-  const opts=shuffle([x,...shuffle(pool).slice(0,3)]);
+  let pool=T.filter(o=>o.id!==x.id&&o.m===x.m);
+  if(pool.length<3)pool=pool.concat(shuffle(T.filter(o=>o.id!==x.id&&o.m!==x.m)));
+  const opts=shuffle([x,...shuffle(pool.slice()).slice(0,3)]);
+  const m=MODS[x.m-1];
+  /* two directions: "def"=redacted definition -> pick term, "term"=term -> pick definition */
+  const mode=Math.random()<0.5?"def":"term";
+  const prompt=mode==="def"
+    ? `<p class="qdef">${esc(redact(x.d,x.t))}</p>`
+    : `<p class="qdef"><span class="qask">Which definition matches</span> <b style="color:var(${m.v})">${esc(x.t)}</b>?</p>`;
   $("studyArea").innerHTML=`
-    <div class="qhead"><span>Q ${qi+1} / ${qList.length}</span><span>Score ${qScore}</span></div>
-    <p class="qdef">${esc(x.d)}</p>
+    <div class="qhead"><span>Q ${qi+1} / ${qList.length} <span style="color:var(${m.v})">${m.code}</span></span><span>Score ${qScore}</span></div>
+    ${prompt}
     <div id="opts"></div>
     <div id="fb"></div>
     <button class="qnext" id="qNext" disabled>${qi+1===qList.length?"See results":"Next question"}</button>`;
   const o=$("opts");
   opts.forEach((opt,idx)=>{
-    const b=document.createElement("button");b.className="opt";b.innerHTML=`<span class="n">${idx+1}</span>${esc(opt.t)}`;
+    const b=document.createElement("button");b.className="opt";
+    const label=mode==="def"?esc(opt.t):esc(redact(opt.d,x.t));
+    b.innerHTML=`<span class="n">${idx+1}</span><span>${label}</span>`;
+    b.dataset.correct=(opt.id===x.id)?"1":"";
     b.onclick=()=>answer(opt,x,b,o);o.appendChild(b);
   });
   $("qNext").onclick=()=>{qi++;showQ();};
@@ -1030,9 +1076,9 @@ function answer(opt,x,b,o){
   if(qAns)return;qAns=true;
   [...o.children].forEach(z=>z.disabled=true);
   if(opt.id===x.id){b.classList.add("right");qScore++;}
-  else{b.classList.add("wrong");[...o.children].forEach(z=>{if(z.textContent.replace(/^\d+/,"")===x.t)z.classList.add("right");});qMiss.push(x);}
-  if(x.tip)$("fb").innerHTML=`<div class="qfb"><b>${esc(x.t)}.</b> ${esc(x.tip)}</div>`;
-  else $("fb").innerHTML=`<div class="qfb"><b>${esc(x.t)}.</b> ${esc(x.d)}</div>`;
+  else{b.classList.add("wrong");[...o.children].forEach(z=>{if(z.dataset.correct)z.classList.add("right");});qMiss.push(x);}
+  const body=x.tip?esc(x.tip):esc(x.d);
+  $("fb").innerHTML=`<div class="qfb"><b>${esc(x.t)}.</b> ${body}</div>`;
   $("qNext").disabled=false;
 }
 function showResult(){
