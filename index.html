@@ -198,6 +198,19 @@ html[data-theme="light"] .card{background:var(--mantle)}
 .copy:hover{color:var(--text);border-color:var(--accent)}
 .copy.done{color:var(--green);border-color:var(--green)}
 
+/* CLI command reference section */
+.cmdref-dom{margin:18px 0 10px;font-family:var(--mono);font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--cat);border-bottom:1px solid var(--border2);padding-bottom:6px}
+.cmdref-dom:first-child{margin-top:4px}
+.cmdref-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:13px 14px;margin-bottom:14px}
+html[data-theme="light"] .cmdref-item{background:var(--mantle)}
+.cmdref-term{font-weight:700;font-size:.97rem;letter-spacing:-.01em;margin-bottom:4px}
+.cmdref-def{color:var(--subtext);font-size:.86rem;line-height:1.55;margin-bottom:8px}
+.cmdref-def b{color:var(--text);font-weight:700}
+.cmdref-tip{font-size:.8rem;color:var(--text);background:color-mix(in srgb,var(--yellow) 13%,transparent);border-radius:8px;padding:6px 10px;margin-bottom:8px}
+.cmdref-tip b{color:var(--yellow)}
+.cmdref-item .code{margin:0}
+.toc-cmd .num{color:var(--green)}
+
 /* ============================== TABLES ============================== */
 .tbl-wrap{overflow-x:auto;border:1px solid var(--border2);border-radius:10px;margin-top:14px}
 table{border-collapse:collapse;width:100%;font-size:.85rem;min-width:520px}
@@ -274,6 +287,9 @@ td code,td .mono{font-family:var(--mono);font-size:.82rem;color:var(--teal)}
   .brand small{display:none}
 }
 @media (max-width:680px){
+  .topbar-inner{flex-wrap:wrap}
+  .search-wrap{order:3;flex-basis:100%;max-width:none;margin-left:0}
+  .tb-actions{margin-left:auto}
   .search-key{display:none}
   .icon-btn .lbl{display:none}
   .icon-btn{padding:0 10px}
@@ -726,17 +742,17 @@ const TERMS = [
 {d:'networking',x:'Core',t:'TCP',def:`<b>Transmission Control Protocol.</b> Connection-oriented and reliable: it uses a three-way handshake, sequencing, acknowledgements, and retransmission. Used where delivery must be guaranteed (web, email, file transfer).`},
 {d:'networking',x:'Core',t:'UDP',def:`<b>User Datagram Protocol.</b> Connectionless and best-effort: no handshake, no guaranteed delivery, low overhead. Used for speed-sensitive traffic (DNS, DHCP, VoIP, streaming, games).`},
 {d:'networking',x:'Core',t:'Three-Way Handshake',def:`How TCP opens a connection: <b>SYN</b> (client) then <b>SYN-ACK</b> (server) then <b>ACK</b> (client). A SYN flood attack abuses this by never sending the final ACK.`},
-{d:'networking',x:'Core',t:'Subnetting & CIDR',def:`Dividing a network into smaller subnets. <b>CIDR</b> notation (e.g. /24) shows how many bits are the network portion. /24 = 256 addresses (254 usable), /25 = 128, /26 = 64. Each added bit halves the host count.`},
+{d:'networking',x:'Core',t:'Subnetting & CIDR',def:`Dividing a network into smaller subnets. <b>CIDR</b> notation (e.g. /24) shows how many bits are the network portion. /24 = 256 addresses (254 usable), /25 = 128, /26 = 64. Each added bit halves the host count.`,code:`# Break down a subnet: network, broadcast, host range, count\nipcalc 192.168.1.0/26\nsipcalc 10.0.0.0/22`},
 {d:'networking',x:'Core',t:'Private IP Ranges',def:`Non-routable RFC 1918 ranges: <b>10.0.0.0/8</b>, <b>172.16.0.0/12</b>, and <b>192.168.0.0/16</b>. APIPA (169.254.0.0/16) self-assigns when DHCP fails.`},
 {d:'networking',x:'Core',t:'IPv4 vs IPv6',def:`IPv4 is 32-bit (about 4.3 billion addresses, dotted decimal). IPv6 is 128-bit (hexadecimal, eight groups), giving a vast address space and built-in IPSec support. No broadcast in IPv6; it uses multicast and anycast.`},
 {d:'networking',x:'Core',t:'NAT / PAT',def:`<b>Network Address Translation</b> maps private internal IPs to a public IP. <b>PAT</b> (Port Address Translation, "NAT overload") lets many internal hosts share one public IP by tracking port numbers.`},
 {d:'networking',x:'Core',t:'DHCP DORA',def:`How a client leases an IP automatically: <b>Discover</b> (client broadcasts) then <b>Offer</b> (server proposes an IP) then <b>Request</b> (client asks for it) then <b>Acknowledge</b> (server confirms the lease).`},
-{d:'networking',x:'Core',t:'ARP',def:`<b>Address Resolution Protocol.</b> Resolves a known IP address to a MAC address on the local network. Operates at Layer 2 and is the target of ARP poisoning attacks.`},
-{d:'networking',x:'Core',t:'DNS',def:`<b>Domain Name System.</b> Resolves hostnames to IP addresses. Key records: <b>A</b> (IPv4), <b>AAAA</b> (IPv6), <b>CNAME</b> (alias), <b>MX</b> (mail), <b>TXT</b> (SPF/DKIM), <b>NS</b>, <b>PTR</b> (reverse), <b>SOA</b>.`},
+{d:'networking',x:'Core',t:'ARP',def:`<b>Address Resolution Protocol.</b> Resolves a known IP address to a MAC address on the local network. Operates at Layer 2 and is the target of ARP poisoning attacks.`,code:`# View the ARP cache (IP to MAC mappings)\narp -a\nip neigh\n# Flush stale entries (Linux)\nsudo ip neigh flush all`},
+{d:'networking',x:'Core',t:'DNS',def:`<b>Domain Name System.</b> Resolves hostnames to IP addresses. Key records: <b>A</b> (IPv4), <b>AAAA</b> (IPv6), <b>CNAME</b> (alias), <b>MX</b> (mail), <b>TXT</b> (SPF/DKIM), <b>NS</b>, <b>PTR</b> (reverse), <b>SOA</b>.`,code:`# Query DNS records\ndig example.com A\ndig example.com MX +short\nnslookup example.com\nhost example.com\n# Reverse lookup an IP\ndig -x 8.8.8.8`},
 {d:'networking',x:'Core',t:'VLAN',def:`<b>Virtual LAN.</b> Logically segments one physical switch into separate broadcast domains. Improves security and reduces broadcast traffic; trunk ports (802.1Q) carry multiple VLANs.`},
 {d:'networking',x:'Core',t:'MAC vs IP Address',def:`A <b>MAC</b> is a permanent 48-bit hardware (physical, Layer 2) address used within a local segment. An <b>IP</b> is a logical (Layer 3) address used for routing between networks. MAC = local delivery, IP = end-to-end routing.`},
 {d:'networking',x:'Core',t:'Switch vs Router',def:`A <b>switch</b> forwards frames within a LAN using MAC addresses (Layer 2). A <b>router</b> forwards packets between networks using IP addresses (Layer 3).`},
-{d:'networking',x:'Core',t:'Default Gateway',def:`The router IP a host sends traffic to when the destination is outside its own subnet. Without it, a host can only reach the local network.`},
+{d:'networking',x:'Core',t:'Default Gateway',def:`The router IP a host sends traffic to when the destination is outside its own subnet. Without it, a host can only reach the local network.`,code:`# Show the routing table and default route\nip route\nroute -n\n# Windows\nroute print\nnetstat -rn`},
 /* ---- 3. CRYPTOGRAPHY (Exam 1.4) ---- */
 {d:'crypto',x:'1.0',t:'Symmetric Encryption',def:`One shared secret key encrypts and decrypts. Fast and good for bulk data, but key distribution is the hard part. Algorithms: AES, ChaCha20, 3DES, DES, RC4 (legacy).`},
 {d:'crypto',x:'1.0',t:'Asymmetric Encryption',def:`A public/private key pair: encrypt with one key, decrypt with the other. Slower, but solves key distribution and enables signatures. Algorithms: RSA, ECC, Diffie-Hellman, DSA.`},
@@ -744,24 +760,24 @@ const TERMS = [
 {d:'crypto',x:'1.0',t:'RSA',def:`A widely used asymmetric algorithm based on the difficulty of factoring large prime products. Used for key exchange, encryption, and digital signatures.`},
 {d:'crypto',x:'1.0',t:'ECC',def:`<b>Elliptic Curve Cryptography.</b> Asymmetric encryption that achieves strong security with much smaller keys, making it efficient for mobile and IoT devices.`},
 {d:'crypto',x:'1.0',t:'3DES',def:`Triple DES applies the DES cipher three times. A legacy algorithm now deprecated (NIST disallowed it) in favor of AES.`},
-{d:'crypto',x:'1.0',t:'Hashing',def:`A one-way function that turns input into a fixed-length digest. Used for integrity, not secrecy: the same input always produces the same hash, and it cannot be reversed. MD5 and SHA-1 are broken; use SHA-256 or SHA-3.`},
+{d:'crypto',x:'1.0',t:'Hashing',def:`A one-way function that turns input into a fixed-length digest. Used for integrity, not secrecy: the same input always produces the same hash, and it cannot be reversed. MD5 and SHA-1 are broken; use SHA-256 or SHA-3.`,code:`# Verify a file's integrity (Linux)\nsha256sum file.iso\nmd5sum file.iso\n# Windows\ncertutil -hashfile file.iso SHA256\n# PowerShell\nGet-FileHash file.iso -Algorithm SHA256`},
 {d:'crypto',x:'1.0',t:'MD5 / SHA Family',def:`<b>MD5</b> (128-bit) and <b>SHA-1</b> (160-bit) are cryptographically broken and should not be used. <b>SHA-2</b> (SHA-256, SHA-512) and <b>SHA-3</b> are the current secure standards.`},
 {d:'crypto',x:'1.0',t:'bcrypt / Key Stretching',def:`Password hashing functions that are deliberately slow and salted to resist brute force. <b>bcrypt</b>, <b>PBKDF2</b>, <b>scrypt</b>, and <b>Argon2</b> use a work factor to stretch keys.`},
 {d:'crypto',x:'1.0',t:'Salting',def:`Adding a unique random value to a password before hashing. Defeats rainbow tables and ensures identical passwords produce different hashes.`},
-{d:'crypto',x:'1.0',t:'HMAC',def:`<b>Hash-based Message Authentication Code.</b> Combines a hash with a secret key to verify both <b>integrity</b> and <b>authenticity</b> of a message.`},
-{d:'crypto',x:'1.0',t:'Digital Signature',def:`A hash of a message encrypted with the sender's <b>private</b> key. The recipient verifies with the sender's public key, proving integrity, authentication, and non-repudiation.`},
+{d:'crypto',x:'1.0',t:'HMAC',def:`<b>Hash-based Message Authentication Code.</b> Combines a hash with a secret key to verify both <b>integrity</b> and <b>authenticity</b> of a message.`,code:`# Keyed hash for message authentication\nopenssl dgst -sha256 -hmac "secretkey" file.txt\n# Same principle secures API request and TLS record signatures`},
+{d:'crypto',x:'1.0',t:'Digital Signature',def:`A hash of a message encrypted with the sender's <b>private</b> key. The recipient verifies with the sender's public key, proving integrity, authentication, and non-repudiation.`,code:`# Sign and verify a file with GPG\ngpg --output file.sig --detach-sign file.txt\ngpg --verify file.sig file.txt`},
 {d:'crypto',x:'1.0',t:'PKI',def:`<b>Public Key Infrastructure.</b> The system of certificate authorities, certificates, and keys that binds identities to public keys. Components: CA, RA, CSR, certificate chain, CRL, OCSP.`},
 {d:'crypto',x:'1.0',t:'Certificate Authority (CA)',def:`A trusted entity that issues and signs digital certificates. A <b>root CA</b> anchors trust; <b>intermediate CAs</b> form a chain so the root stays offline and protected.`},
-{d:'crypto',x:'1.0',t:'CSR',def:`<b>Certificate Signing Request.</b> A file containing your public key and identity details, submitted to a CA to request a signed certificate. Your private key never leaves your system.`},
-{d:'crypto',x:'1.0',t:'CRL vs OCSP',def:`Two ways to check if a certificate was revoked. A <b>CRL</b> is a downloaded list of revoked certs. <b>OCSP</b> queries the CA in real time for a single cert's status (OCSP stapling caches the response).`},
-{d:'crypto',x:'1.0',t:'TLS Handshake',def:`How a secure session is established: client and server agree on a cipher, the server proves identity with its certificate, they exchange keys (often via Diffie-Hellman), and derive a shared session key for symmetric encryption.`},
+{d:'crypto',x:'1.0',t:'CSR',def:`<b>Certificate Signing Request.</b> A file containing your public key and identity details, submitted to a CA to request a signed certificate. Your private key never leaves your system.`,code:`# Generate a private key and a certificate signing request\nopenssl genrsa -out server.key 2048\nopenssl req -new -key server.key -out server.csr\n# Inspect the CSR before sending it to the CA\nopenssl req -in server.csr -noout -text`},
+{d:'crypto',x:'1.0',t:'CRL vs OCSP',def:`Two ways to check if a certificate was revoked. A <b>CRL</b> is a downloaded list of revoked certs. <b>OCSP</b> queries the CA in real time for a single cert's status (OCSP stapling caches the response).`,code:`# Check revocation status via OCSP\nopenssl ocsp -issuer ca.pem -cert server.pem -url http://ocsp.example.com\n# Read a downloaded CRL\nopenssl crl -in crl.pem -noout -text`},
+{d:'crypto',x:'1.0',t:'TLS Handshake',def:`How a secure session is established: client and server agree on a cipher, the server proves identity with its certificate, they exchange keys (often via Diffie-Hellman), and derive a shared session key for symmetric encryption.`,code:`# Inspect a live handshake and the presented cert chain\nopenssl s_client -connect example.com:443 -servername example.com\n# Show just the leaf certificate details\nopenssl s_client -connect example.com:443 < /dev/null | openssl x509 -noout -text`},
 {d:'crypto',x:'1.0',t:'Diffie-Hellman',def:`A key exchange method that lets two parties derive a shared secret over an insecure channel without ever sending the secret itself. <b>ECDHE</b> adds perfect forward secrecy.`},
 {d:'crypto',x:'1.0',t:'Perfect Forward Secrecy',def:`Each session uses a unique ephemeral key, so compromising one session key (or the server's long-term key) does not expose past or future sessions.`},
 {d:'crypto',x:'1.0',t:'At Rest vs In Transit',def:`<b>Encryption at rest</b> protects stored data (full disk, database, file encryption). <b>Encryption in transit</b> protects data moving across a network (TLS, IPSec, SSH). Strong programs do both.`},
 {d:'crypto',x:'1.0',t:'Block vs Stream Cipher',def:`A <b>block</b> cipher encrypts fixed-size chunks (AES = 128-bit blocks). A <b>stream</b> cipher encrypts one bit or byte at a time (ChaCha20, RC4), better for continuous data.`},
 {d:'crypto',x:'1.0',t:'Nonce / IV',def:`A random or unique value added to encryption so the same plaintext does not produce the same ciphertext. An <b>IV</b> (initialization vector) seeds block cipher modes.`},
 {d:'crypto',x:'1.0',t:'Steganography',def:`Hiding data inside other data (an image, audio, or video file) so its very existence is concealed, rather than just its contents.`},
-{d:'crypto',x:'1.0',t:'Certificate Types',def:`<b>Wildcard</b> (*.domain.com covers subdomains), <b>SAN</b> (Subject Alternative Name, multiple domains), <b>self-signed</b> (no external CA, internal use), and <b>code-signing</b> (verifies software publisher).`},
+{d:'crypto',x:'1.0',t:'Certificate Types',def:`<b>Wildcard</b> (*.domain.com covers subdomains), <b>SAN</b> (Subject Alternative Name, multiple domains), <b>self-signed</b> (no external CA, internal use), and <b>code-signing</b> (verifies software publisher).`,code:`# Inspect any certificate: subject, issuer, SAN, validity\nopenssl x509 -in cert.pem -noout -text\nopenssl x509 -in cert.pem -noout -subject -issuer -dates`},
 
 /* ---- 4. THREATS (Exam 2.0) ---- */
 {d:'threats',x:'2.0',t:'Virus',def:`Malware that attaches to a host file or program and needs a user to execute it to spread. Replicates when the infected file runs.`},
@@ -834,7 +850,7 @@ const TERMS = [
 {d:'iam',x:'4.0',t:'SAML',def:`<b>Security Assertion Markup Language.</b> XML-based standard for exchanging authentication and authorization between an identity provider and a service provider. Common for enterprise SSO.`},
 {d:'iam',x:'4.0',t:'OAuth 2.0',def:`An <b>authorization</b> framework that lets an app access resources on a user's behalf via tokens, without sharing the password. It authorizes, it does not authenticate by itself.`},
 {d:'iam',x:'4.0',t:'OpenID Connect (OIDC)',def:`An <b>authentication</b> layer built on top of OAuth 2.0. OAuth handles authorization; OIDC adds identity (who you are).`},
-{d:'iam',x:'4.0',t:'Kerberos',def:`A ticket-based authentication protocol using a <b>Key Distribution Center (KDC)</b>. A Ticket-Granting Ticket (TGT) enables SSO. Time-sensitive, so clock skew breaks it. Default in Active Directory.`},
+{d:'iam',x:'4.0',t:'Kerberos',def:`A ticket-based authentication protocol using a <b>Key Distribution Center (KDC)</b>. A Ticket-Granting Ticket (TGT) enables SSO. Time-sensitive, so clock skew breaks it. Default in Active Directory.`,code:`# Request and list Kerberos tickets\nkinit jdoe@EXAMPLE.COM\nklist\n# Destroy cached tickets\nkdestroy`},
 {d:'iam',x:'4.0',t:'RADIUS vs TACACS+',def:`Both are AAA protocols. <b>RADIUS</b> uses UDP, encrypts only the password, and is cross-vendor. <b>TACACS+</b> uses TCP, encrypts the entire payload, separates AAA, and is Cisco-oriented.`},
 {d:'iam',x:'4.0',t:'RBAC',def:`<b>Role-Based Access Control.</b> Permissions are assigned to roles, and users get roles. Scales well in large organizations.`},
 {d:'iam',x:'4.0',t:'ABAC',def:`<b>Attribute-Based Access Control.</b> Decisions use attributes (department, location, time, device) for fine-grained, context-aware policies.`},
@@ -843,7 +859,7 @@ const TERMS = [
 {d:'iam',x:'4.0',t:'Account Lifecycle',def:`<b>Provisioning</b> (create with least privilege), ongoing review/<b>recertification</b>, and <b>deprovisioning</b> (disable promptly on offboarding). Stops privilege creep and orphaned accounts.`},
 {d:'iam',x:'4.0',t:'Biometric Errors',def:`<b>FAR</b> (False Acceptance Rate) wrongly accepts an impostor; <b>FRR</b> (False Rejection Rate) wrongly denies a valid user. The <b>CER</b> (Crossover Error Rate) is where they meet; lower CER = better.`},
 {d:'iam',x:'4.0',t:'Passwordless / FIDO2',def:`Authentication using passkeys, hardware keys, or biometrics instead of passwords. FIDO2/WebAuthn resists phishing because the credential is bound to the legitimate site.`},
-{d:'iam',x:'4.0',t:'LDAP',def:`<b>Lightweight Directory Access Protocol.</b> Queries and manages directory services such as Active Directory. LDAPS adds TLS encryption.`},
+{d:'iam',x:'4.0',t:'LDAP',def:`<b>Lightweight Directory Access Protocol.</b> Queries and manages directory services such as Active Directory. LDAPS adds TLS encryption.`,code:`# Query a directory over LDAP\nldapsearch -x -H ldap://dc.example.com -b "dc=example,dc=com" "(sAMAccountName=jdoe)"`},
 
 /* ---- 7. SECOPS / SOC (Exam 4.0) ---- */
 {d:'secops',x:'4.0',t:'SIEM',def:`<b>Security Information and Event Management.</b> Centralizes, correlates, and alerts on logs from across the environment. The SOC analyst's primary console for detection.`},
@@ -852,13 +868,13 @@ const TERMS = [
 {d:'secops',x:'4.0',t:'IDS vs IPS',def:`An <b>IDS</b> detects and alerts on suspicious traffic (passive). An <b>IPS</b> sits inline and can actively block it. IDS watches, IPS acts.`},
 {d:'secops',x:'4.0',t:'NIDS vs HIDS',def:`<b>Network-based</b> sensors inspect traffic at choke points. <b>Host-based</b> agents monitor a single system's files, logs, and processes. Many environments use both.`},
 {d:'secops',x:'4.0',t:'Signature vs Anomaly Detection',def:`<b>Signature</b>-based matches known patterns (low false positives, misses zero-days). <b>Anomaly/behavior</b>-based flags deviations from a baseline (catches the unknown, more false positives).`},
-{d:'secops',x:'4.0',t:'Firewall Types',def:`<b>Stateless</b> filters per-packet by rules. <b>Stateful</b> tracks connection state. <b>NGFW</b> adds app awareness, IPS, and deep inspection. <b>WAF</b> protects web apps from SQLi/XSS at Layer 7.`},
+{d:'secops',x:'4.0',t:'Firewall Types',def:`<b>Stateless</b> filters per-packet by rules. <b>Stateful</b> tracks connection state. <b>NGFW</b> adds app awareness, IPS, and deep inspection. <b>WAF</b> protects web apps from SQLi/XSS at Layer 7.`,code:`# Inspect host firewall state (Linux)\nsudo iptables -L -n -v\nsudo ufw status verbose\nsudo nft list ruleset\n# Windows\nnetsh advfirewall show allprofiles`},
 {d:'secops',x:'4.0',t:'DLP',def:`<b>Data Loss Prevention.</b> Inspects data in use, in motion, and at rest to detect and block unauthorized exfiltration of sensitive information.`},
 {d:'secops',x:'4.0',t:'Honeypot / Honeynet',def:`A decoy system (or network of decoys) designed to attract and study attackers, diverting them from real assets. A <b>honeytoken</b> is fake data that triggers an alert if accessed.`},
 {d:'secops',x:'4.0',t:'Threat Hunting',def:`Proactively searching for hidden threats that evaded automated detection, using hypotheses, intel, and behavioral analysis rather than waiting for alerts.`},
 {d:'secops',x:'4.0',t:'IOC vs TTP',def:`<b>Indicators of Compromise</b> are forensic artifacts of a breach (malicious IPs, hashes, domains). <b>TTPs</b> describe how an actor operates. TTPs are harder for attackers to change than IOCs.`},
 {d:'secops',x:'4.0',t:'Threat Intelligence',def:`Collected, analyzed information about current threats and actors. Sources include <b>OSINT</b>, ISACs, and vendor feeds, often shared via <b>STIX/TAXII</b>.`},
-{d:'secops',x:'4.0',t:'Log Sources',def:`What a SOC ingests: firewall, IDS/IPS, endpoint/EDR, OS security logs, application logs, DNS, authentication, NetFlow, and <b>syslog</b> aggregation. More sources = better correlation.`},
+{d:'secops',x:'4.0',t:'Log Sources',def:`What a SOC ingests: firewall, IDS/IPS, endpoint/EDR, OS security logs, application logs, DNS, authentication, NetFlow, and <b>syslog</b> aggregation. More sources = better correlation.`,code:`# Linux system and auth logs\njournalctl -u ssh --since "1 hour ago"\ntail -f /var/log/auth.log\n# Windows event logs\nwevtutil qe Security /c:20 /rd:true /f:text\nGet-WinEvent -LogName Security -MaxEvents 20`},
 {d:'secops',x:'4.0',t:'NAC',def:`<b>Network Access Control.</b> Enforces policy before a device joins the network, checking posture (patches, AV) and quarantining non-compliant or unknown devices.`},
 {d:'secops',x:'4.0',t:'Sandboxing',def:`Running suspicious files or code in an isolated environment to observe behavior safely without risking production systems.`},
 {d:'secops',x:'4.0',t:'UEBA',def:`<b>User and Entity Behavior Analytics.</b> Uses baselines and machine learning to flag abnormal user or device behavior that signature rules would miss.`},
@@ -872,7 +888,7 @@ const TERMS = [
 {d:'ir',x:'4.0',t:'Post-Incident Activity',def:`The lessons-learned review: what happened, how response went, and what to improve. Feeds back into preparation and updates playbooks.`},
 {d:'ir',x:'4.0',t:'Chain of Custody',def:`Documentation tracking who collected, handled, and stored each piece of evidence and when. Breaking it can make evidence inadmissible in court.`},
 {d:'ir',x:'4.0',t:'Order of Volatility',def:`Collect evidence from most to least volatile: CPU registers/cache, then RAM, then network state, then disk, then logs/archives, then backups. Capture the fleeting stuff first.`},
-{d:'ir',x:'4.0',t:'Forensic Imaging',def:`Creating a bit-for-bit copy of a drive (with a <b>write blocker</b>) and hashing both the source and copy to prove the image is identical and unaltered.`},
+{d:'ir',x:'4.0',t:'Forensic Imaging',def:`Creating a bit-for-bit copy of a drive (with a <b>write blocker</b>) and hashing both the source and copy to prove the image is identical and unaltered.`,code:`# Bit-for-bit disk image, then hash source and copy to prove integrity\nsudo dd if=/dev/sdb of=evidence.img bs=4M conv=noerror,sync\nsha256sum /dev/sdb evidence.img\n# dc3dd and dcfldd add built-in hashing and progress`},
 {d:'ir',x:'4.0',t:'Legal Hold',def:`A formal directive to preserve all data relevant to anticipated or active litigation, overriding normal deletion and retention schedules.`},
 {d:'ir',x:'4.0',t:'Playbook vs Runbook',def:`A <b>playbook</b> is the strategic, scenario-level response plan (e.g. for ransomware). A <b>runbook</b> is the detailed, step-by-step operational procedure that executes it.`},
 {d:'ir',x:'4.0',t:'Tabletop Exercise',def:`A discussion-based drill where the team walks through a simulated incident to test the plan and roles without touching live systems.`},
@@ -884,7 +900,7 @@ const TERMS = [
 {d:'vulnmgmt',x:'4.0',t:'CWE',def:`<b>Common Weakness Enumeration.</b> A categorized list of software weakness <b>types</b> (e.g. buffer overflow). CWE = the class of flaw; CVE = a specific instance of one.`},
 {d:'vulnmgmt',x:'4.0',t:'Pen Test Phases',def:`<b>Reconnaissance, Scanning/Enumeration, Exploitation, Post-Exploitation, Reporting.</b> Bounded by rules of engagement and scope agreed in advance.`},
 {d:'vulnmgmt',x:'4.0',t:'Pen Test Knowledge Levels',def:`<b>Known (white box)</b>: full info given. <b>Unknown (black box)</b>: no inside info, simulating an outsider. <b>Partially known (gray box)</b>: some information, like a typical insider.`},
-{d:'vulnmgmt',x:'4.0',t:'Patch Management',def:`The process of identifying, testing, deploying, and verifying updates. Test patches before production to avoid breaking systems; prioritize by CVSS and exposure.`},
+{d:'vulnmgmt',x:'4.0',t:'Patch Management',def:`The process of identifying, testing, deploying, and verifying updates. Test patches before production to avoid breaking systems; prioritize by CVSS and exposure.`,code:`# Apply updates (Debian / Ubuntu)\nsudo apt update && sudo apt upgrade\n# RHEL / Fedora\nsudo dnf update\n# Windows (PowerShell, PSWindowsUpdate module)\nGet-WindowsUpdate; Install-WindowsUpdate`},
 {d:'vulnmgmt',x:'4.0',t:'False Positive vs Negative',def:`A <b>false positive</b> is an alert with no real threat (noise). A <b>false negative</b> is a real threat that was missed (dangerous). Tuning balances the two.`},
 {d:'vulnmgmt',x:'4.0',t:'Responsible Disclosure',def:`Privately reporting a vulnerability to the vendor and giving time to patch before going public. <b>Bug bounty</b> programs reward this.`},
 {d:'vulnmgmt',x:'4.0',t:'Remediation vs Mitigation',def:`<b>Remediation</b> fully fixes the vulnerability (patch). <b>Mitigation</b> reduces risk without fully fixing it (compensating control). <b>Acceptance</b> formally tolerates the residual risk.`},
@@ -893,7 +909,7 @@ const TERMS = [
 {d:'cloud',x:'3.0',t:'Shared Responsibility Model',def:`Security duties split between provider and customer. The provider secures the cloud (hardware, hypervisor); the customer secures what they put in it (data, identities, config). The split shifts with IaaS vs PaaS vs SaaS.`},
 {d:'cloud',x:'3.0',t:'IaaS / PaaS / SaaS',def:`<b>IaaS</b>: you manage OS and up (VMs, storage). <b>PaaS</b>: you manage just the app and data. <b>SaaS</b>: you manage only your data and access (Gmail, Salesforce). More "aaS" = less you manage, less you control.`},
 {d:'cloud',x:'3.0',t:'Hypervisor (Type 1 vs 2)',def:`Software that runs virtual machines. <b>Type 1 (bare-metal)</b> runs directly on hardware (ESXi, Hyper-V), efficient for servers. <b>Type 2 (hosted)</b> runs on top of an OS (VirtualBox, VMware Workstation).`},
-{d:'cloud',x:'3.0',t:'Containers vs VMs',def:`<b>VMs</b> virtualize hardware and each run a full OS (heavier, stronger isolation). <b>Containers</b> share the host OS kernel and package just the app (lightweight, faster, weaker isolation). Docker is the common example.`},
+{d:'cloud',x:'3.0',t:'Containers vs VMs',def:`<b>VMs</b> virtualize hardware and each run a full OS (heavier, stronger isolation). <b>Containers</b> share the host OS kernel and package just the app (lightweight, faster, weaker isolation). Docker is the common example.`,code:`# Inspect running containers\ndocker ps\ndocker images\n# Run and shell into a container\ndocker run -it --rm alpine sh\n# Kubernetes pods across namespaces\nkubectl get pods -A`},
 {d:'cloud',x:'3.0',t:'CASB',def:`<b>Cloud Access Security Broker.</b> Sits between users and cloud services to enforce policy: visibility, DLP, access control, and threat protection for cloud usage.`},
 {d:'cloud',x:'3.0',t:'Cloud Misconfigurations',def:`The top cause of cloud breaches: publicly exposed storage buckets, default or no credentials, overly broad IAM permissions, and unencrypted data. Usually a customer-side failure.`},
 {d:'cloud',x:'3.0',t:'IaC',def:`<b>Infrastructure as Code.</b> Defining and deploying infrastructure through version-controlled config files (Terraform, CloudFormation). Consistent and repeatable, but a bad template scales the mistake.`},
@@ -1074,7 +1090,7 @@ const EXTRAS_TEXT = {
 const LS = {theme:'secplus_theme', learned:'secplus_learned', favs:'secplus_favs'};
 let learned = loadSet(LS.learned);
 let favs = loadSet(LS.favs);
-let openState = {}; DOMAINS.forEach(d=>openState[d.key]=true);
+let openState = {}; DOMAINS.forEach(d=>openState[d.key]=true); openState.cmdref=true;
 let activeExam = null, favOnly=false, hideLearned=false, query='';
 
 TERMS.forEach((t,i)=>{ t.id = (t.d+'-'+t.t).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'-'+i; });
@@ -1208,6 +1224,32 @@ function render(){
       + (showExtras? EXTRAS[d.key]() : '')
       + '</div></section>';
   });
+  // ---- CLI command reference (every term carrying a code block) ----
+  const cmdTerms=TERMS.filter(t=>t.code && termMatches(t));
+  if(cmdTerms.length){
+    const co = query ? true : openState.cmdref;
+    let cinner='';
+    DOMAINS.forEach(d=>{
+      const items=cmdTerms.filter(t=>t.d===d.key); if(!items.length) return;
+      cinner+='<h3 class="cmdref-dom" style="--cat:'+d.color+'">'+d.num+' &middot; '+esc(d.name)+'</h3>';
+      items.forEach(t=>{
+        const tip=t.e&&t.e.x;
+        cinner+='<div class="cmdref-item"><div class="cmdref-term">'+hl(t.t)+'</div>'
+          +'<div class="cmdref-def">'+hlHTML(t.def)+'</div>'
+          +(tip?'<div class="cmdref-tip"><b>&#9873; Tip.</b> '+esc(stripTags(t.e.x))+'</div>':'')
+          +'<div class="code"><button class="copy" data-code="'+encodeURIComponent(t.code)+'" aria-label="Copy commands" title="Copy">'+iconCopy()+'</button><pre>'
+          + t.code.split('\n').map(l=> l.trim().startsWith('#')?'<span class="cmt">'+esc(l)+'</span>':esc(l)).join('\n')
+          +'</pre></div></div>';
+      });
+    });
+    html += '<section class="domain cmdref" id="cmdref" data-open="'+co+'" style="--cat:var(--green)">'
+      +'<button class="domain-head" aria-expanded="'+co+'" data-key="cmdref">'
+      +'<span class="code">&gt;_</span><h2>CLI Command Reference</h2>'
+      +'<span class="meta"><span class="exam-pill">Tools</span><span>'+cmdTerms.length+'</span>'
+      +'<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m6 9 6 6 6-6"/></svg>'
+      +'</span></button>'
+      +'<div class="domain-body"><div class="cmdref-list">'+cinner+'</div></div></section>';
+  }
   content.innerHTML = html;
   $('#emptyState').style.display = anyVisible? 'none':'block';
   updateGlobalProgress();
@@ -1257,7 +1299,9 @@ function buildTOC(){
     '<a href="#'+d.key+'" data-key="'+d.key+'" style="--cat:'+d.color+'">'
     +'<span class="num">'+d.num+'</span><span class="ring mini-dot" id="ring-'+d.key+'"></span>'
     +'<span class="tname">'+d.name+'</span></a>'
-  ).join('');
+  ).join('')
+  + '<a href="#cmdref" data-key="cmdref" class="toc-cmd" style="--cat:var(--green)">'
+  + '<span class="num">&gt;_</span><span class="tname">CLI Command Reference</span></a>';
 }
 
 /* ---- Hero stats + exam chips ---- */
@@ -2049,7 +2093,6 @@ document.addEventListener('keydown',e=>{
 });
 </script>
 <footer style="max-width:1280px;margin:0 auto;padding:22px;text-align:center;color:var(--muted);font-size:12px;font-family:var(--mono);border-top:1px solid var(--border)">
-  <span>Unofficial study tool. Not affiliated with or endorsed by CompTIA or Cisco NetAcad.</span><br>
   <span aria-live="polite">&#128065; <b id="gcCount" style="color:var(--accent)">0</b> page views</span>
 </footer>
 <script>

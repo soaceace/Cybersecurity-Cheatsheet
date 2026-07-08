@@ -160,6 +160,17 @@ details[open] .chev{transform:rotate(90deg)}
 .m-tip b{color:var(--gold)}
 .m-cmd{position:relative;background:var(--crust);border:1px solid var(--s0);border-radius:10px;padding:13px 14px;font-family:var(--mono);font-size:12.5px;color:var(--text);white-space:pre;overflow-x:auto}
 .m-cmd .copy{position:absolute;top:8px;right:8px;background:var(--s0);border:none;border-radius:6px;font-size:10px;padding:4px 8px;color:var(--sub);font-family:var(--sans);font-weight:600}
+/* CLI command reference section */
+.cmdref{scroll-margin-top:84px}
+.cmdlist{padding:6px 16px 16px}
+.cmdmod{margin:20px 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--mc);border-bottom:1px solid var(--s0);padding-bottom:6px}
+.cmdmod:first-child{margin-top:6px}
+.cmdentry{margin:0 0 16px;padding:12px 13px;background:var(--mantle);border:1px solid var(--s0);border-radius:12px}
+.cmdterm{font-weight:700;font-size:14.5px;letter-spacing:-.2px;margin-bottom:3px}
+.cmddef{color:var(--sub);font-size:13px;margin-bottom:8px}
+.cmdtip{color:var(--text);font-size:12.5px;background:color-mix(in srgb,var(--gold) 12%,transparent);border-radius:8px;padding:6px 10px;margin-bottom:8px}
+.cmdtip b{color:var(--gold)}
+.cmdentry .m-cmd{margin:0}
 .rel{display:flex;flex-wrap:wrap;gap:7px}
 .rel button{background:var(--mantle);border:1px solid var(--s0);border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600;color:var(--sub)}
 .rel button:hover{border-color:var(--accent);color:var(--text)}
@@ -228,7 +239,7 @@ footer{max-width:1280px;margin:0 auto;padding:24px 22px 50px;color:var(--faint);
 
 @media (max-width:880px){.shell{grid-template-columns:1fr}.sidebar{display:none}}
 @media (max-width:620px){
-  .tb{flex-wrap:wrap;padding:11px 14px}.search-wrap{order:3;flex-basis:100%;max-width:none}
+  .tb{flex-wrap:wrap;padding:11px 14px;justify-content:space-between;gap:10px}.logo{min-width:0}.tb-actions{margin-left:auto}.search-wrap{order:3;flex-basis:100%;max-width:none;margin:0}
   .logo .name small{display:none}.shell{padding:0 14px}.hero h1{font-size:24px}
   .icon-btn .lbl{display:none}.icon-btn{padding:0 11px}
 }
@@ -1271,6 +1282,9 @@ function buildShell(){
     a.innerHTML=`<span class="ring" id="rg${m.n}" style="--mc:var(${m.v})"></span><span class="tname">${m.code} ${m.name}</span><span class="ct" id="tc${m.n}"></span>`;
     toc.appendChild(a);
   });
+  const ca=document.createElement("a");ca.href="#cmdsec";ca.style.setProperty("--mc","var(--accent)");ca.dataset.mod="cmd";
+  ca.innerHTML=`<span class="ring" style="--mc:var(--accent)"></span><span class="tname">&gt;_ CLI Command Reference</span><span class="ct">${T.filter(x=>x.c).length}</span>`;
+  toc.appendChild(ca);
   const chips=$("chips");
   MODS.forEach(m=>{
     const b=document.createElement("button");b.className="chip";b.style.setProperty("--cc",`var(${m.v})`);b.setAttribute("aria-pressed","false");
@@ -1377,6 +1391,28 @@ function render(){
     det.querySelector("summary").addEventListener("click",()=>setTimeout(()=>{det.open?openMods.add(m.n):openMods.delete(m.n);store.set("ndk_open",[...openMods]);},0));
     list.appendChild(det);
   });
+  // ---- CLI command reference (all terms that carry a command) ----
+  const cmdItems=shown.filter(x=>x.c);
+  if(cmdItems.length){
+    const cd=document.createElement("details");cd.className="domain cmdref";cd.id="cmdsec";
+    cd.style.setProperty("--mc","var(--accent)");
+    cd.open=!!(query||activeMods.size||favOnly);
+    let inner=`<summary class="dhead"><span class="dcode">&gt;_</span><span class="dname">CLI Command Reference</span><span class="dmeta">${cmdItems.length} cmds</span><span class="dprog"><i style="width:100%"></i></span><span class="chev">▶</span></summary><div class="cmdlist">`;
+    MODS.forEach(m=>{
+      const mi=cmdItems.filter(x=>x.m===m.n);if(!mi.length)return;
+      inner+=`<h4 class="cmdmod" style="--mc:var(${m.v})">${m.code} · ${esc(m.name)}</h4>`;
+      mi.forEach(x=>{
+        inner+=`<div class="cmdentry"><div class="cmdterm">${esc(x.t)}</div>`
+          +`<div class="cmddef">${esc(x.d)}</div>`
+          +(x.tip?`<div class="cmdtip"><b>⚑ Tip.</b> ${esc(x.tip)}</div>`:"")
+          +`<div class="m-cmd"><button class="copy" data-cmd="${encodeURIComponent(x.c)}">copy</button>${esc(x.c)}</div></div>`;
+      });
+    });
+    inner+=`</div>`;
+    cd.innerHTML=inner;
+    list.appendChild(cd);
+    cd.querySelectorAll(".copy[data-cmd]").forEach(b=>b.onclick=()=>{const v=decodeURIComponent(b.dataset.cmd);navigator.clipboard&&navigator.clipboard.writeText(v);toast("Command copied");});
+  }
   renderHeat();
 }
 
