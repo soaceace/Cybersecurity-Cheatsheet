@@ -2100,7 +2100,7 @@ document.addEventListener('keydown',e=>{
 </footer>
 <script>
 (function(){
-  fetch('https://soaceace.goatcounter.com/counter/'+encodeURIComponent(location.pathname)+'.json')
+  fetch('https://soaceace.goatcounter.com/counter/TOTAL.json')
     .then(function(r){return r.ok?r.json():null;})
     .then(function(d){ if(d&&d.count){ var n=document.getElementById('gcCount'); if(n) n.textContent=d.count; } })
     .catch(function(){});
