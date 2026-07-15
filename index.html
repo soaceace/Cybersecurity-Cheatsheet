@@ -440,6 +440,31 @@ mark{background:color-mix(in srgb,var(--yellow) 42%,transparent);color:var(--tex
 .rb.easy{border-color:color-mix(in srgb,var(--green) 45%,var(--border));color:var(--green)}
 .rb:hover{filter:brightness(1.08)}
 .fc-tip{margin-top:10px;font-size:12.5px;color:var(--yellow);line-height:1.45;text-align:left}
+/* ============================== VIDEO ============================== */
+.vid-face{position:relative;display:block;width:100%;aspect-ratio:16/9;border:1px solid var(--border2);
+  border-radius:var(--r-sm);background:var(--code-bg);overflow:hidden;cursor:pointer;padding:0;color:var(--text)}
+.vid-face img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.6;border:0}
+.vid-face .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:42px;
+  border-radius:11px;background:var(--red);display:grid;place-items:center;box-shadow:var(--shadow);transition:filter .15s}
+.vid-face .play svg{fill:#fff;margin-left:3px}
+.vid-face:hover .play{filter:brightness(1.12)}
+.vid-face .vid-meta{position:absolute;left:0;right:0;bottom:0;padding:5px 9px;font-size:.66rem;font-family:var(--mono);
+  color:#cdd6f4;background:linear-gradient(transparent,rgba(0,0,0,.6));text-align:left}
+.vid-frame{width:100%;aspect-ratio:16/9;border:1px solid var(--border2);border-radius:var(--r-sm);display:block}
+.vid-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px}
+.vid-btn{height:34px;padding:0 12px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);
+  color:var(--text);font:600 .78rem/1 var(--sans);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.vid-btn:hover{border-color:var(--accent)}
+.vid-btn.danger{color:var(--red)}
+.vid-pinform{display:none;gap:8px;margin-top:8px}
+.vid-pinform input{flex:1;min-width:0;height:34px;padding:0 10px;border-radius:8px;border:1px solid var(--border2);
+  background:var(--crust);color:var(--text);font:400 .76rem/1 var(--mono)}
+.vid-pinform input:focus{outline:none;border-color:var(--accent)}
+.vid-note{margin-top:8px;font-size:.72rem;color:var(--muted);line-height:1.45}
+.vid-note b{color:var(--subtext)}
+.fc-vidbtn{margin-top:11px;height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--border2);
+  background:var(--surface2);color:var(--text);font:600 .75rem/1 var(--sans);cursor:pointer}
+.fc-vidbtn:hover{border-color:var(--accent)}
 .chip.tts[aria-pressed="true"]{color:#fff;background:var(--teal);border-color:var(--teal)}
 /* ===== added: exam mode ===== */
 .exam-clock{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--peach);font-weight:700}
@@ -589,6 +614,7 @@ mark{background:color-mix(in srgb,var(--yellow) 42%,transparent);color:var(--tex
             <span class="side">Definition</span><span class="cat" id="fcBackCat"></span>
             <div class="fc-def" id="fcDef"></div>
             <div class="fc-tip" id="fcTip"></div>
+            <div id="fcVid"></div>
           </div>
         </div>
       </div>
@@ -1132,7 +1158,7 @@ function bumpStreak(){ const t=new Date().toISOString().slice(0,10); if(streak.l
 
 /* ---- progress export / import (cross-device) ---- */
 function exportProgress(){
-  const data={v:1,app:'secplus',learned:[...learned],favs:[...favs],srs,stats,streak,theme:document.documentElement.getAttribute('data-theme')};
+  const data={v:2,app:'secplus',learned:[...learned],favs:[...favs],srs,stats,streak,vids,theme:document.documentElement.getAttribute('data-theme')};
   const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
   a.download='secplus-progress-'+new Date().toISOString().slice(0,10)+'.json'; a.click(); URL.revokeObjectURL(a.href);
@@ -1146,6 +1172,7 @@ function importProgress(file){
     if(d.srs){ srs=d.srs; saveSrs(); }
     if(d.stats){ stats=d.stats; saveStats(); }
     if(d.streak){ streak=d.streak; saveStreak(); }
+    if(d.vids){ vids=Object.assign(vids||{},d.vids); saveVids(); }
     render(); toast('Progress imported');
   }catch(e){ toast('Import failed: bad file'); } };
   rd.readAsText(file);
@@ -1441,11 +1468,15 @@ function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.rand
 function showCard(){
   const card=$('#flashcard'); card.classList.remove('flipped');
   const t=deck[fcIdx]; const rate=$('#fcRate');
-  if(!t){ $('#fcTerm').textContent='Nothing due'; $('#fcDef').textContent='Great work. Switch mode to All or New, pick another deck, or star some terms.'; $('#fcTip').innerHTML=''; $('#fcCount').textContent='0 / 0'; $('#fcProgBar').style.width='0%'; $('#fcFrontCat').textContent=''; $('#fcBackCat').textContent=''; if(rate)rate.innerHTML=''; return; }
+  if(!t){ $('#fcTerm').textContent='Nothing due'; $('#fcDef').textContent='Great work. Switch mode to All or New, pick another deck, or star some terms.'; $('#fcTip').innerHTML=''; $('#fcVid').innerHTML=''; $('#fcCount').textContent='0 / 0'; $('#fcProgBar').style.width='0%'; $('#fcFrontCat').textContent=''; $('#fcBackCat').textContent=''; if(rate)rate.innerHTML=''; return; }
   const d=domainOf(t.d);
   $('#fcTerm').textContent=t.t;
   $('#fcDef').innerHTML=t.def;
   $('#fcTip').innerHTML = (t.e&&t.e.x)?('⚑ '+t.e.x):'';
+  const fv=$('#fcVid'), fvv=vidFor(t);
+  fv.innerHTML='<button class="fc-vidbtn" type="button">'+(fvv?'▶ Watch video':'🔍 Find a video')+'</button>';
+  fv.firstChild.onclick=ev=>{ ev.stopPropagation();
+    window.open(fvv?vidWatchURL(fvv):vidSearchURL(t),'_blank','noopener'); };
   $('#fcFrontCat').textContent=d.num+' · box '+srsOf(t.id).b; $('#fcFrontCat').style.setProperty('--fc-cat',d.color);
   $('#fcBackCat').textContent=d.name; $('#fcBackCat').style.setProperty('--fc-cat',d.color);
   document.querySelectorAll('.fc-face').forEach(f=>f.style.setProperty('--fc-cat',d.color));
@@ -1762,6 +1793,152 @@ TERMS.filter(t=>t.d==='acronyms').forEach(a=>{
 });
 
 /* ============================================================
+   VIDEO
+   Pin one YouTube clip per term; fall back to a search link.
+   Keyed d|t (same scheme as DEEP) because t.id embeds the array
+   index, so id-keyed data would break on any TERMS insert.
+   ============================================================ */
+const VID_QUERY  = 'Professor Messer SY0-701 ';  // search prefix when nothing is pinned
+const VID_THUMBS = true;   // set false to never touch i.ytimg.com before a click
+
+/* Curated pins baked into the file. Survives a cache wipe; works on a fresh
+   device. Fill from an exported JSON. Keys must match DEEP exactly. */
+const VIDEOS = {
+  // 'crypto|AES':{v:'ELEVEN_CHAR',s:0},
+};
+
+const LS_VIDS='secplus_vids';
+let vids; try{ vids=JSON.parse(localStorage.getItem(LS_VIDS)||'{}'); }catch(e){ vids={}; }
+function saveVids(){ try{ localStorage.setItem(LS_VIDS,JSON.stringify(vids)); }catch(e){} }
+
+/* An acronym stub borrows the video pinned on its full-term parent. */
+function vidSubject(t){
+  if(t.d==='acronyms' && t.seeAlso){ const p=termById(t.seeAlso); if(p) return p; }
+  return t;
+}
+function vidKey(t){ const s=vidSubject(t); return s.d+'|'+s.t; }
+function vidFor(t){ const k=vidKey(t); return vids[k]||VIDEOS[k]||null; }
+function vidPinned(t){ return !!vids[vidKey(t)]; }
+function vidSearchURL(t){ return 'https://www.youtube.com/results?search_query='+encodeURIComponent(VID_QUERY+vidSubject(t).t); }
+function vidWatchURL(v){ return 'https://www.youtube.com/watch?v='+v.v+(v.s?'&t='+v.s+'s':''); }
+function vidStamp(s){ if(!s) return '';
+  const h=Math.floor(s/3600), m=Math.floor(s%3600/60), x=s%60, p=n=>String(n).padStart(2,'0');
+  return ' @ '+(h? h+':'+p(m) : m)+':'+p(x); }
+
+function vidTime(s){
+  if(/^\d+$/.test(s)) return parseInt(s,10);
+  const m=/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/.exec(s);
+  return m? (+(m[1]||0))*3600+(+(m[2]||0))*60+(+(m[3]||0)) : 0;
+}
+/* Accepts watch/youtu.be/embed/shorts/live links, with or without a timestamp,
+   or a bare 11-char id. Returns {v:id,s:startSeconds} or null. */
+function parseYT(raw){
+  if(!raw) return null;
+  const s=String(raw).trim();
+  if(/^[A-Za-z0-9_-]{11}$/.test(s)) return {v:s,s:0};
+  let id='', start=0, wasURL=false;
+  try{
+    const u=new URL(/^https?:\/\//i.test(s)?s:'https://'+s);
+    wasURL=true;
+    const h=u.hostname.replace(/^(www|m|music)\./,'');
+    if(h==='youtu.be') id=(u.pathname.split('/')[1]||'');
+    else if(h==='youtube.com'||h==='youtube-nocookie.com'){
+      id=u.searchParams.get('v')||'';
+      if(!id){ const m=/\/(?:embed|shorts|v|live)\/([A-Za-z0-9_-]{11})/.exec(u.pathname); if(m) id=m[1]; }
+    }
+    const tp=u.searchParams.get('t')||u.searchParams.get('start');
+    if(tp) start=vidTime(tp);
+  }catch(e){ /* not a URL */ }
+  // Only guess loosely on non-URL input; a channel URL must not yield a bogus id.
+  if(!id && !wasURL){ const m=/([A-Za-z0-9_-]{11})/.exec(s); if(m) id=m[1]; }
+  if(!/^[A-Za-z0-9_-]{11}$/.test(id)) return null;
+  return {v:id,s:start};
+}
+
+/* Facade: nothing loads from Google until the play button is clicked. */
+function vidFaceEl(t,v){
+  const wrap=document.createElement('div');
+  const face=document.createElement('button');
+  face.className='vid-face'; face.type='button';
+  face.setAttribute('aria-label','Play video for '+vidSubject(t).t);
+  if(VID_THUMBS){
+    const img=document.createElement('img');
+    img.loading='lazy'; img.alt=''; img.referrerPolicy='no-referrer';
+    img.src='https://i.ytimg.com/vi/'+v.v+'/mqdefault.jpg';
+    img.onerror=()=>img.remove();          // offline or dead id: fall back to the plain block
+    face.appendChild(img);
+  }
+  face.insertAdjacentHTML('beforeend',
+    '<span class="play"><svg width="17" height="17" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>'
+   +'<span class="vid-meta">'+esc(v.v)+esc(vidStamp(v.s))+'</span>');
+  face.onclick=()=>{
+    if(!navigator.onLine){ toast('Offline. Video needs a connection.'); return; }
+    const f=document.createElement('iframe');
+    f.className='vid-frame';
+    f.src='https://www.youtube-nocookie.com/embed/'+v.v+'?playsinline=1&rel=0&modestbranding=1&autoplay=1'+(v.s?'&start='+v.s:'');
+    f.allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share';
+    f.allowFullscreen=true; f.loading='lazy'; f.title='Video: '+vidSubject(t).t;
+    f.referrerPolicy='strict-origin-when-cross-origin';
+    wrap.replaceChildren(f);
+  };
+  wrap.appendChild(face);
+  return wrap;
+}
+
+function renderVid(t){
+  const mount=$('#dtVid'); if(!mount) return;
+  mount.replaceChildren();
+  const subj=vidSubject(t), v=vidFor(t), pinned=vidPinned(t);
+
+  if(v) mount.appendChild(vidFaceEl(t,v));
+
+  const row=document.createElement('div'); row.className='vid-row';
+  const searchBtn=document.createElement('button');
+  searchBtn.className='vid-btn'; searchBtn.type='button';
+  searchBtn.textContent = v?'Search for another':'Search YouTube';
+  searchBtn.onclick=()=>window.open(vidSearchURL(t),'_blank','noopener');
+  row.appendChild(searchBtn);
+
+  const pinBtn=document.createElement('button');
+  pinBtn.className='vid-btn'; pinBtn.type='button';
+  pinBtn.textContent = pinned?'Replace pin':'Pin a video';
+  row.appendChild(pinBtn);
+
+  if(pinned){
+    const rm=document.createElement('button');
+    rm.className='vid-btn danger'; rm.type='button'; rm.textContent='Unpin';
+    rm.onclick=()=>{ delete vids[vidKey(t)]; saveVids(); toast('Unpinned'); renderVid(t); };
+    row.appendChild(rm);
+  }
+  mount.appendChild(row);
+
+  const form=document.createElement('div'); form.className='vid-pinform';
+  const inp=document.createElement('input');
+  inp.type='url'; inp.placeholder='Paste a YouTube link'; inp.autocapitalize='off';
+  inp.autocorrect='off'; inp.spellcheck=false;
+  const save=document.createElement('button');
+  save.className='vid-btn'; save.type='button'; save.textContent='Save';
+  const commit=()=>{
+    const p=parseYT(inp.value);
+    if(!p){ toast('Not a YouTube link'); inp.focus(); return; }
+    vids[vidKey(t)]=p; saveVids(); toast('Pinned to '+subj.t); renderVid(t);
+  };
+  save.onclick=commit;
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); commit(); } });
+  form.append(inp,save);
+  mount.appendChild(form);
+  pinBtn.onclick=()=>{ const shown=form.style.display==='flex';
+    form.style.display=shown?'none':'flex'; if(!shown) inp.focus(); };
+
+  const note=document.createElement('div'); note.className='vid-note';
+  if(subj!==t) note.innerHTML='Shares whatever is pinned on <b>'+esc(subj.t)+'</b>.';
+  else if(pinned) note.textContent='Pinned by you. Included in your progress export.';
+  else if(v) note.textContent='Built into this file.';
+  else note.textContent='Nothing pinned. Search, then paste the link back here to keep it.';
+  mount.appendChild(note);
+}
+
+/* ============================================================
    DETAIL VIEW (click a term for the in-depth explanation)
    ============================================================ */
 function findTerm(name){
@@ -1786,6 +1963,7 @@ document.body.insertAdjacentHTML('beforeend',
 +'<div id="dtSeeAlso"></div>'
 +'<div class="dt-section"><h4>Definition</h4><div class="dt-body" id="dtDef"></div></div>'
 +'<div class="dt-section" id="dtDepthWrap"><h4>In depth</h4><div class="dt-body" id="dtDepth"></div></div>'
++'<div class="dt-section" id="dtVidWrap"><h4>Video</h4><div id="dtVid"></div></div>'
 +'<div class="dt-code" id="dtCode"></div>'
 +'<div class="dt-section dt-tip" id="dtTipWrap"><h4>Exam tip</h4><div class="dt-body" id="dtTip"></div></div>'
 +'<div class="dt-section" id="dtRelWrap"><h4>Related terms</h4><div class="dt-rel" id="dtRel"></div></div>'
@@ -1821,6 +1999,8 @@ function openDetail(id, push){
   // depth
   if(t.e&&t.e.h){ $('#dtDepthWrap').style.display=''; $('#dtDepth').innerHTML=t.e.h; }
   else $('#dtDepthWrap').style.display='none';
+  // video
+  renderVid(t);
   // code
   const codeWrap=$('#dtCode');
   if(t.code){ codeWrap.innerHTML='<div class="code"><button class="copy" data-code="'+encodeURIComponent(t.code)+'" aria-label="Copy commands">'+iconCopy()+'</button><pre>'
@@ -1848,7 +2028,8 @@ function openDetail(id, push){
   const cp=codeWrap.querySelector('.copy'); if(cp) cp.onclick=()=>copyText(decodeURIComponent(cp.dataset.code),cp);
   dtModal.classList.add('open'); document.body.style.overflow='hidden';
 }
-function closeDetail(){ dtModal.classList.remove('open'); document.body.style.overflow=''; dtStack=[]; }
+function closeDetail(){ const vm=$('#dtVid'); if(vm) vm.replaceChildren();
+  dtModal.classList.remove('open'); document.body.style.overflow=''; dtStack=[]; }
 $('#dtClose').onclick=closeDetail;
 $('#dtBack').onclick=()=>{ dtStack.pop(); const prev=dtStack[dtStack.length-1]; if(prev) openDetail(prev,false); else closeDetail(); };
 dtModal.addEventListener('click',e=>{ if(e.target===dtModal) closeDetail(); });
